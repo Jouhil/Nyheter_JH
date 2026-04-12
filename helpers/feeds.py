@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import json
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from html import unescape
+from pathlib import Path
 from typing import Any
 from urllib.error import URLError
 from urllib.request import ProxyHandler, Request, build_opener
@@ -18,7 +20,7 @@ SPACE_RE = re.compile(r"\s+")
 XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
 
 
-def parse_opml_feed_urls(opml_path: str) -> list[dict[str, str]]:
+def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, str]]:
     """Parse OPML in a fault-tolerant way and return unique feed URLs."""
     raw = open(opml_path, "rb").read()
     text = CONTROL_CHARS_RE.sub("", raw.decode("utf-8", errors="replace"))
@@ -41,7 +43,10 @@ def parse_opml_feed_urls(opml_path: str) -> list[dict[str, str]]:
             seen.add(item["xml_url"])
             unique.append(item)
 
-    print(f"[YouTube] OPML: hittade {len(unique)} unika feed-url:er.")
+    print(f"[YouTube] OPML: hittade {len(feeds)} xmlUrl, {len(unique)} unika feed-url:er.")
+    if debug and unique:
+        sample_urls = [f["xml_url"] for f in unique[:3]]
+        print(f"[YouTube][DEBUG] Exempel feed-url: {sample_urls}")
     return unique
 
 
@@ -92,13 +97,13 @@ def _make_video_summary(title: str, channel: str, source_text: str) -> str:
     elif clean_source:
         words = clean_source.split()
         tail = " ".join(words[20:40]).strip()
-        second = tail if tail else f"Innehållet publicerades av {clean_channel} och går att se via länken."
+        second = tail if tail else f"Videon kommer från {clean_channel} och handlar om ämnet i titeln."
     else:
-        second = f"Innehållet publicerades av {clean_channel} och går att se via länken."
+        second = f"Videon kommer från {clean_channel} och handlar om ämnet i titeln."
     second = second.rstrip(".!?") + "."
 
     if first == second:
-        second = f"Videon kommer från {clean_channel} och kan läsas mer om via länken."
+        second = f"Öppna länken för att se hela genomgången från {clean_channel}."
     return f"{first} {second}"
 
 
@@ -124,6 +129,15 @@ def _entry_link(entry: ET.Element) -> str:
     return "#"
 
 
+def _media_group_text(entry: ET.Element) -> str:
+    for child in entry:
+        if _tag_name(child) == "group":
+            for nested in child:
+                if _tag_name(nested) in {"description", "title"} and nested.text:
+                    return nested.text.strip()
+    return ""
+
+
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
     root = ET.fromstring(CONTROL_CHARS_RE.sub("", xml_text))
     root_name = _tag_name(root)
@@ -134,7 +148,7 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
         for entry in root.findall("{*}entry"):
             published_raw = _entry_text(entry, ["published", "updated"])
             published_dt = _parse_date(published_raw)
-            summary = _entry_text(entry, ["summary", "content", "media:group"]) or ""
+            summary = _entry_text(entry, ["summary", "content"]) or _media_group_text(entry)
             items.append(
                 {
                     "title": _entry_text(entry, ["title"]) or "Utan titel",
@@ -145,7 +159,7 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                     "summary": _make_video_summary(
                         title=_entry_text(entry, ["title"]) or "",
                         channel=feed_title,
-                        source_text=summary,
+                        source_text=summary or "",
                     ),
                 }
             )
@@ -176,10 +190,18 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
     return items
 
 
-def collect_latest_youtube_videos(feeds: list[dict[str, str]], max_items: int = 24) -> list[dict[str, Any]]:
+def collect_latest_youtube_videos(
+    feeds: list[dict[str, str]],
+    max_items: int = 24,
+    debug: bool = False,
+    debug_dir: Path | None = None,
+) -> list[dict[str, Any]]:
     opener = build_opener(ProxyHandler({}))
     videos: list[dict[str, Any]] = []
-    for feed in feeds:
+
+    tested = 0
+    for idx, feed in enumerate(feeds):
+        tested += 1
         request = Request(
             feed["xml_url"],
             headers={
@@ -187,16 +209,50 @@ def collect_latest_youtube_videos(feeds: list[dict[str, str]], max_items: int = 
                 "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml",
             },
         )
+        if debug:
+            print(f"[YouTube][DEBUG] testar URL: {feed['xml_url']}")
         try:
             with opener.open(request, timeout=15) as response:
-                xml_text = response.read().decode("utf-8", errors="replace")
+                status = getattr(response, "status", 200)
+                content_type = response.headers.get("Content-Type", "okänd")
+                raw = response.read()
+            xml_text = raw.decode("utf-8", errors="replace")
+            if debug:
+                print(
+                    f"[YouTube][DEBUG] status={status} content-type={content_type} bytes={len(raw)}"
+                )
             feed_items = _parse_feed_xml(xml_text, feed["title"])
+            if debug:
+                titles = [item["title"] for item in feed_items[:2]]
+                print(f"[YouTube][DEBUG] parsade poster={len(feed_items)} första titlar={titles}")
+            if debug and debug_dir and idx < 3:
+                (debug_dir / f"youtube_feed_sample_{idx + 1}.xml").write_text(xml_text, encoding="utf-8")
             videos.extend(feed_items[:4])
         except (URLError, TimeoutError, ET.ParseError) as exc:
             print(f"[YouTube] VARNING: kunde inte läsa {feed['xml_url']}: {exc}")
             continue
 
+    before_sort = len(videos)
     videos.sort(key=lambda x: x["published"], reverse=True)
     videos = videos[:max_items]
+    print(f"[YouTube] Totalt antal poster före sortering: {before_sort}")
+    print(f"[YouTube] Totalt antal poster efter sortering/gräns: {len(videos)}")
+    print(f"[YouTube] Totalt testade feeds: {tested}")
+
+    if debug and debug_dir:
+        sample_file = debug_dir / "youtube_feed_sample.xml"
+        sample_written = False
+        for i in range(1, 4):
+            path = debug_dir / f"youtube_feed_sample_{i}.xml"
+            if path.exists():
+                sample_file.write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+                sample_written = True
+                break
+        if not sample_written:
+            sample_file.write_text("<!-- No YouTube feed could be downloaded in this run -->", encoding="utf-8")
+        (debug_dir / "parsed_youtube.json").write_text(
+            json.dumps(videos, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
+        )
+
     print(f"[YouTube] OK: hämtade totalt {len(videos)} videoposter.")
     return videos

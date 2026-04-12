@@ -3,20 +3,22 @@
 Den här lösningen bygger en **automatisk daglig briefing** som publiceras som statisk HTML via GitHub Pages.
 Ingen dator behöver vara igång när den körs.
 
-## Vad version 1.1 innehåller
+## Vad version 1.2 innehåller
 
 - Väder från SMHI (standard: Stockholm)
 - Senaste YouTube-videos från `youtube_prenumerationer.opml`
 - Svensk videosammanfattning (ca 2 meningar) per YouTube-post
 - Dagliga nyheter via öppna RSS-flöden (AI, teknik, Sverige)
 - Statisk och mobilvänlig sida i `docs/index.html`
-- Automatisk uppdatering varje morgon via GitHub Actions
+- Debug-läge (`DEBUG_BRIEFING=1`) med detaljerade hämtloggar och debugfiler
+- Validering som failar bygget om resultatet blir för tomt
 
 ## Projektstruktur
 
 ```text
 .
 ├─ .github/workflows/daily_briefing.yml
+├─ debug/                              # skapas i debug-läge
 ├─ docs/
 │  ├─ index.html
 │  └─ style.css
@@ -37,9 +39,13 @@ Ingen dator behöver vara igång när den körs.
    - väder från SMHI,
    - senaste YouTube-poster från OPML-feeds,
    - RSS-nyheter från öppna källor.
-3. Scriptet bygger `docs/index.html`.
-4. Workflow committar uppdaterad `docs/index.html` tillbaka till repot.
-5. GitHub Pages serverar innehållet från `docs/`.
+3. Scriptet validerar minimikrav:
+   - minst ett vädervärde,
+   - minst 5 YouTube-poster,
+   - minst 3 nyhetsposter totalt.
+4. Scriptet bygger `docs/index.html`.
+5. Workflow committar uppdaterad `docs/index.html` tillbaka till repot.
+6. GitHub Pages serverar innehållet från `docs/`.
 
 ## Köra lokalt
 
@@ -47,10 +53,28 @@ Ingen dator behöver vara igång när den körs.
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python generate_briefing.py
+DEBUG_BRIEFING=1 python -u generate_briefing.py
 ```
 
-Öppna sedan `docs/index.html` i valfri webbläsare.
+## Debugläge
+
+Sätt `DEBUG_BRIEFING=1` för att få:
+
+- URL som testas
+- HTTP-statuskod
+- Content-Type
+- Antal bytes
+- Antal parsade poster
+- Första 1–2 titlar
+- Debugfiler i `debug/`
+
+Exempel på debugfiler:
+
+- `debug/smhi_response.json`
+- `debug/youtube_feed_sample.xml`
+- `debug/news_ai_sample.xml`
+- `debug/parsed_youtube.json`
+- `debug/parsed_news.json`
 
 ## GitHub Actions
 
@@ -58,19 +82,10 @@ Workflow-fil: `.github/workflows/daily_briefing.yml`
 
 - `schedule`: kör varje dag 05:30 UTC
 - `workflow_dispatch`: manuell körning via GitHub UI
-- Installerar Python + dependencies
-- Kör `python generate_briefing.py`
-- Committar `docs/index.html` om den ändrats
-
-## GitHub Pages (aktivering)
-
-1. Gå till repo → **Settings** → **Pages**.
-2. Under **Build and deployment**, välj:
-   - **Source**: `Deploy from a branch`
-   - **Branch**: `main` (eller din standard-branch)
-   - **Folder**: `/docs`
-3. Spara.
-4. Efter första workflow-körningen publiceras sidan på din GitHub Pages-URL.
+- Skriver ut Python-version, arbetskatalog och fil-listning
+- Kör `python -u generate_briefing.py` med `DEBUG_BRIEFING=1`
+- Laddar upp `debug/` som artifact även när bygget misslyckas
+- Committar `docs/index.html` om den ändrats och valideringen passerar
 
 ## Anpassning
 
@@ -93,24 +108,3 @@ Uppdatera `NEWS_FEEDS` i `helpers/news.py`.
 ### Byta YouTube-kanaler
 
 Redigera `youtube_prenumerationer.opml`.
-
-## Förslag för version 2
-
-- **Google Calendar**
-  - Lägg till kalender-sammanfattning per dag (t.ex. nästa 3 möten)
-  - Rendera i egen sektion i HTML
-- **Mejlutskick**
-  - Lägg till jobb i workflow som skickar HTML eller sammanfattning via mail-API
-- **Personliga ämnen/filter**
-  - Lägg konfig i JSON/YAML för prioriterade kanaler och nyhetsämnen
-  - Lägg in vikter/taggar och visa "Dagens fokus"
-
-## Robusthet i lösningen
-
-- HTTP-anrop använder Python standardbibliotek med tydlig timeout och egen User-Agent
-- Proxy-bypass används i hämtningarna för att undvika 403 tunnel-fel i vissa miljöer
-- Nätverksfel fångas så att hela bygget inte kraschar
-- Trasiga feeds hoppas över istället för att stoppa processen
-- Datum normaliseras och sorteras konsekvent
-- OPML-parser hanterar dåliga tecken och har regex-fallback om XML är trasig
-- Workflown loggar antal hittade OPML-feeds, videos, nyheter per kategori och SMHI-status
