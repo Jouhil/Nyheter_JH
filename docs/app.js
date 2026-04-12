@@ -43,8 +43,11 @@
       hardSignals.push('url_contains_/shorts/');
     }
 
-    const duration = Number(video?.duration);
-    if (Number.isFinite(duration) && duration <= 60) {
+    const rawDuration = video?.duration;
+    const duration = rawDuration === null || rawDuration === undefined || rawDuration === ''
+      ? Number.NaN
+      : Number(rawDuration);
+    if (Number.isFinite(duration) && duration > 0 && duration <= 60) {
       hardSignals.push('duration_<=_60s');
     }
 
