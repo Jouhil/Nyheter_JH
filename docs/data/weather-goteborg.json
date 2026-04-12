@@ -2,7 +2,7 @@
   "location": "Göteborg",
   "lat": 57.7089,
   "lon": 11.9746,
-  "generated_at": "2026-04-12T14:01:51.220624+00:00",
+  "generated_at": "2026-04-12T14:06:37.759081+00:00",
   "current": {
     "temperature_c": null,
     "wind_ms": null,
@@ -255,5 +255,5 @@
       "description": "Okänd"
     }
   ],
-  "error": "Kunde inte hämta väderdata: <urlopen error [Errno 101] Network is unreachable>"
+  "error": "Kunde inte hämta väderdata: HTTP Error 400: Bad Request"
 }
