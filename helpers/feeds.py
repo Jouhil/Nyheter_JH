@@ -31,7 +31,11 @@ SWEDISH_SUMMARY_HINT_RE = re.compile(
 )
 
 
-def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, str]]:
+def parse_opml_feed_urls(
+    opml_path: str,
+    debug: bool = False,
+    with_stats: bool = False,
+) -> list[dict[str, str]] | dict[str, Any]:
     raw = open(opml_path, "rb").read()
     text = CONTROL_CHARS_RE.sub("", raw.decode("utf-8", errors="replace"))
 
@@ -61,6 +65,12 @@ def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, 
     if debug and unique:
         sample_urls = [f["xml_url"] for f in unique[:3]]
         print(f"[YouTube][DEBUG] Exempel feed-url: {sample_urls}")
+    if with_stats:
+        return {
+            "feeds": unique,
+            "feeds_total": len(feeds),
+            "feeds_unique": len(unique),
+        }
     return unique
 
 
@@ -450,9 +460,13 @@ def collect_latest_youtube_videos(
     normalized_candidates: list[dict[str, Any]] = []
 
     feeds_total = len(feeds)
+    feeds_unique = len({feed.get("xml_url") for feed in feeds if feed.get("xml_url")})
     feeds_attempted = 0
     feeds_ok = 0
     parse_failures = 0
+    failed_feed_urls: list[str] = []
+    per_feed_counts: dict[str, int] = {}
+    per_feed_selected_counts: dict[str, int] = {}
     discarded = {
         "no_published_date": 0,
         "duplicate": 0,
@@ -477,14 +491,18 @@ def collect_latest_youtube_videos(
             xml_text = raw.decode("utf-8", errors="replace")
             feed_items = _parse_feed_xml(xml_text, feed["title"])
             feeds_ok += 1
+            feed_key = f"{feed['title']} | {feed['xml_url']}"
+            per_feed_counts[feed_key] = len(feed_items)
             if debug and debug_dir and idx < 3:
                 (debug_dir / f"youtube_feed_sample_{idx + 1}.xml").write_text(xml_text, encoding="utf-8")
-            selected_items = feed_items[: max(5, per_feed_items)]
+            selected_items = feed_items[: max(10, per_feed_items)]
+            per_feed_selected_counts[feed_key] = len(selected_items)
             videos.extend(selected_items)
             raw_entries.extend(selected_items)
         except (URLError, TimeoutError, ET.ParseError, HTTPError) as exc:
             parse_failures += 1
             discarded["parse_failure"] += 1
+            failed_feed_urls.append(feed["xml_url"])
             print(f"[YouTube] VARNING: kunde inte läsa {feed['xml_url']}: {exc}")
             continue
 
@@ -523,10 +541,17 @@ def collect_latest_youtube_videos(
 
     filtered = deduped[:max_items]
 
-    print(f"[YouTube] OPML feeds found: {feeds_total}")
+    top_feeds = sorted(per_feed_counts.items(), key=lambda kv: kv[1], reverse=True)[:20]
+    print(f"[YouTube] OPML feeds found (total): {feeds_total}")
+    print(f"[YouTube] OPML feeds unique xmlUrl: {feeds_unique}")
     print(f"[YouTube] feed URLs used: {feeds_attempted}")
     print(f"[YouTube] feeds fetched OK: {feeds_ok}")
-    print(f"[YouTube] raw video entries: {before_filters}")
+    print(f"[YouTube] feeds failed: {parse_failures}")
+    print(f"[YouTube] raw video entries total: {before_filters}")
+    print("[YouTube] top feeds by raw entries (top 20):")
+    for feed_key, count in top_feeds:
+        selected_count = per_feed_selected_counts.get(feed_key, 0)
+        print(f"  - {feed_key}: raw={count}, selected={selected_count}")
     print("[YouTube] discarded by reason:")
     print(f"  - no published date: {discarded['no_published_date']}")
     print(f"  - duplicate: {discarded['duplicate']}")
@@ -536,17 +561,25 @@ def collect_latest_youtube_videos(
     print(f"  - outside lookback: {discarded['outside_lookback']}")
     print(f"[YouTube] saved to youtube-latest.json: {len(filtered)}")
     print(f"[YouTube] parse failures (feeds): {parse_failures}")
+    if failed_feed_urls:
+        print(f"[YouTube] failed feed urls (first 10): {failed_feed_urls[:10]}")
 
     if debug and debug_dir:
         debug_payload = {
-            "feeds_count": feeds_total,
+            "feeds_total": feeds_total,
+            "feeds_unique": feeds_unique,
             "feed_urls_used_count": feeds_attempted,
             "feeds_fetched_ok": feeds_ok,
+            "feeds_failed": parse_failures,
+            "failed_feed_urls": failed_feed_urls[:50],
             "feed_url_examples": [f.get("xml_url") for f in feeds[:20]],
             "raw_entries_first_20": raw_entries[:20],
             "normalized_entries_first_20": normalized_candidates[:20],
+            "per_feed_counts": per_feed_counts,
+            "per_feed_selected_counts": per_feed_selected_counts,
+            "raw_entries_total": before_filters,
             "discard_reasons": discarded,
-            "saved_count": len(filtered),
+            "saved_entries_total": len(filtered),
             "lookback_hours": lookback_hours,
         }
         (debug_dir / "youtube-debug.json").write_text(
@@ -555,11 +588,16 @@ def collect_latest_youtube_videos(
 
     stats = {
         "feeds_total": feeds_total,
+        "feeds_unique": feeds_unique,
         "feeds_attempted": feeds_attempted,
-        "feeds_ok": feeds_ok,
-        "raw_entries": before_filters,
-        "discarded": discarded,
-        "saved": len(filtered),
+        "feeds_fetched_ok": feeds_ok,
+        "feeds_failed": parse_failures,
+        "failed_feed_urls": failed_feed_urls[:50],
+        "raw_entries_total": before_filters,
+        "per_feed_counts": per_feed_counts,
+        "per_feed_selected_counts": per_feed_selected_counts,
+        "discard_reasons": discarded,
+        "saved_entries_total": len(filtered),
         "parse_failures": parse_failures,
     }
 
