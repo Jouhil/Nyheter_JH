@@ -86,7 +86,7 @@ def _render_weather(weather: dict) -> str:
         <p class="muted">Laddar timprognos...</p>
       </div>
 
-      <h3 class="subheading">10-dagarsöversikt</h3>
+      <h3 class="subheading">7-dagarsöversikt</h3>
       <div class="daily-grid" id="weather-daily">
         <p class="muted">Laddar dygnsprognos...</p>
       </div>
@@ -108,12 +108,16 @@ def _render_list(items: list[dict], item_type: str) -> str:
             else f"{escape(item['source'])} • {when}"
         )
         if item_type == "video":
-            thumbnail = item.get("thumbnail") or ""
+            thumbnail = item.get("thumbnail") or (
+                f"https://i.ytimg.com/vi/{item.get('video_id')}/hqdefault.jpg"
+                if item.get("video_id")
+                else "https://i.ytimg.com/vi_webp/default/hqdefault.webp"
+            )
             rows.append(
                 (
                     "<li class='video-item'>"
                     "<a class='thumb-link' href='{link}' target='_blank' rel='noopener noreferrer'>"
-                    "<img class='video-thumb' src='{thumb}' alt='Thumbnail för {title}' loading='lazy' />"
+                    "<img class='video-thumb' src='{thumb}' alt='Thumbnail för {title}' loading='lazy' referrerpolicy='no-referrer' />"
                     "</a>"
                     "<div class='video-content'>"
                     "<a class='video-title' href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
@@ -182,7 +186,7 @@ def build_html(
     </section>
 
     <section class="card youtube-card">
-      <h2>Dagens nya YouTube-videos</h2>
+      <h2>YouTube från dina prenumerationer (senaste 24h)</h2>
       {_render_list(videos, 'video')}
     </section>
 
