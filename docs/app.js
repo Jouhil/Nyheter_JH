@@ -13,8 +13,9 @@
   }
 
   function parsePublishedDate(video) {
-    if (Number.isFinite(Number(video?.published_at_unix))) {
-      return new Date(Number(video.published_at_unix) * 1000);
+    const unix = Number(video?.published_at_unix);
+    if (Number.isFinite(unix) && unix > 0) {
+      return new Date(unix * 1000);
     }
     return parseISO(video?.published_at_utc);
   }
@@ -44,10 +45,16 @@
       return { isShort: true, isCandidate: true, signals };
     }
 
+    const title = String(video?.title || '').toLowerCase();
+    if (/#shorts\b/.test(title) || /\bshorts\b/.test(title)) {
+      signals.push('title_contains_shorts');
+      return { isShort: true, isCandidate: true, signals };
+    }
+
     const rawSignals = Array.isArray(video?.raw_short_signals) ? video.raw_short_signals : [];
-    if (rawSignals.length > 0) signals.push(...rawSignals);
-    const textBlob = [video?.title, video?.summary_source_text, ...rawSignals].join(' ').toLowerCase();
-    const metadataCandidate = /\b(shorts?|#shorts|vertical|reel)\b/.test(textBlob) || rawSignals.length > 0 || video?.is_short_candidate === true;
+    if (video?.is_short_candidate === true) signals.push('is_short_candidate');
+    if (rawSignals.length > 0) signals.push('raw_short_signals');
+    const metadataCandidate = video?.is_short_candidate === true || rawSignals.length > 0;
     return { isShort: false, isCandidate: metadataCandidate, signals };
   }
 
@@ -132,15 +139,11 @@
         .filter((video) => video._published >= lower && video._published <= now)
         .sort((a, b) => b._published.getTime() - a._published.getTime());
 
-      console.log('[YouTube] Totalt antal videor i JSON:', allVideos.length);
-      console.log('[YouTube] Antal efter short-filter:', afterShortFilter.length);
-      console.log('[YouTube] Antal efter 24h-filter:', videos.length);
-      console.log('[YouTube] Första 5 parsed publiceringstider:', parsedVideos.slice(0, 5).map((v) => ({
-        title: v.title,
-        published_at_utc: v.published_at_utc,
-        published_at_unix: v.published_at_unix,
-        parsed_iso: v._published ? v._published.toISOString() : null,
-      })));
+      console.log('[YouTube debug] total videos in json:', allVideos.length);
+      console.log('[YouTube debug] videos after valid date parse:', parsedVideos.length);
+      console.log('[YouTube debug] videos after hard shorts filter:', afterShortFilter.length);
+      console.log('[YouTube debug] videos after 24h filter:', videos.length);
+      console.log('[YouTube debug] first 5 kept titles:', videos.slice(0, 5).map((v) => v.title));
 
       const label = byId('youtube-range-label');
       if (label) {
