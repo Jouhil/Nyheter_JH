@@ -7,59 +7,6 @@
 
   const byId = (id) => document.getElementById(id);
 
-  function renderHiddenChannelsPanel({ root, hiddenChannels, onResetOne, onResetAll }) {
-    let panel = byId('youtube-hidden-panel');
-    if (!panel) {
-      panel = document.createElement('section');
-      panel.id = 'youtube-hidden-panel';
-      panel.className = 'youtube-hidden-panel';
-      root.parentNode?.insertBefore(panel, root);
-    }
-
-    panel.innerHTML = '';
-    const heading = document.createElement('h3');
-    heading.className = 'youtube-hidden-title';
-    heading.textContent = 'Visa dolda kanaler (lokalt)';
-    panel.appendChild(heading);
-
-    const help = document.createElement('p');
-    help.className = 'muted youtube-hidden-help';
-    help.textContent = 'Döljer endast i denna browser via localStorage. Inga filer i repot ändras.';
-    panel.appendChild(help);
-
-    if (!hiddenChannels.length) {
-      const empty = document.createElement('p');
-      empty.className = 'muted';
-      empty.textContent = 'Inga lokalt dolda kanaler.';
-      panel.appendChild(empty);
-      return;
-    }
-
-    const list = document.createElement('ul');
-    list.className = 'youtube-hidden-list';
-    hiddenChannels.forEach((channel) => {
-      const li = document.createElement('li');
-      li.className = 'youtube-hidden-item';
-      const label = document.createElement('span');
-      label.textContent = channel;
-      const resetBtn = document.createElement('button');
-      resetBtn.type = 'button';
-      resetBtn.className = 'yt-reset';
-      resetBtn.textContent = 'Återställ';
-      resetBtn.addEventListener('click', () => onResetOne(channel));
-      li.append(label, resetBtn);
-      list.appendChild(li);
-    });
-    panel.appendChild(list);
-
-    const resetAllBtn = document.createElement('button');
-    resetAllBtn.type = 'button';
-    resetAllBtn.className = 'yt-reset-all';
-    resetAllBtn.textContent = 'Återställ alla';
-    resetAllBtn.addEventListener('click', onResetAll);
-    panel.appendChild(resetAllBtn);
-  }
-
   function parseISO(value) {
     if (!value) return null;
     const date = new Date(value);
@@ -225,12 +172,6 @@
       const hideChannel = typeof youtubeUi.hideChannel === 'function'
         ? youtubeUi.hideChannel
         : () => {};
-      const unhideChannel = typeof youtubeUi.unhideChannel === 'function'
-        ? youtubeUi.unhideChannel
-        : () => {};
-      const clearHiddenChannels = typeof youtubeUi.clearHiddenChannels === 'function'
-        ? youtubeUi.clearHiddenChannels
-        : () => {};
       const hiddenChannels = readHiddenChannels();
       const videos = videos24h.filter((video) => !isChannelHidden(video.channel, hiddenChannels));
       const hiddenByLocal = videos24h.length - videos.length;
@@ -256,18 +197,6 @@
       }
 
       const rerender = () => renderYoutubeLatest();
-      renderHiddenChannelsPanel({
-        root,
-        hiddenChannels,
-        onResetOne: (channel) => {
-          unhideChannel(channel);
-          rerender();
-        },
-        onResetAll: () => {
-          clearHiddenChannels();
-          rerender();
-        },
-      });
 
       if (!videos.length) {
         root.innerHTML = "<p class='muted'>Inga vanliga videos senaste 24h just nu.</p>";
