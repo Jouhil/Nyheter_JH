@@ -4,21 +4,27 @@
   const API = (lat, lon) =>
     `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code&hourly=temperature_2m,wind_speed_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&forecast_days=10&timezone=UTC`;
 
-  const SYMBOLS = {
-    0: ["☀️", "Klart"], 1: ["🌤️", "Mest klart"], 2: ["⛅", "Delvis molnigt"], 3: ["☁️", "Mulet"],
-    45: ["🌫️", "Dimma"], 48: ["🌫️", "Dimma"], 51: ["🌦️", "Lätt duggregn"], 53: ["🌦️", "Duggregn"],
-    55: ["🌧️", "Tätt duggregn"], 61: ["🌦️", "Lätt regn"], 63: ["🌧️", "Regn"], 65: ["🌧️", "Kraftigt regn"],
-    71: ["🌨️", "Lätt snö"], 73: ["❄️", "Snö"], 75: ["❄️", "Kraftig snö"], 80: ["🌧️", "Regnskurar"],
-    81: ["🌧️", "Kraftiga regnskurar"], 82: ["⛈️", "Mycket kraftiga regnskurar"], 95: ["⛈️", "Åska"],
-    96: ["⛈️", "Åska med hagel"], 99: ["⛈️", "Åska med hagel"],
-  };
+  const WEATHER_CODE_MAP = [
+    { test: (code) => code === 0, icon: "☀️", text: "Klart" },
+    { test: (code) => code === 1, icon: "🌤️", text: "Lätt molnigt" },
+    { test: (code) => code === 2 || code === 3, icon: "☁️", text: "Molnigt" },
+    { test: (code) => code === 45 || code === 48, icon: "🌫️", text: "Dimma" },
+    { test: (code) => [51, 53, 55, 61, 63, 65].includes(code), icon: "🌧️", text: "Regn" },
+    { test: (code) => [80, 81, 82].includes(code), icon: "🌦️", text: "Skurar" },
+    { test: (code) => [95, 96, 99].includes(code), icon: "⛈️", text: "Åska" },
+    { test: (code) => [71, 73, 75, 77, 85, 86].includes(code), icon: "❄️", text: "Snö" },
+  ];
 
   const byId = (id) => document.getElementById(id);
-  const safeNum = (value, digits = 1) => (value == null || Number.isNaN(Number(value)) ? "-" : Number(value).toFixed(digits));
-  const valueOrDash = (v, suffix = "") => (v == null || Number.isNaN(Number(v)) ? "-" : `${Number(v).toFixed(0)}${suffix}`);
-  const fmtHour = (iso) => (iso ? new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" }) : "--:--");
-  const fmtDay = (iso) => (iso ? new Date(iso).toLocaleDateString("sv-SE", { weekday: "short" }) : "-");
-  const fmtDateTime = (iso) => (iso ? new Date(iso).toLocaleString("sv-SE") : "-");
+  const safeNum = (value, digits = 1) => (value == null || Number.isNaN(Number(value)) ? null : Number(value).toFixed(digits));
+  const valueOrText = (v, suffix = "", fallback = "Ingen data") => (v == null || Number.isNaN(Number(v)) ? fallback : `${Number(v).toFixed(0)}${suffix}`);
+  const fmtHour = (iso) => (iso ? new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Stockholm" }) : "Tid saknas");
+  const fmtDay = (iso) => (iso ? new Date(iso).toLocaleDateString("sv-SE", { weekday: "short", timeZone: "Europe/Stockholm" }) : "Okänd dag");
+  const fmtDateTime = (iso) => (iso ? new Date(iso).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" }) : "Okänd tid");
+  const getWeatherSymbol = (code) => {
+    const value = Number(code);
+    return WEATHER_CODE_MAP.find((row) => row.test(value)) || { icon: "🌤️", text: "Växlande molnighet" };
+  };
 
   function normalizeApiToWeatherJson(apiData, locationName) {
     const current = apiData?.current || {};
@@ -39,7 +45,7 @@
         wind_speed: current.wind_speed_10m ?? null,
         precipitation: current.precipitation ?? null,
         weather_code: weatherCode,
-        description: (SYMBOLS[weatherCode] || ["⛅", "Okänd"])[1],
+        description: getWeatherSymbol(weatherCode).text,
         forecast_time: current.time ?? null,
         temp_min: daily[0]?.temp_min ?? null,
         temp_max: daily[0]?.temp_max ?? null,
@@ -58,27 +64,31 @@
 
   function renderWeather(data) {
     const current = data?.current || {};
-    const [icon, fallbackText] = SYMBOLS[Number(current.weather_code ?? 0)] || ["⛅", "Okänd"];
+    const symbol = getWeatherSymbol(current.weather_code);
 
     byId("weather-location").textContent = data?.location || DEFAULT_LOCATION.name;
-    byId("weather-temp").textContent = `${valueOrDash(current.temperature, "°")}`;
-    byId("weather-desc").textContent = current.description || fallbackText;
-    byId("weather-icon").textContent = icon;
-    byId("weather-feels-like").textContent = `${valueOrDash(current.feels_like, "°")}`;
-    byId("weather-hilo").textContent = `${valueOrDash(current.temp_max, "°")} / ${valueOrDash(current.temp_min, "°")}`;
-    byId("weather-wind").textContent = `${safeNum(current.wind_speed)} m/s`;
-    byId("weather-precip").textContent = `${safeNum(current.precipitation)} mm/h`;
+    byId("weather-temp").textContent = valueOrText(current.temperature, "°", "Temperatur saknas");
+    byId("weather-desc").textContent = current.description || symbol.text;
+    byId("weather-icon").textContent = symbol.icon;
+    byId("weather-feels-like").textContent = valueOrText(current.feels_like, "°", "okänt");
+    byId("weather-hilo").textContent = `${valueOrText(current.temp_max, "°", "okänt")} / ${valueOrText(current.temp_min, "°", "okänt")}`;
+    byId("weather-wind").textContent = safeNum(current.wind_speed) ? `${safeNum(current.wind_speed)} m/s` : "Ingen vinddata";
+    byId("weather-precip").textContent = safeNum(current.precipitation) ? `${safeNum(current.precipitation)} mm/h` : "Ingen nederbörd just nu";
     byId("weather-updated").textContent = fmtDateTime(current.forecast_time);
 
     const hourlyTarget = byId("weather-hourly");
-    const points = Array.isArray(data?.hourly_24) ? data.hourly_24.slice(0, 24) : [];
+    const now = Date.now();
+    const points = (Array.isArray(data?.hourly_24) ? data.hourly_24 : [])
+      .filter((row) => row?.time && new Date(row.time).getTime() >= now - 3600_000)
+      .slice(0, 24);
     if (!points.length) {
       hourlyTarget.innerHTML = "<p class='muted'>Ingen timprognos tillgänglig.</p>";
     } else {
       hourlyTarget.innerHTML = points
         .map((row) => {
-          const [hourIcon] = SYMBOLS[Number(row.weather_code ?? 0)] || ["⛅"];
-          return `<article class="hour-card"><p class="hour-time">${fmtHour(row.time)}</p><div>${hourIcon}</div><strong>${valueOrDash(row.temperature, "°")}</strong><small>${safeNum(row.precipitation)} mm • ${safeNum(row.wind_speed)} m/s</small></article>`;
+          const hourSymbol = getWeatherSymbol(row.weather_code);
+          const precip = safeNum(row.precipitation);
+          return `<article class="hour-card"><p class="hour-time">${fmtHour(row.time)}</p><div class="hour-icon">${hourSymbol.icon}</div><strong>${valueOrText(row.temperature, "°", "—")}</strong><small>${precip ? `${precip} mm nederbörd` : "Ingen nederbörd"}</small></article>`;
         })
         .join("");
     }
@@ -90,18 +100,20 @@
       return;
     }
 
-    const globalMin = Math.min(...days.map((day) => Number(day.temp_min ?? 0)));
-    const globalMax = Math.max(...days.map((day) => Number(day.temp_max ?? 0)));
+    const dailyMins = days.map((day) => Number(day.temp_min)).filter((n) => Number.isFinite(n));
+    const dailyMaxes = days.map((day) => Number(day.temp_max)).filter((n) => Number.isFinite(n));
+    const globalMin = dailyMins.length ? Math.min(...dailyMins) : 0;
+    const globalMax = dailyMaxes.length ? Math.max(...dailyMaxes) : 1;
     const span = Math.max(1, globalMax - globalMin);
 
     dailyTarget.innerHTML = days
       .map((day) => {
-        const [dayIcon] = SYMBOLS[Number(day.weather_code ?? 0)] || ["⛅"];
-        const min = Number(day.temp_min ?? globalMin);
-        const max = Number(day.temp_max ?? globalMin);
+        const daySymbol = getWeatherSymbol(day.weather_code);
+        const min = Number.isFinite(Number(day.temp_min)) ? Number(day.temp_min) : globalMin;
+        const max = Number.isFinite(Number(day.temp_max)) ? Number(day.temp_max) : min;
         const offset = ((min - globalMin) / span) * 100;
         const width = (Math.max(0.5, max - min) / span) * 100;
-        return `<article class="day-row"><p>${fmtDay(day.date)}</p><div class="day-icon">${dayIcon}</div><span class="day-min">${valueOrDash(day.temp_min, "°")}</span><div class="temp-track"><span class="temp-fill" style="left:${offset.toFixed(1)}%;width:${width.toFixed(1)}%"></span></div><span class="day-max">${valueOrDash(day.temp_max, "°")}</span></article>`;
+        return `<article class="day-row"><p>${fmtDay(day.date)}</p><div class="day-icon">${daySymbol.icon}</div><span class="day-min">${valueOrText(day.temp_min, "°", "—")}</span><div class="temp-track"><span class="temp-fill" style="left:${offset.toFixed(1)}%;width:${width.toFixed(1)}%"></span></div><span class="day-max">${valueOrText(day.temp_max, "°", "—")}</span></article>`;
       })
       .join("");
   }

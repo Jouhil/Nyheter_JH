@@ -24,6 +24,7 @@ PROMO_RE = re.compile(r"\b(subscribe|follow|patreon|sponsor|sponsored|instagram|
 XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 SHORT_HINT_RE = re.compile(r"\b(shorts?|#shorts|vertical|reel)\b", re.IGNORECASE)
+SHORT_METADATA_RE = re.compile(r"(yt:short|shorts|reel|portrait|9:16)", re.IGNORECASE)
 
 
 def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, str]]:
@@ -124,14 +125,16 @@ def _make_video_summary(title: str, source_texts: list[str]) -> str:
     if not text_pool:
         return f"Videon tar upp {clean_title.lower()} och sätter ämnet i sitt sammanhang. Beskrivningen i feeden är begränsad, men fokus verkar ligga på huvudpoängen."
 
-    candidates = [
-        s.rstrip(" .!?") + "."
-        for s in _dedupe_sentences(_split_sentences(text_pool))
-        if _is_useful_sentence(s)
-    ]
+    candidates = []
+    for sentence in _dedupe_sentences(_split_sentences(text_pool)):
+        cleaned = _clean_text(sentence)
+        if _is_useful_sentence(cleaned):
+            candidates.append(cleaned.rstrip(" .!?") + ".")
 
     if len(candidates) >= 2:
-        return f"{candidates[0]} {candidates[1]}"
+        first = candidates[0][:220].rstrip(" ,;:.!?") + "."
+        second = candidates[1][:220].rstrip(" ,;:.!?") + "."
+        return f"{first} {second}"
     if len(candidates) == 1:
         return f"{candidates[0]} Videon kompletterar med konkreta detaljer och exempel kring ämnet."
     return f"Videon tar upp {clean_title.lower()} med fokus på centrala delar i innehållet. Feeden innehåller få detaljer, men tonen pekar på en tydlig genomgång."
@@ -243,29 +246,38 @@ def _extract_duration_seconds(entry: ET.Element) -> int | None:
     return None
 
 
+def is_today_in_stockholm(published: datetime) -> bool:
+    now_se = datetime.now(ZoneInfo("Europe/Stockholm"))
+    published_se = published.astimezone(ZoneInfo("Europe/Stockholm"))
+    return published_se.date() == now_se.date()
+
+
 def _is_short_candidate(item: dict[str, Any]) -> bool:
+    """
+    Shorts-filter med både starka och svagare signaler.
+    Vi filtrerar direkt vid tydliga träffar (URL /shorts/), annars krävs minst två
+    svagare signaler för att minska risken att kasta bort vanliga videos.
+    """
     links = " ".join([item.get("link") or "", item.get("secondary_link") or ""]).lower()
     if "/shorts/" in links:
         return True
 
+    weak_signals = 0
     duration = item.get("duration_seconds")
     if duration is not None and duration <= 60:
-        return True
+        weak_signals += 1
 
     meta_blob = " ".join([
         item.get("title") or "",
         item.get("summary_source") or "",
+        item.get("feed_metadata_blob") or "",
     ])
     if SHORT_HINT_RE.search(meta_blob):
-        return True
+        weak_signals += 1
+    if SHORT_METADATA_RE.search(meta_blob):
+        weak_signals += 1
 
-    return False
-
-
-def _is_today_stockholm(published: datetime) -> bool:
-    now_se = datetime.now(ZoneInfo("Europe/Stockholm"))
-    published_se = published.astimezone(ZoneInfo("Europe/Stockholm"))
-    return published_se.date() == now_se.date()
+    return weak_signals >= 2
 
 
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
@@ -290,6 +302,10 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
             video_id = _extract_youtube_video_id(raw_link, entry)
             links = _build_youtube_links(raw_link, video_id)
             title = _entry_text(entry, ["title"]) or "Utan titel"
+            metadata_blob = " ".join(
+                f"{elem.tag} {' '.join(f'{k}:{v}' for k, v in elem.attrib.items())}"
+                for elem in entry.iter()
+            )
             items.append(
                 {
                     "title": title,
@@ -301,6 +317,7 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                     "video_id": video_id,
                     "thumbnail": _media_thumbnail(entry),
                     "duration_seconds": _extract_duration_seconds(entry),
+                    "feed_metadata_blob": metadata_blob,
                     "summary_source": summary_source_text,
                     "summary": _make_video_summary(title=title, source_texts=summary_sources),
                 }
@@ -338,6 +355,10 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                 video_id = _extract_youtube_video_id(raw_link, None)
                 links = _build_youtube_links(raw_link, video_id)
                 title = (entry.findtext("title") or "Utan titel").strip()
+                metadata_blob = " ".join(
+                    f"{elem.tag} {' '.join(f'{k}:{v}' for k, v in elem.attrib.items())}"
+                    for elem in entry.iter()
+                )
                 items.append(
                     {
                         "title": title,
@@ -349,6 +370,7 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                         "video_id": video_id,
                         "thumbnail": thumbnail,
                         "duration_seconds": _extract_duration_seconds(entry),
+                        "feed_metadata_blob": metadata_blob,
                         "summary_source": " ".join(summary_sources),
                         "summary": _make_video_summary(title=title, source_texts=summary_sources),
                     }
@@ -388,7 +410,7 @@ def collect_latest_youtube_videos(
             continue
 
     before_filters = len(videos)
-    today_videos = [item for item in videos if _is_today_stockholm(item["published"])]
+    today_videos = [item for item in videos if is_today_in_stockholm(item["published"])]
     non_short_videos = [item for item in today_videos if not _is_short_candidate(item)]
 
     non_short_videos.sort(key=lambda x: x["published"], reverse=True)

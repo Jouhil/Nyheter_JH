@@ -18,7 +18,7 @@ def _format_sv_datetime(iso_value: str) -> str:
 
 def _safe_num(value: float | int | None) -> str:
     if value is None:
-        return "-"
+        return ""
     return f"{value:.1f}" if isinstance(value, float) else str(value)
 
 
@@ -32,7 +32,7 @@ def _render_weather(weather: dict) -> str:
     description = weather.get("description") or "Ingen väderbeskrivning"
     wind_ms = _safe_num(weather.get("wind_ms") or weather.get("wind"))
     precip_mm_h = _safe_num(weather.get("precip_mm_h") or weather.get("precipitation"))
-    forecast_time_utc = weather.get("forecast_time_utc") or "-"
+    forecast_time_utc = weather.get("forecast_time_utc") or "Okänd tid"
 
     if error:
         fallback = f"<p class='weather-fallback'>{escape(str(error))}. Visar fallback för Göteborg/Säve.</p>"
@@ -66,15 +66,17 @@ def _render_weather(weather: dict) -> str:
           </div>
           <div class="weather-icon" id="weather-icon" aria-hidden="true">⛅</div>
         </div>
-        <div class="weather-temp" id="weather-temp">{temperature_c}°</div>
+        <div class="weather-temp-wrap">
+          <div class="weather-temp" id="weather-temp">{temperature_c + "°" if temperature_c else "Temperatur saknas"}</div>
+          <p class="weather-temp-note">Känns som <strong id="weather-feels-like">{feels_like + "°" if feels_like else "okänt"}</strong></p>
+        </div>
         <p class="weather-desc" id="weather-desc">{escape(str(description))}</p>
         <div class="weather-hero-meta">
-          <span>Känns som <strong id="weather-feels-like">{feels_like}°</strong></span>
-          <span>H/L <strong id="weather-hilo">{max_temp}° / {min_temp}°</strong></span>
+          <span>Högsta/lägsta idag <strong id="weather-hilo">{(max_temp + "°") if max_temp else "okänt"} / {(min_temp + "°") if min_temp else "okänt"}</strong></span>
         </div>
         <div class="weather-grid">
-          <div class="metric"><span>Vind</span><strong id="weather-wind">{wind_ms} m/s</strong></div>
-          <div class="metric"><span>Nederbörd</span><strong id="weather-precip">{precip_mm_h} mm/h</strong></div>
+          <div class="metric"><span>Vind</span><strong id="weather-wind">{(wind_ms + " m/s") if wind_ms else "Ingen data"}</strong></div>
+          <div class="metric"><span>Nederbörd</span><strong id="weather-precip">{(precip_mm_h + " mm/h") if precip_mm_h else "Ingen nederbörd just nu"}</strong></div>
           <div class="metric"><span>Prognostid</span><strong id="weather-updated">{escape(str(forecast_time_utc))}</strong></div>
         </div>
       </div>
@@ -116,7 +118,7 @@ def _render_list(items: list[dict], item_type: str) -> str:
                     "<div class='video-content'>"
                     "<a class='video-title' href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
                     "<div class='meta'>{subtitle}</div>"
-                    "<p class='summary'>{summary}</p>"
+                    "<p class='summary' aria-label='Sammanfattning'>{summary}</p>"
                     "<div class='video-links'><a class='yt-open' href='{link}' target='_blank' rel='noopener noreferrer'>Öppna i YouTube</a></div>"
                     "</div></li>"
                 ).format(
