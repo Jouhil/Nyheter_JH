@@ -50,12 +50,12 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          if [[ -n "$(git status --porcelain docs/index.html)" ]]; then
+          if [[ -n "$(git status --porcelain docs/index.html docs/data/weather-goteborg.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add docs/index.html
+            git add docs/index.html docs/data/weather-goteborg.json
             git commit -m "chore: update daily briefing"
             git push
           else
-            echo "No changes in docs/index.html"
+            echo "No changes in generated docs files"
           fi
