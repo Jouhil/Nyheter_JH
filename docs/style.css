@@ -57,6 +57,7 @@ body {
 }
 .youtube-list-root .item-list li { padding: 0.2rem; border: none; background: transparent; }
 .youtube-range { margin: 0 0 0.65rem; }
+.youtube-header-row { margin: 0 0 0.6rem; display: flex; justify-content: flex-end; }
 .theme-toggle {
   margin-top: 0.55rem;
   border: 1px solid #93c5fd;
@@ -271,6 +272,44 @@ body {
   outline: none;
 }
 
+.history-link-btn {
+  font-size: 0.88rem;
+  border: 1px solid #93c5fd;
+  border-radius: 999px;
+  padding: 0.5rem 0.82rem;
+  text-decoration: none;
+  background: #eff6ff;
+  color: var(--text);
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+}
+.history-link-btn:hover,
+.history-link-btn:focus-visible {
+  background: #dbeafe;
+  border-color: #60a5fa;
+  outline: none;
+}
+
+.history-container { grid-template-columns: 1fr; }
+.history-date-nav { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.history-date-anchor {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 0.88rem;
+}
+.history-day-section {
+  border-top: 1px solid rgba(148, 163, 184, 0.35);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+.history-day-section:first-child { border-top: 0; margin-top: 0; padding-top: 0; }
+.history-day-heading { margin: 0 0 0.6rem; font-size: 1.05rem; }
+
 @media (max-width: 480px) {
   .topbar { padding: 0.82rem 0.82rem 0.9rem; }
   .container { padding-inline: 0.62rem; gap: 0.72rem; }
@@ -288,6 +327,8 @@ body {
   .video-content { gap: 0.34rem; }
   .video-title { -webkit-line-clamp: 3; }
   .yt-open { width: 100%; justify-content: center; min-height: 44px; }
+  .history-link-btn { width: 100%; justify-content: center; min-height: 44px; }
+  .youtube-header-row { justify-content: stretch; }
   .item-list li { padding: 0.68rem; }
   .summary { -webkit-line-clamp: 3; }
 }
@@ -319,6 +360,8 @@ body {
   .weather-grid { grid-template-columns: repeat(3, minmax(130px, 1fr)); }
   .hourly-scroll { grid-auto-columns: clamp(116px, 16vw, 140px); }
   .video-item { grid-template-columns: minmax(240px, 312px) 1fr; align-items: stretch; }
+  .history-container { grid-template-columns: minmax(220px, 320px) minmax(0, 1fr); }
+  .history-days-card { min-height: 100%; }
 }
 
 :root[data-theme='dark'] {
@@ -371,7 +414,8 @@ body {
 }
 
 :root[data-theme='dark'] .yt-open,
-:root[data-theme='dark'] .theme-toggle {
+:root[data-theme='dark'] .theme-toggle,
+:root[data-theme='dark'] .history-link-btn {
   background: rgba(37, 99, 235, 0.18);
   border-color: rgba(147, 197, 253, 0.6);
   color: #dbeafe;

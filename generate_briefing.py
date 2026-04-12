@@ -7,6 +7,7 @@ import re
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from helpers.feeds import collect_latest_youtube_videos, parse_opml_feed_urls
 from helpers.html_builder import build_html
@@ -24,6 +25,8 @@ OPML_FILE = ROOT / "youtube_prenumerationer.opml"
 OUTPUT_HTML = ROOT / "docs" / "index.html"
 OUTPUT_WEATHER_JSON = ROOT / "docs" / "data" / "weather-goteborg.json"
 OUTPUT_YOUTUBE_JSON = ROOT / "docs" / "data" / "youtube-latest.json"
+OUTPUT_YOUTUBE_HISTORY_DIR = ROOT / "docs" / "data" / "youtube-history"
+OUTPUT_YOUTUBE_HISTORY_INDEX = OUTPUT_YOUTUBE_HISTORY_DIR / "index.json"
 DEBUG_DIR = ROOT / "debug"
 
 
@@ -67,6 +70,98 @@ def _default_daily_rows() -> list[dict]:
             "sunset": None,
         })
     return rows
+
+
+def _is_regular_video(video: dict) -> bool:
+    url = str(video.get("url") or "").lower()
+    title = str(video.get("title") or "").lower()
+    duration = video.get("duration")
+
+    if "/shorts/" in url:
+        return False
+    if video.get("is_short_candidate"):
+        return False
+    if "#shorts" in title or " shorts" in title:
+        return False
+    if isinstance(duration, (int, float)) and duration > 0 and duration <= 60:
+        return False
+    return True
+
+
+def _history_video_payload(video: dict) -> dict:
+    return {
+        "video_id": video.get("video_id"),
+        "title": video.get("title"),
+        "channel": video.get("channel"),
+        "published_at_utc": video.get("published_at_utc"),
+        "published_at_unix": video.get("published_at_unix"),
+        "published_at_stockholm": video.get("published_at_stockholm"),
+        "thumbnail": video.get("thumbnail"),
+        "summary": video.get("summary"),
+        "url": video.get("url"),
+        "duration": video.get("duration"),
+    }
+
+
+def _update_youtube_history(videos: list[dict], generated_at_utc_iso: str) -> None:
+    OUTPUT_YOUTUBE_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+    history_date = datetime.now(ZoneInfo("Europe/Stockholm")).date().isoformat()
+    day_file = OUTPUT_YOUTUBE_HISTORY_DIR / f"{history_date}.json"
+
+    existing_videos: list[dict] = []
+    if day_file.exists():
+        try:
+            existing_payload = json.loads(day_file.read_text(encoding="utf-8"))
+            existing_videos = existing_payload.get("videos") or []
+        except json.JSONDecodeError:
+            existing_videos = []
+
+    deduped: list[dict] = []
+    seen: set[str] = set()
+    combined = existing_videos + [_history_video_payload(video) for video in videos if _is_regular_video(video)]
+    for item in combined:
+        key = item.get("video_id") or item.get("url") or f"{item.get('channel')}::{item.get('title')}"
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        deduped.append(item)
+
+    deduped.sort(key=lambda item: item.get("published_at_unix") or 0, reverse=True)
+    day_file.write_text(
+        json.dumps(
+            {
+                "date": history_date,
+                "generated_at_utc": generated_at_utc_iso,
+                "timezone": "Europe/Stockholm",
+                "videos": deduped,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    available_dates: list[str] = []
+    if OUTPUT_YOUTUBE_HISTORY_INDEX.exists():
+        try:
+            existing_index = json.loads(OUTPUT_YOUTUBE_HISTORY_INDEX.read_text(encoding="utf-8"))
+            available_dates = [entry for entry in existing_index.get("dates", []) if isinstance(entry, str)]
+        except json.JSONDecodeError:
+            available_dates = []
+
+    all_dates = sorted(set(available_dates + [history_date]), reverse=True)
+    OUTPUT_YOUTUBE_HISTORY_INDEX.write_text(
+        json.dumps(
+            {
+                "generated_at_utc": generated_at_utc_iso,
+                "timezone": "Europe/Stockholm",
+                "dates": all_dates,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
 def _validate_counts(weather: dict, videos: list[dict], news: dict[str, list[dict]]) -> None:
     total_news = sum(len(items) for items in news.values())
@@ -193,10 +288,11 @@ def main() -> None:
     videos = youtube_result["videos"]
     youtube_stats = youtube_result["stats"]
     OUTPUT_YOUTUBE_JSON.parent.mkdir(parents=True, exist_ok=True)
+    generated_at_utc = datetime.now(timezone.utc).isoformat()
     OUTPUT_YOUTUBE_JSON.write_text(
         json.dumps(
             {
-                "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+                "generated_at_utc": generated_at_utc,
                 "timezone": "Europe/Stockholm",
                 "lookback_hours": 72,
                 "videos": videos,
@@ -209,6 +305,7 @@ def main() -> None:
     print(f"[YouTube] Skrev lokal YouTube-fil: {OUTPUT_YOUTUBE_JSON} ({len(videos)} videos)")
     if len(videos) == 0:
         raise ValidationError("youtube-latest.json contains 0 videos")
+    _update_youtube_history(videos=videos, generated_at_utc_iso=generated_at_utc)
     if debug:
         print(f"[YouTube][DEBUG] Statistik: {json.dumps(youtube_stats, ensure_ascii=False)}")
 

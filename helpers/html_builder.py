@@ -152,6 +152,9 @@ def _render_list(items: list[dict], item_type: str) -> str:
 
 def _render_youtube_shell() -> str:
     return """
+    <div class="youtube-header-row">
+      <a class="history-link-btn" href="youtube-history.html">Visa historik</a>
+    </div>
     <div class="youtube-toolbar">
       <p class="muted youtube-range" id="youtube-range-label">Senaste 24h från när sidan öppnades (Europe/Stockholm).</p>
     </div>
@@ -211,6 +214,7 @@ def build_html(
     </section>
   </main>
   <script src="weather.js" defer></script>
+  <script src="youtube-common.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
