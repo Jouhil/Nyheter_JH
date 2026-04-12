@@ -1,12 +1,12 @@
 {
   "location": "Göteborg/Säve",
   "current": {
-    "temperature": 9.4,
-    "wind_speed": 11.5,
+    "temperature": 9.3,
+    "wind_speed": 10.8,
     "precipitation": 0.0,
     "weather_code": 3,
     "description": "Mulet",
-    "forecast_time": "2026-04-12T17:45",
+    "forecast_time": "2026-04-12T18:00",
     "feels_like": 5.8,
     "temp_min": 4.4,
     "temp_max": 10.7

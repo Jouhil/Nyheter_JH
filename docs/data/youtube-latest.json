@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-12T17:51:01.101533+00:00",
+  "generated_at_utc": "2026-04-12T18:09:38.474205+00:00",
   "timezone": "Europe/Stockholm",
   "lookback_hours": 72,
   "videos": [
@@ -346,24 +346,6 @@
       "duration": null,
       "raw_short_signals": [],
       "is_short_candidate": false
-    },
-    {
-      "video_id": "WYQVQDgyOyY",
-      "title": "What was Bentley thinking?! 😱",
-      "channel": "carwow",
-      "published_at_utc": "2026-04-09T18:04:00+00:00",
-      "published_at_unix": 1775757840,
-      "published_at_stockholm": "2026-04-09T20:04:00+02:00",
-      "thumbnail": "https://i4.ytimg.com/vi/WYQVQDgyOyY/hqdefault.jpg",
-      "summary_source_text": "   What was Bentley thinking?! 😱 ",
-      "summary": "Videon tar upp what was bentley thinking?! med fokus på centrala delar i innehållet. Feeden innehåller få detaljer, men tonen pekar på en tydlig genomgång.",
-      "url": "https://www.youtube.com/watch?v=WYQVQDgyOyY",
-      "duration": null,
-      "raw_short_signals": [
-        "title_or_text_short_hint",
-        "feed_metadata_short_hint"
-      ],
-      "is_short_candidate": true
     }
   ]
 }
