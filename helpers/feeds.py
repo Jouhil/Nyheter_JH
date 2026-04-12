@@ -10,7 +10,7 @@ from email.utils import parsedate_to_datetime
 from html import unescape
 from pathlib import Path
 from typing import Any
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.request import ProxyHandler, Request, build_opener
 from zoneinfo import ZoneInfo
 
@@ -21,7 +21,7 @@ SPACE_RE = re.compile(r"\s+")
 SENTENCE_TRIM_RE = re.compile(r"\s*[•|]\s*")
 EMOJI_RE = re.compile(r"[\U00010000-\U0010ffff]", flags=re.UNICODE)
 PROMO_RE = re.compile(r"\b(subscribe|follow|patreon|sponsor|sponsored|instagram|twitter|tiktok|merch|affiliate|rabattkod|annons|partnerlänk)\b", re.IGNORECASE)
-XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
+XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"', re.IGNORECASE)
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 SHORT_HINT_RE = re.compile(r"\b(shorts?|#shorts|vertical|reel)\b", re.IGNORECASE)
 SHORT_METADATA_RE = re.compile(r"(yt:short|shorts|reel|portrait|9:16)", re.IGNORECASE)
@@ -39,7 +39,11 @@ def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, 
     try:
         root = ET.fromstring(text)
         for outline in root.findall(".//outline"):
-            xml_url = outline.attrib.get("xmlUrl")
+            xml_url = (
+                outline.attrib.get("xmlUrl")
+                or outline.attrib.get("xmlurl")
+                or outline.attrib.get("xmlURL")
+            )
             if xml_url:
                 feeds.append({"title": outline.attrib.get("text", "Okänd kanal"), "xml_url": xml_url})
     except ET.ParseError:
@@ -436,13 +440,30 @@ def collect_latest_youtube_videos(
     lookback_hours: int = 72,
     debug: bool = False,
     debug_dir: Path | None = None,
-) -> list[dict[str, Any]]:
+    with_stats: bool = False,
+) -> list[dict[str, Any]] | dict[str, Any]:
     opener = build_opener(ProxyHandler({}))
+    if debug and debug_dir:
+        debug_dir.mkdir(parents=True, exist_ok=True)
     videos: list[dict[str, Any]] = []
+    raw_entries: list[dict[str, Any]] = []
+    normalized_candidates: list[dict[str, Any]] = []
 
-    tested = 0
+    feeds_total = len(feeds)
+    feeds_attempted = 0
+    feeds_ok = 0
+    parse_failures = 0
+    discarded = {
+        "no_published_date": 0,
+        "duplicate": 0,
+        "invalid_url": 0,
+        "short_url": 0,
+        "parse_failure": 0,
+        "outside_lookback": 0,
+    }
+
     for idx, feed in enumerate(feeds):
-        tested += 1
+        feeds_attempted += 1
         request = Request(
             feed["xml_url"],
             headers={
@@ -455,44 +476,94 @@ def collect_latest_youtube_videos(
                 raw = response.read()
             xml_text = raw.decode("utf-8", errors="replace")
             feed_items = _parse_feed_xml(xml_text, feed["title"])
+            feeds_ok += 1
             if debug and debug_dir and idx < 3:
                 (debug_dir / f"youtube_feed_sample_{idx + 1}.xml").write_text(xml_text, encoding="utf-8")
-            videos.extend(feed_items[: max(3, per_feed_items)])
-        except (URLError, TimeoutError, ET.ParseError) as exc:
+            selected_items = feed_items[: max(5, per_feed_items)]
+            videos.extend(selected_items)
+            raw_entries.extend(selected_items)
+        except (URLError, TimeoutError, ET.ParseError, HTTPError) as exc:
+            parse_failures += 1
+            discarded["parse_failure"] += 1
             print(f"[YouTube] VARNING: kunde inte läsa {feed['xml_url']}: {exc}")
             continue
 
     before_filters = len(videos)
     now_utc = datetime.now(timezone.utc)
     lower_bound = now_utc - timedelta(hours=lookback_hours)
-    lookback_videos = [
-        item for item in videos
-        if isinstance(item.get("published"), datetime) and lower_bound <= item["published"].astimezone(timezone.utc) <= now_utc
-    ]
-    normalized = [_normalize_video(item) for item in lookback_videos]
+
+    for item in videos:
+        published = item.get("published")
+        if not isinstance(published, datetime) or published == datetime.min.replace(tzinfo=timezone.utc):
+            discarded["no_published_date"] += 1
+            continue
+        published_utc = published.astimezone(timezone.utc)
+        if not (lower_bound <= published_utc <= now_utc):
+            discarded["outside_lookback"] += 1
+            continue
+        normalized = _normalize_video(item)
+        url = (normalized.get("url") or "").strip()
+        if not url.startswith("http"):
+            discarded["invalid_url"] += 1
+            continue
+        if "/shorts/" in url.lower():
+            discarded["short_url"] += 1
+            continue
+        normalized_candidates.append(normalized)
 
     deduped: list[dict[str, Any]] = []
     seen_keys: set[str] = set()
-    for item in sorted(normalized, key=lambda x: x["published_at_utc"], reverse=True):
+    for item in sorted(normalized_candidates, key=lambda x: x["published_at_utc"], reverse=True):
         unique_key = item.get("video_id") or item.get("url") or f"{item.get('channel')}::{item.get('title')}"
         if unique_key in seen_keys:
+            discarded["duplicate"] += 1
             continue
         seen_keys.add(unique_key)
         deduped.append(item)
 
     filtered = deduped[:max_items]
 
-    print(f"[YouTube] Totalt antal poster före filtrering: {before_filters}")
-    print(f"[YouTube] Inom lookback {lookback_hours}h: {len(lookback_videos)}")
-    print(f"[YouTube] Efter normalisering: {len(normalized)}")
-    print(f"[YouTube] Efter deduplicering: {len(deduped)}")
-    print(f"[YouTube] Poster sparade till JSON: {len(filtered)}")
-    print(f"[YouTube] Totalt testade feeds: {tested}")
+    print(f"[YouTube] OPML feeds found: {feeds_total}")
+    print(f"[YouTube] feed URLs used: {feeds_attempted}")
+    print(f"[YouTube] feeds fetched OK: {feeds_ok}")
+    print(f"[YouTube] raw video entries: {before_filters}")
+    print("[YouTube] discarded by reason:")
+    print(f"  - no published date: {discarded['no_published_date']}")
+    print(f"  - duplicate: {discarded['duplicate']}")
+    print(f"  - invalid url: {discarded['invalid_url']}")
+    print(f"  - short url: {discarded['short_url']}")
+    print(f"  - parse failure: {discarded['parse_failure']}")
+    print(f"  - outside lookback: {discarded['outside_lookback']}")
+    print(f"[YouTube] saved to youtube-latest.json: {len(filtered)}")
+    print(f"[YouTube] parse failures (feeds): {parse_failures}")
 
     if debug and debug_dir:
-        (debug_dir / "parsed_youtube.json").write_text(
-            json.dumps(filtered, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
+        debug_payload = {
+            "feeds_count": feeds_total,
+            "feed_urls_used_count": feeds_attempted,
+            "feeds_fetched_ok": feeds_ok,
+            "feed_url_examples": [f.get("xml_url") for f in feeds[:20]],
+            "raw_entries_first_20": raw_entries[:20],
+            "normalized_entries_first_20": normalized_candidates[:20],
+            "discard_reasons": discarded,
+            "saved_count": len(filtered),
+            "lookback_hours": lookback_hours,
+        }
+        (debug_dir / "youtube-debug.json").write_text(
+            json.dumps(debug_payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
         )
 
+    stats = {
+        "feeds_total": feeds_total,
+        "feeds_attempted": feeds_attempted,
+        "feeds_ok": feeds_ok,
+        "raw_entries": before_filters,
+        "discarded": discarded,
+        "saved": len(filtered),
+        "parse_failures": parse_failures,
+    }
+
     print(f"[YouTube] OK: hämtade totalt {len(filtered)} videoposter.")
+    if with_stats:
+        return {"videos": filtered, "stats": stats}
     return filtered

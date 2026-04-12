@@ -164,14 +164,17 @@ def main() -> None:
         youtube_feeds = []
         print(f"VARNING: OPML-fil saknas: {OPML_FILE}")
 
-    videos = collect_latest_youtube_videos(
+    youtube_result = collect_latest_youtube_videos(
         youtube_feeds,
         max_items=800,
         per_feed_items=5,
         lookback_hours=72,
         debug=debug,
         debug_dir=DEBUG_DIR if debug else None,
+        with_stats=True,
     )
+    videos = youtube_result["videos"]
+    youtube_stats = youtube_result["stats"]
     OUTPUT_YOUTUBE_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_YOUTUBE_JSON.write_text(
         json.dumps(
@@ -187,6 +190,10 @@ def main() -> None:
         encoding="utf-8",
     )
     print(f"[YouTube] Skrev lokal YouTube-fil: {OUTPUT_YOUTUBE_JSON} ({len(videos)} videos)")
+    if len(videos) == 0:
+        raise ValidationError("youtube-latest.json contains 0 videos")
+    if debug:
+        print(f"[YouTube][DEBUG] Statistik: {json.dumps(youtube_stats, ensure_ascii=False)}")
 
     print("[3/4] Hämtar nyheter från RSS...")
     news = fetch_news(

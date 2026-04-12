@@ -40,6 +40,19 @@ jobs:
           DEBUG_BRIEFING: "1"
         run: python -u generate_briefing.py
 
+      - name: Validate YouTube output is non-empty
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("docs/data/youtube-latest.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          videos = data.get("videos", [])
+          if len(videos) == 0:
+            raise SystemExit("youtube-latest.json contains 0 videos")
+          print(f"youtube-latest.json contains {len(videos)} videos")
+          PY
+
       - name: Debug weather JSON preview
         run: |
           echo "----- weather-goteborg.json (first 40 lines) -----"
@@ -55,10 +68,10 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          if [[ -n "$(git status --porcelain docs/index.html docs/data/weather-goteborg.json)" ]]; then
+          if [[ -n "$(git status --porcelain docs/index.html docs/data/weather-goteborg.json docs/data/youtube-latest.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add docs/index.html docs/data/weather-goteborg.json
+            git add docs/index.html docs/data/weather-goteborg.json docs/data/youtube-latest.json
             git commit -m "chore: update daily briefing"
             git push
           else
