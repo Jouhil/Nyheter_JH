@@ -6,54 +6,6 @@
 
   const byId = (id) => document.getElementById(id);
 
-  function renderHiddenChannelsPanel({ root, hiddenChannels, onResetOne, onResetAll }) {
-    let panel = byId('history-hidden-panel');
-    if (!panel) {
-      panel = document.createElement('section');
-      panel.id = 'history-hidden-panel';
-      panel.className = 'youtube-hidden-panel';
-      root.parentNode?.insertBefore(panel, root);
-    }
-
-    panel.innerHTML = '';
-    const heading = document.createElement('h3');
-    heading.className = 'youtube-hidden-title';
-    heading.textContent = 'Visa dolda kanaler (lokalt)';
-    panel.appendChild(heading);
-
-    if (!hiddenChannels.length) {
-      const empty = document.createElement('p');
-      empty.className = 'muted';
-      empty.textContent = 'Inga lokalt dolda kanaler.';
-      panel.appendChild(empty);
-      return;
-    }
-
-    const list = document.createElement('ul');
-    list.className = 'youtube-hidden-list';
-    hiddenChannels.forEach((channel) => {
-      const li = document.createElement('li');
-      li.className = 'youtube-hidden-item';
-      const label = document.createElement('span');
-      label.textContent = channel;
-      const resetBtn = document.createElement('button');
-      resetBtn.type = 'button';
-      resetBtn.className = 'yt-reset';
-      resetBtn.textContent = 'Återställ';
-      resetBtn.addEventListener('click', () => onResetOne(channel));
-      li.append(label, resetBtn);
-      list.appendChild(li);
-    });
-    panel.appendChild(list);
-
-    const resetAllBtn = document.createElement('button');
-    resetAllBtn.type = 'button';
-    resetAllBtn.className = 'yt-reset-all';
-    resetAllBtn.textContent = 'Återställ alla';
-    resetAllBtn.addEventListener('click', onResetAll);
-    panel.appendChild(resetAllBtn);
-  }
-
   function createDateAnchor(dateValue) {
     const a = document.createElement('a');
     a.className = 'history-date-anchor';
@@ -95,22 +47,8 @@
 
       const readHiddenChannels = typeof ui.readHiddenChannels === 'function' ? ui.readHiddenChannels : () => [];
       const isChannelHidden = typeof ui.isChannelHidden === 'function' ? ui.isChannelHidden : () => false;
-      const unhideChannel = typeof ui.unhideChannel === 'function' ? ui.unhideChannel : () => {};
-      const clearHiddenChannels = typeof ui.clearHiddenChannels === 'function' ? ui.clearHiddenChannels : () => {};
       const hiddenChannels = readHiddenChannels();
 
-      renderHiddenChannelsPanel({
-        root: daysRoot,
-        hiddenChannels,
-        onResetOne: (channel) => {
-          unhideChannel(channel);
-          renderHistory();
-        },
-        onResetAll: () => {
-          clearHiddenChannels();
-          renderHistory();
-        },
-      });
 
       dayPayloads.forEach((payload) => {
         const dateValue = payload?.date || 'okänt-datum';

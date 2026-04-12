@@ -3,38 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>YouTube historik</title>
+  <title>Dolda kanaler</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="topbar">
     <div>
-      <h1>YouTube historik</h1>
-      <p>Tidigare dagar från dina prenumerationer</p>
+      <h1>Dolda kanaler (lokalt)</h1>
+      <p>Hantera kanaler du dolt i denna browser</p>
     </div>
     <div class="updated youtube-header-row">
       <a class="history-link-btn" href="index.html">Till startsidan</a>
-      <a class="history-link-btn" href="hidden-channels.html">Dolda kanaler</a>
+      <a class="history-link-btn" href="youtube-history.html">Till historik</a>
     </div>
   </header>
 
   <main class="container history-container">
-    <section class="card history-card">
-      <h2>Tillgängliga datum</h2>
-      <div id="history-date-list" class="history-date-list">
-        <p class="muted">Laddar datum...</p>
-      </div>
-    </section>
-
     <section class="card history-card history-days-card">
-      <h2>Arkiv</h2>
-      <div id="history-days" class="history-days-root">
-        <p class="muted">Laddar historik...</p>
+      <h2>Dolda kanaler (lokalt)</h2>
+      <p class="muted youtube-hidden-help">Detta gäller bara i denna browser via localStorage. Inga filer i repot ändras.</p>
+      <div id="hidden-channels-root" class="youtube-hidden-root">
+        <p class="muted">Laddar lokalt dolda kanaler...</p>
       </div>
     </section>
   </main>
 
   <script src="youtube-common.js" defer></script>
-  <script src="youtube-history.js" defer></script>
+  <script src="hidden-channels.js" defer></script>
 </body>
 </html>
