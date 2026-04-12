@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 from urllib.error import URLError
 from urllib.request import ProxyHandler, Request, build_opener
+from zoneinfo import ZoneInfo
 
 CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 TAG_RE = re.compile(r"<[^>]+>")
@@ -19,13 +20,13 @@ URL_RE = re.compile(r"https?://\S+")
 SPACE_RE = re.compile(r"\s+")
 SENTENCE_TRIM_RE = re.compile(r"\s*[•|]\s*")
 EMOJI_RE = re.compile(r"[\U00010000-\U0010ffff]", flags=re.UNICODE)
-PROMO_RE = re.compile(r"\b(subscribe|follow|patreon|sponsor|sponsored|instagram|twitter|tiktok|merch|affiliate|rabattkod|annons)\b", re.IGNORECASE)
+PROMO_RE = re.compile(r"\b(subscribe|follow|patreon|sponsor|sponsored|instagram|twitter|tiktok|merch|affiliate|rabattkod|annons|partnerlänk)\b", re.IGNORECASE)
 XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
+SHORT_HINT_RE = re.compile(r"\b(shorts?|#shorts|vertical|reel)\b", re.IGNORECASE)
 
 
 def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, str]]:
-    """Parse OPML in a fault-tolerant way and return unique feed URLs."""
     raw = open(opml_path, "rb").read()
     text = CONTROL_CHARS_RE.sub("", raw.decode("utf-8", errors="replace"))
 
@@ -79,11 +80,12 @@ def _clean_text(value: str | None) -> str:
     text = unescape(value)
     text = TAG_RE.sub(" ", text)
     text = URL_RE.sub("", text)
+    text = re.sub(r"#[\w_]+", "", text)
     text = SENTENCE_TRIM_RE.sub(" ", text)
     text = EMOJI_RE.sub("", text)
-    text = re.sub(r"[\*_=~]{2,}", " ", text)
-    text = re.sub(r"\s+", " ", text)
-    return SPACE_RE.sub(" ", text).strip(" -|•")
+    text = re.sub(r"[\*_~=]{2,}", " ", text)
+    text = SPACE_RE.sub(" ", text)
+    return text.strip(" -|•")
 
 
 def _split_sentences(text: str) -> list[str]:
@@ -105,7 +107,7 @@ def _dedupe_sentences(sentences: list[str]) -> list[str]:
 
 def _is_useful_sentence(sentence: str) -> bool:
     words = sentence.split()
-    if len(words) < 5:
+    if len(words) < 6:
         return False
     if PROMO_RE.search(sentence):
         return False
@@ -115,25 +117,24 @@ def _is_useful_sentence(sentence: str) -> bool:
     return True
 
 
-def _first_entry_text(entry: ET.Element, names: list[str]) -> str:
-    value = _entry_text(entry, names)
-    return value or ""
-
-
 def _make_video_summary(title: str, source_texts: list[str]) -> str:
-    text_pool = " ".join(_clean_text(v) for v in source_texts if v)[:2400]
     clean_title = _clean_text(title) or "videon"
+    text_pool = " ".join(_clean_text(v) for v in source_texts if v)[:2600]
 
     if not text_pool:
-        return f"Videon handlar om {clean_title.lower()}. Mer detaljer saknas i feeden."
+        return f"Videon tar upp {clean_title.lower()} och sätter ämnet i sitt sammanhang. Beskrivningen i feeden är begränsad, men fokus verkar ligga på huvudpoängen."
 
-    sentences = [s.rstrip(" .!?") + "." for s in _dedupe_sentences(_split_sentences(text_pool)) if _is_useful_sentence(s)]
-    if not sentences:
-        return f"Videon handlar om {clean_title.lower()}. Mer detaljer saknas i feeden."
+    candidates = [
+        s.rstrip(" .!?") + "."
+        for s in _dedupe_sentences(_split_sentences(text_pool))
+        if _is_useful_sentence(s)
+    ]
 
-    first = sentences[0]
-    second = sentences[1] if len(sentences) > 1 else "Inslaget fokuserar på huvudpoängen och konkreta detaljer i ämnet."
-    return f"{first} {second}"
+    if len(candidates) >= 2:
+        return f"{candidates[0]} {candidates[1]}"
+    if len(candidates) == 1:
+        return f"{candidates[0]} Videon kompletterar med konkreta detaljer och exempel kring ämnet."
+    return f"Videon tar upp {clean_title.lower()} med fokus på centrala delar i innehållet. Feeden innehåller få detaljer, men tonen pekar på en tydlig genomgång."
 
 
 def _tag_name(elem: ET.Element) -> str:
@@ -150,14 +151,7 @@ def _entry_text(entry: ET.Element, names: list[str]) -> str | None:
 
 
 def _entry_text_candidates(entry: ET.Element) -> str:
-    candidate_names = {
-        "summary",
-        "content",
-        "description",
-        "subtitle",
-        "transcript",
-        "text",
-    }
+    candidate_names = {"summary", "content", "description", "subtitle", "transcript", "text"}
     chunks: list[str] = []
     for elem in entry.iter():
         if _tag_name(elem) in candidate_names:
@@ -176,8 +170,6 @@ def _entry_link(entry: ET.Element) -> str:
             if child.text:
                 return child.text.strip()
     return "#"
-
-
 
 
 def _extract_youtube_video_id(link: str | None, entry: ET.Element | None = None) -> str | None:
@@ -214,18 +206,18 @@ def _build_youtube_links(raw_link: str, video_id: str | None) -> dict[str, str |
         short = f"https://youtu.be/{video_id}"
         return {"primary": clean, "secondary": short}
     return {"primary": raw_link or "#", "secondary": None}
+
+
 def _media_group_text(entry: ET.Element) -> str:
     collected: list[str] = []
     for child in entry:
         if _tag_name(child) == "group":
             for nested in child:
-                if _tag_name(nested) in {"description", "title", "content", "transcript"}:
+                if _tag_name(nested) in {"description", "title", "content", "transcript", "credit", "text"}:
                     text_value = " ".join(part.strip() for part in nested.itertext() if part and part.strip())
                     if text_value:
                         collected.append(text_value)
     return " ".join(collected).strip()
-
-
 
 
 def _media_thumbnail(entry: ET.Element) -> str | None:
@@ -236,29 +228,71 @@ def _media_thumbnail(entry: ET.Element) -> str | None:
                 return url.strip()
     return None
 
+
+def _extract_duration_seconds(entry: ET.Element) -> int | None:
+    for elem in entry.iter():
+        tag = _tag_name(elem)
+        if tag == "duration":
+            direct = elem.attrib.get("seconds") or elem.attrib.get("value") or (elem.text or "").strip()
+            if direct and direct.isdigit():
+                return int(direct)
+        if tag == "content":
+            duration = elem.attrib.get("duration")
+            if duration and duration.isdigit():
+                return int(duration)
+    return None
+
+
+def _is_short_candidate(item: dict[str, Any]) -> bool:
+    links = " ".join([item.get("link") or "", item.get("secondary_link") or ""]).lower()
+    if "/shorts/" in links:
+        return True
+
+    duration = item.get("duration_seconds")
+    if duration is not None and duration <= 60:
+        return True
+
+    meta_blob = " ".join([
+        item.get("title") or "",
+        item.get("summary_source") or "",
+    ])
+    if SHORT_HINT_RE.search(meta_blob):
+        return True
+
+    return False
+
+
+def _is_today_stockholm(published: datetime) -> bool:
+    now_se = datetime.now(ZoneInfo("Europe/Stockholm"))
+    published_se = published.astimezone(ZoneInfo("Europe/Stockholm"))
+    return published_se.date() == now_se.date()
+
+
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
     root = ET.fromstring(CONTROL_CHARS_RE.sub("", xml_text))
     root_name = _tag_name(root)
     items: list[dict[str, Any]] = []
 
-    if root_name == "feed":  # Atom
+    if root_name == "feed":
         feed_title = _entry_text(root, ["title"]) or fallback_channel
         for entry in root.findall("{*}entry"):
             published_raw = _entry_text(entry, ["published", "updated"])
             published_dt = _parse_date(published_raw)
             summary_sources = [
-                _first_entry_text(entry, ["description"]),
-                _first_entry_text(entry, ["summary"]),
-                _first_entry_text(entry, ["content"]),
+                _entry_text(entry, ["description"]) or "",
+                _entry_text(entry, ["summary"]) or "",
+                _entry_text(entry, ["content"]) or "",
                 _media_group_text(entry),
                 _entry_text_candidates(entry),
             ]
+            summary_source_text = " ".join(summary_sources)
             raw_link = _entry_link(entry)
             video_id = _extract_youtube_video_id(raw_link, entry)
             links = _build_youtube_links(raw_link, video_id)
+            title = _entry_text(entry, ["title"]) or "Utan titel"
             items.append(
                 {
-                    "title": _entry_text(entry, ["title"]) or "Utan titel",
+                    "title": title,
                     "channel": feed_title,
                     "published": published_dt,
                     "published_iso": published_dt.isoformat(),
@@ -266,10 +300,9 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                     "secondary_link": links["secondary"],
                     "video_id": video_id,
                     "thumbnail": _media_thumbnail(entry),
-                    "summary": _make_video_summary(
-                        title=_entry_text(entry, ["title"]) or "",
-                        source_texts=summary_sources,
-                    ),
+                    "duration_seconds": _extract_duration_seconds(entry),
+                    "summary_source": summary_source_text,
+                    "summary": _make_video_summary(title=title, source_texts=summary_sources),
                 }
             )
     else:
@@ -304,9 +337,10 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                 raw_link = (entry.findtext("link") or "#").strip()
                 video_id = _extract_youtube_video_id(raw_link, None)
                 links = _build_youtube_links(raw_link, video_id)
+                title = (entry.findtext("title") or "Utan titel").strip()
                 items.append(
                     {
-                        "title": (entry.findtext("title") or "Utan titel").strip(),
+                        "title": title,
                         "channel": channel_name,
                         "published": published_dt,
                         "published_iso": published_dt.isoformat(),
@@ -314,10 +348,9 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                         "secondary_link": links["secondary"],
                         "video_id": video_id,
                         "thumbnail": thumbnail,
-                        "summary": _make_video_summary(
-                            title=(entry.findtext("title") or ""),
-                            source_texts=summary_sources,
-                        ),
+                        "duration_seconds": _extract_duration_seconds(entry),
+                        "summary_source": " ".join(summary_sources),
+                        "summary": _make_video_summary(title=title, source_texts=summary_sources),
                     }
                 )
     return items
@@ -342,50 +375,35 @@ def collect_latest_youtube_videos(
                 "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml",
             },
         )
-        if debug:
-            print(f"[YouTube][DEBUG] testar URL: {feed['xml_url']}")
         try:
             with opener.open(request, timeout=15) as response:
-                status = getattr(response, "status", 200)
-                content_type = response.headers.get("Content-Type", "okänd")
                 raw = response.read()
             xml_text = raw.decode("utf-8", errors="replace")
-            if debug:
-                print(
-                    f"[YouTube][DEBUG] status={status} content-type={content_type} bytes={len(raw)}"
-                )
             feed_items = _parse_feed_xml(xml_text, feed["title"])
-            if debug:
-                titles = [item["title"] for item in feed_items[:2]]
-                print(f"[YouTube][DEBUG] parsade poster={len(feed_items)} första titlar={titles}")
             if debug and debug_dir and idx < 3:
                 (debug_dir / f"youtube_feed_sample_{idx + 1}.xml").write_text(xml_text, encoding="utf-8")
-            videos.extend(feed_items[:4])
+            videos.extend(feed_items[:5])
         except (URLError, TimeoutError, ET.ParseError) as exc:
             print(f"[YouTube] VARNING: kunde inte läsa {feed['xml_url']}: {exc}")
             continue
 
-    before_sort = len(videos)
-    videos.sort(key=lambda x: x["published"], reverse=True)
-    videos = videos[:max_items]
-    print(f"[YouTube] Totalt antal poster före sortering: {before_sort}")
-    print(f"[YouTube] Totalt antal poster efter sortering/gräns: {len(videos)}")
+    before_filters = len(videos)
+    today_videos = [item for item in videos if _is_today_stockholm(item["published"])]
+    non_short_videos = [item for item in today_videos if not _is_short_candidate(item)]
+
+    non_short_videos.sort(key=lambda x: x["published"], reverse=True)
+    filtered = non_short_videos[:max_items]
+
+    print(f"[YouTube] Totalt antal poster före filtrering: {before_filters}")
+    print(f"[YouTube] Idag i Europe/Stockholm: {len(today_videos)}")
+    print(f"[YouTube] Efter Shorts-filter: {len(non_short_videos)}")
+    print(f"[YouTube] Efter sortering/gräns: {len(filtered)}")
     print(f"[YouTube] Totalt testade feeds: {tested}")
 
     if debug and debug_dir:
-        sample_file = debug_dir / "youtube_feed_sample.xml"
-        sample_written = False
-        for i in range(1, 4):
-            path = debug_dir / f"youtube_feed_sample_{i}.xml"
-            if path.exists():
-                sample_file.write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
-                sample_written = True
-                break
-        if not sample_written:
-            sample_file.write_text("<!-- No YouTube feed could be downloaded in this run -->", encoding="utf-8")
         (debug_dir / "parsed_youtube.json").write_text(
-            json.dumps(videos, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
+            json.dumps(filtered, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
         )
 
-    print(f"[YouTube] OK: hämtade totalt {len(videos)} videoposter.")
-    return videos
+    print(f"[YouTube] OK: hämtade totalt {len(filtered)} videoposter.")
+    return filtered

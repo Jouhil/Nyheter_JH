@@ -49,10 +49,10 @@ def _build_open_meteo_url(lat: float, lon: float) -> str:
     params = {
         "latitude": _fmt(lat),
         "longitude": _fmt(lon),
-        "current": "temperature_2m,wind_speed_10m,precipitation,weather_code",
+        "current": "temperature_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code",
         "hourly": "temperature_2m,wind_speed_10m,precipitation,weather_code",
         "daily": "temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum",
-        "forecast_days": 7,
+        "forecast_days": 10,
         "timezone": "UTC",
     }
     return f"{OPEN_METEO_URL}?{urlencode(params)}"
@@ -61,6 +61,7 @@ def _build_open_meteo_url(lat: float, lon: float) -> str:
 def _build_hourly(hourly: dict[str, Any], hours: int = 24) -> list[dict[str, Any]]:
     times = _safe_list(hourly, "time")[:hours]
     temps = _safe_list(hourly, "temperature_2m")[:hours]
+    winds = _safe_list(hourly, "wind_speed_10m")[:hours]
     precip = _safe_list(hourly, "precipitation")[:hours]
     code = _safe_list(hourly, "weather_code")[:hours]
 
@@ -73,12 +74,13 @@ def _build_hourly(hourly: dict[str, Any], hours: int = 24) -> list[dict[str, Any
                 "temperature": temps[idx] if idx < len(temps) else None,
                 "weather_code": weather_code,
                 "precipitation": precip[idx] if idx < len(precip) else None,
+                "wind_speed": winds[idx] if idx < len(winds) else None,
             }
         )
     return rows
 
 
-def _build_daily(daily: dict[str, Any], days: int = 7) -> list[dict[str, Any]]:
+def _build_daily(daily: dict[str, Any], days: int = 10) -> list[dict[str, Any]]:
     dates = _safe_list(daily, "time")[:days]
     max_t = _safe_list(daily, "temperature_2m_max")[:days]
     min_t = _safe_list(daily, "temperature_2m_min")[:days]
@@ -126,16 +128,21 @@ def get_weather(
         )
 
     current = payload.get("current") or {}
+    daily_rows = _build_daily(payload.get("daily") or {}, days=10)
+    today = daily_rows[0] if daily_rows else {}
     code = int(current.get("weather_code") or 0)
     return {
         "location": location_name,
         "temperature_c": current.get("temperature_2m"),
+        "feels_like_c": current.get("apparent_temperature"),
+        "min_c": today.get("temp_min"),
+        "max_c": today.get("temp_max"),
         "wind_ms": current.get("wind_speed_10m"),
         "precip_mm_h": current.get("precipitation"),
         "description": WEATHER_CODES.get(code, "Okänd"),
         "forecast_time_utc": current.get("time"),
         "weather_code": code,
         "hourly_24": _build_hourly(payload.get("hourly") or {}, hours=24),
-        "daily_7": _build_daily(payload.get("daily") or {}, days=7),
+        "daily_10": daily_rows,
         "error": None,
     }

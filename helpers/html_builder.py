@@ -1,4 +1,4 @@
-"""HTML rendering utilities."""
+"""HTML builder for the static daily briefing page."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from html import escape
 from zoneinfo import ZoneInfo
 
 
-def _format_sv_datetime(iso_value: str | None) -> str:
+def _format_sv_datetime(iso_value: str) -> str:
     if not iso_value:
         return "Okänt datum"
     dt = datetime.fromisoformat(iso_value)
@@ -24,15 +24,18 @@ def _safe_num(value: float | int | None) -> str:
 
 def _render_weather(weather: dict) -> str:
     error = weather.get("error")
-    location = weather.get("location") or "Göteborg"
+    location = weather.get("location") or "Göteborg/Säve"
     temperature_c = _safe_num(weather.get("temperature_c") or weather.get("temperature"))
+    feels_like = _safe_num(weather.get("feels_like_c"))
+    min_temp = _safe_num(weather.get("min_c"))
+    max_temp = _safe_num(weather.get("max_c"))
     description = weather.get("description") or "Ingen väderbeskrivning"
     wind_ms = _safe_num(weather.get("wind_ms") or weather.get("wind"))
     precip_mm_h = _safe_num(weather.get("precip_mm_h") or weather.get("precipitation"))
     forecast_time_utc = weather.get("forecast_time_utc") or "-"
 
     if error:
-        fallback = f"<p class='weather-fallback'>{escape(str(error))}. Visar fallback för Göteborg.</p>"
+        fallback = f"<p class='weather-fallback'>{escape(str(error))}. Visar fallback för Göteborg/Säve.</p>"
     else:
         fallback = ""
 
@@ -40,6 +43,9 @@ def _render_weather(weather: dict) -> str:
         {
             "location": location,
             "temperature_c": weather.get("temperature_c"),
+            "feels_like_c": weather.get("feels_like_c"),
+            "min_c": weather.get("min_c"),
+            "max_c": weather.get("max_c"),
             "description": description,
             "wind_ms": weather.get("wind_ms"),
             "precip_mm_h": weather.get("precip_mm_h"),
@@ -52,16 +58,20 @@ def _render_weather(weather: dict) -> str:
     return f"""
     <section id="weather-app" class="weather-app" aria-live="polite">
       {fallback}
-      <div class="weather-now-card">
-        <div class="weather-now-top">
+      <div class="weather-hero-card">
+        <div class="weather-hero-head">
           <div>
             <p class="weather-label">Plats</p>
             <h3 id="weather-location">{escape(str(location))}</h3>
           </div>
           <div class="weather-icon" id="weather-icon" aria-hidden="true">⛅</div>
         </div>
-        <div class="weather-temp" id="weather-temp">{temperature_c}°C</div>
+        <div class="weather-temp" id="weather-temp">{temperature_c}°</div>
         <p class="weather-desc" id="weather-desc">{escape(str(description))}</p>
+        <div class="weather-hero-meta">
+          <span>Känns som <strong id="weather-feels-like">{feels_like}°</strong></span>
+          <span>H/L <strong id="weather-hilo">{max_temp}° / {min_temp}°</strong></span>
+        </div>
         <div class="weather-grid">
           <div class="metric"><span>Vind</span><strong id="weather-wind">{wind_ms} m/s</strong></div>
           <div class="metric"><span>Nederbörd</span><strong id="weather-precip">{precip_mm_h} mm/h</strong></div>
@@ -74,7 +84,7 @@ def _render_weather(weather: dict) -> str:
         <p class="muted">Laddar timprognos...</p>
       </div>
 
-      <h3 class="subheading">7-dagarsöversikt</h3>
+      <h3 class="subheading">10-dagarsöversikt</h3>
       <div class="daily-grid" id="weather-daily">
         <p class="muted">Laddar dygnsprognos...</p>
       </div>
@@ -96,40 +106,36 @@ def _render_list(items: list[dict], item_type: str) -> str:
             else f"{escape(item['source'])} • {when}"
         )
         if item_type == "video":
-            cta = (
-                "<div class='video-links'>"
-                f"<a class='yt-open' href='{escape(item.get('link', '#'))}' target='_blank' rel='noopener noreferrer'>Öppna i YouTube</a>"
-                + (
-                    f"<a class='yt-alt' href='{escape(item.get('secondary_link', '#'))}' target='_blank' rel='noopener noreferrer'>Kortlänk</a>"
-                    if item.get("secondary_link")
-                    else ""
+            thumbnail = item.get("thumbnail") or ""
+            rows.append(
+                (
+                    "<li class='video-item'>"
+                    "<a class='thumb-link' href='{link}' target='_blank' rel='noopener noreferrer'>"
+                    "<img class='video-thumb' src='{thumb}' alt='Thumbnail för {title}' loading='lazy' />"
+                    "</a>"
+                    "<div class='video-content'>"
+                    "<a class='video-title' href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
+                    "<div class='meta'>{subtitle}</div>"
+                    "<p class='summary'>{summary}</p>"
+                    "<div class='video-links'><a class='yt-open' href='{link}' target='_blank' rel='noopener noreferrer'>Öppna i YouTube</a></div>"
+                    "</div></li>"
+                ).format(
+                    link=escape(item.get("link", "#")),
+                    thumb=escape(thumbnail),
+                    title=escape(item.get("title", "Utan titel")),
+                    subtitle=subtitle,
+                    summary=escape(item.get("summary", "Sammanfattning saknas.")),
                 )
-                + "</div>"
             )
         else:
-            cta = ""
-
-        thumbnail = item.get("thumbnail") if item_type == "video" else None
-        thumbnail_html = (
-            f"<a class='thumb-link' href='{escape(item.get('link', '#'))}' target='_blank' rel='noopener noreferrer'><img class='video-thumb' src='{escape(thumbnail)}' alt='Thumbnail för {escape(item.get('title', 'video'))}' loading='lazy' /></a>"
-            if thumbnail
-            else ""
-        )
-        rows.append(
-            "<li>{thumbnail}<a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
-            "<div class='meta'>{subtitle}</div>{cta}{summary}</li>".format(
-                thumbnail=thumbnail_html,
-                link=escape(item.get("link", "#")),
-                title=escape(item.get("title", "Utan titel")),
-                subtitle=subtitle,
-                cta=cta,
-                summary=(
-                    f"<p class='summary'>{escape(item.get('summary', ''))}</p>"
-                    if item_type == "video" and item.get("summary")
-                    else ""
-                ),
+            rows.append(
+                "<li><a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
+                "<div class='meta'>{subtitle}</div></li>".format(
+                    link=escape(item.get("link", "#")),
+                    title=escape(item.get("title", "Utan titel")),
+                    subtitle=subtitle,
+                )
             )
-        )
 
     return "<ul class='item-list'>" + "".join(rows) + "</ul>"
 
@@ -174,7 +180,7 @@ def build_html(
     </section>
 
     <section class="card youtube-card">
-      <h2>Nya YouTube-videos</h2>
+      <h2>Dagens nya YouTube-videos</h2>
       {_render_list(videos, 'video')}
     </section>
 
