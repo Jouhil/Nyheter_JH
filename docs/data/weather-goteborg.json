@@ -1,259 +1,209 @@
 {
   "location": "Göteborg",
-  "lat": 57.7089,
-  "lon": 11.9746,
-  "generated_at": "2026-04-12T14:06:37.759081+00:00",
   "current": {
-    "temperature_c": null,
-    "wind_ms": null,
-    "precip_mm_h": null,
+    "temperature": null,
+    "wind_speed": null,
+    "precipitation": null,
+    "weather_code": null,
     "description": null,
-    "forecast_time_utc": null
+    "forecast_time": null
   },
   "hourly_24": [
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     },
     {
-      "valid_time": null,
-      "temperature_c": null,
-      "wind_ms": null,
-      "precip_mm_h": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "time": null,
+      "temperature": null,
+      "weather_code": null,
+      "precipitation": null
     }
   ],
   "daily_7": [
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     },
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     },
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     },
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     },
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     },
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     },
     {
       "date": null,
-      "min_temp_c": null,
-      "max_temp_c": null,
-      "symbol": 0,
-      "description": "Okänd"
+      "temp_max": null,
+      "temp_min": null,
+      "weather_code": null,
+      "precipitation_sum": null
     }
   ],
-  "error": "Kunde inte hämta väderdata: HTTP Error 400: Bad Request"
+  "error": "Kunde inte hämta väderdata: <urlopen error [Errno 101] Network is unreachable>"
 }
