@@ -30,6 +30,8 @@ OUTPUT_YOUTUBE_HISTORY_DIR = ROOT / "docs" / "data" / "youtube-history"
 OUTPUT_YOUTUBE_HISTORY_INDEX = OUTPUT_YOUTUBE_HISTORY_DIR / "index.json"
 DEBUG_DIR = ROOT / "debug"
 YOUTUBE_HISTORY_LOOKBACK_HOURS = 168
+YOUTUBE_MAX_ITEMS = 5000
+YOUTUBE_PER_FEED_ITEMS = 0  # 0 = behåll alla poster per feed inom lookback
 
 
 class ValidationError(RuntimeError):
@@ -283,8 +285,8 @@ def main() -> None:
 
     youtube_result = collect_latest_youtube_videos(
         youtube_feeds,
-        max_items=2000,
-        per_feed_items=15,
+        max_items=YOUTUBE_MAX_ITEMS,
+        per_feed_items=YOUTUBE_PER_FEED_ITEMS,
         lookback_hours=YOUTUBE_HISTORY_LOOKBACK_HOURS,
         debug=debug,
         debug_dir=DEBUG_DIR if debug else None,
@@ -315,9 +317,13 @@ def main() -> None:
         "feeds_unique": youtube_stats["feeds_unique"],
         "feeds_fetched_ok": youtube_stats["feeds_fetched_ok"],
         "feeds_failed": youtube_stats["feeds_failed"],
-        "failed_feed_urls": youtube_stats["failed_feed_urls"][:50],
+        "failed_feed_urls": youtube_stats["failed_feed_urls"],
         "raw_entries_total": youtube_stats["raw_entries_total"],
+        "normalized_entries_total": youtube_stats["normalized_entries_total"],
+        "deduped_entries_total": youtube_stats["deduped_entries_total"],
         "saved_entries_total": youtube_stats["saved_entries_total"],
+        "cap_hit": youtube_stats["cap_hit"],
+        "max_items": youtube_stats["max_items"],
         "per_feed_counts": youtube_stats["per_feed_counts"],
         "discard_reasons": youtube_stats["discard_reasons"],
         "per_feed_selected_counts": youtube_stats["per_feed_selected_counts"],
@@ -331,6 +337,8 @@ def main() -> None:
     feeds_total = youtube_debug_payload["feeds_total"]
     feeds_fetched_ok = youtube_debug_payload["feeds_fetched_ok"]
     saved_entries_total = youtube_debug_payload["saved_entries_total"]
+    cap_hit = bool(youtube_debug_payload.get("cap_hit"))
+    max_items = int(youtube_debug_payload.get("max_items") or 0)
 
     if feeds_total > 0 and feeds_fetched_ok == 0:
         raise ValidationError(
@@ -346,9 +354,14 @@ def main() -> None:
         raise ValidationError(
             "YouTube feed failure: saved_entries_total == 0."
         )
-    if saved_entries_total < 50:
+    if cap_hit:
+        raise ValidationError(
+            "YouTube feed failure: youtube-latest.json verkar kapad av hård gräns "
+            f"(saved_entries_total={saved_entries_total}, max_items={max_items})."
+        )
+    if saved_entries_total < 20:
         print(
-            "[YouTube] VARNING: saved_entries_total är lågt (< 50), "
+            "[YouTube] VARNING: saved_entries_total är lågt (< 20), "
             f"men workflow fortsätter ({saved_entries_total})."
         )
 
