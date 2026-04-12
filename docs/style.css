@@ -255,6 +255,11 @@ body {
 .news-item .summary { -webkit-line-clamp: 3; margin-top: 0.4rem; }
 
 .video-links { display: flex; gap: 0.55rem; margin-top: 0.2rem; flex-wrap: wrap; }
+.video-links > .yt-open,
+.video-links > .yt-copy,
+.video-links > .yt-hide {
+  white-space: nowrap;
+}
 .yt-open,
 .yt-copy,
 .yt-hide,
@@ -368,7 +373,23 @@ body {
   .video-item { gap: 0.62rem; }
   .video-content { gap: 0.34rem; }
   .video-title { -webkit-line-clamp: 3; }
-  .yt-open, .yt-copy, .yt-hide, .yt-reset, .yt-reset-all { width: 100%; justify-content: center; min-height: 44px; }
+  .video-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.42rem;
+    margin-top: 0.16rem;
+  }
+  .video-links > .yt-open,
+  .video-links > .yt-copy,
+  .video-links > .yt-hide {
+    width: 100%;
+    justify-content: center;
+    min-height: 40px;
+    font-size: 0.79rem;
+    padding: 0.42rem 0.36rem;
+    white-space: nowrap;
+  }
+  .yt-reset, .yt-reset-all { width: 100%; justify-content: center; min-height: 44px; }
   .history-link-btn { width: 100%; justify-content: center; min-height: 44px; }
   .youtube-header-row { justify-content: stretch; }
   .item-list li { padding: 0.68rem; }
