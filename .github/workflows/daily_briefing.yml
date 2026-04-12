@@ -27,7 +27,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Generate daily briefing
-        run: python generate_briefing.py
+        run: python -u generate_briefing.py
 
       - name: Commit and push if changed
         run: |

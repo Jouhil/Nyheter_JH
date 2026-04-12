@@ -6,7 +6,7 @@ import json
 from datetime import datetime, timezone
 from typing import Any
 from urllib.error import URLError
-from urllib.request import urlopen
+from urllib.request import ProxyHandler, Request, build_opener
 
 SMHI_URL_TEMPLATE = (
     "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/"
@@ -22,10 +22,13 @@ def _timeseries_param_map(timeseries: dict[str, Any]) -> dict[str, Any]:
 
 def get_weather(lat: float, lon: float, location_name: str, timeout: int = 12) -> dict[str, Any]:
     url = SMHI_URL_TEMPLATE.format(lat=lat, lon=lon)
+    opener = build_opener(ProxyHandler({}))
+    request = Request(url, headers={"User-Agent": "DailyBriefingBot/1.1 (+https://github.com/actions)"})
     try:
-        with urlopen(url, timeout=timeout) as response:
+        with opener.open(request, timeout=timeout) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+        print(f"[SMHI] FEL: kunde inte hämta väder från {url}: {exc}")
         return {"location": location_name, "error": f"Kunde inte hämta väderdata: {exc}"}
 
     now_utc = datetime.now(timezone.utc)
@@ -42,11 +45,12 @@ def get_weather(lat: float, lon: float, location_name: str, timeout: int = 12) -
     if not selected and time_series:
         selected = time_series[0]
     if not selected:
+        print("[SMHI] FEL: svar innehöll ingen prognosrad.")
         return {"location": location_name, "error": "SMHI svarade utan prognosdata."}
 
     param_map = _timeseries_param_map(selected)
     symbol = int(param_map.get("Wsymb2") or 0)
-    return {
+    weather = {
         "location": location_name,
         "temperature_c": param_map.get("t"),
         "wind_ms": param_map.get("ws"),
@@ -55,3 +59,9 @@ def get_weather(lat: float, lon: float, location_name: str, timeout: int = 12) -
         "forecast_time_utc": selected.get("validTime"),
         "error": None,
     }
+    print(
+        "[SMHI] OK: "
+        f"{location_name} {weather['temperature_c']}°C, "
+        f"{weather['description']}, vind {weather['wind_ms']} m/s"
+    )
+    return weather

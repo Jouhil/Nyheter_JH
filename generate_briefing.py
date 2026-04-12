@@ -30,14 +30,20 @@ def main() -> None:
         lon=LOCATION["lon"],
         location_name=LOCATION["name"],
     )
+    if weather.get("error"):
+        print(f"[SMHI] Status: FEL - {weather['error']}")
+    else:
+        print("[SMHI] Status: OK")
 
     print("[2/4] Läser OPML och hämtar YouTube-feeds...")
     if OPML_FILE.exists():
         youtube_feeds = parse_opml_feed_urls(str(OPML_FILE))
+        print(f"[YouTube] Antal feeds i OPML: {len(youtube_feeds)}")
     else:
         youtube_feeds = []
         print(f"VARNING: OPML-fil saknas: {OPML_FILE}")
     videos = collect_latest_youtube_videos(youtube_feeds, max_items=24)
+    print(f"[YouTube] Antal videor efter sortering/gräns: {len(videos)}")
 
     print("[3/4] Hämtar nyheter från RSS...")
     news = fetch_news(max_per_category=8)
@@ -57,7 +63,7 @@ def main() -> None:
     print(f"Klar: {OUTPUT_HTML}")
     print(f"Antal videos: {len(videos)}")
     for category, items in news.items():
-        print(f"Nyheter {category}: {len(items)}")
+        print(f"[Nyheter] {category}: {len(items)}")
 
 
 if __name__ == "__main__":

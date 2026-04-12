@@ -107,6 +107,12 @@ body {
   margin-top: 0.25rem;
 }
 
+.summary {
+  margin: 0.45rem 0 0;
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
 .muted {
   color: var(--muted);
 }

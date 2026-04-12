@@ -45,10 +45,15 @@ def _render_list(items: list[dict], item_type: str) -> str:
         )
         rows.append(
             "<li><a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
-            "<div class='meta'>{subtitle}</div></li>".format(
+            "<div class='meta'>{subtitle}</div>{summary}</li>".format(
                 link=escape(item.get("link", "#")),
                 title=escape(item.get("title", "Utan titel")),
                 subtitle=subtitle,
+                summary=(
+                    f"<p class='summary'>{escape(item.get('summary', ''))}</p>"
+                    if item_type == "video" and item.get("summary")
+                    else ""
+                ),
             )
         )
 
