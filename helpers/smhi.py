@@ -29,6 +29,71 @@ def _format_coord(value: float) -> str:
     return f"{value:.6f}".rstrip("0").rstrip(".")
 
 
+def _build_hourly_forecast(time_series: list[dict[str, Any]], hours: int = 24) -> list[dict[str, Any]]:
+    hourly: list[dict[str, Any]] = []
+    for row in time_series[:hours]:
+        params = _timeseries_param_map(row)
+        symbol = int(params.get("Wsymb2") or 0)
+        hourly.append(
+            {
+                "valid_time": row.get("validTime"),
+                "temperature_c": params.get("t"),
+                "wind_ms": params.get("ws"),
+                "precip_mm_h": params.get("pmean"),
+                "symbol": symbol,
+                "description": WEATHER_SYMBOLS.get(symbol, "Okänd"),
+            }
+        )
+    return hourly
+
+
+def _build_daily_forecast(time_series: list[dict[str, Any]], days: int = 7) -> list[dict[str, Any]]:
+    daily_map: dict[str, dict[str, Any]] = {}
+    for row in time_series:
+        valid_time = row.get("validTime")
+        if not valid_time:
+            continue
+        day_key = valid_time[:10]
+        params = _timeseries_param_map(row)
+        temp = params.get("t")
+        symbol = int(params.get("Wsymb2") or 0)
+
+        if day_key not in daily_map:
+            daily_map[day_key] = {
+                "date": day_key,
+                "min_temp_c": temp,
+                "max_temp_c": temp,
+                "symbol": symbol,
+            }
+        else:
+            if temp is not None:
+                if daily_map[day_key]["min_temp_c"] is None:
+                    daily_map[day_key]["min_temp_c"] = temp
+                else:
+                    daily_map[day_key]["min_temp_c"] = min(daily_map[day_key]["min_temp_c"], temp)
+                if daily_map[day_key]["max_temp_c"] is None:
+                    daily_map[day_key]["max_temp_c"] = temp
+                else:
+                    daily_map[day_key]["max_temp_c"] = max(daily_map[day_key]["max_temp_c"], temp)
+
+        if len(daily_map) >= days:
+            break
+
+    daily: list[dict[str, Any]] = []
+    for day in daily_map.values():
+        symbol = int(day.get("symbol") or 0)
+        daily.append(
+            {
+                "date": day.get("date"),
+                "min_temp_c": day.get("min_temp_c"),
+                "max_temp_c": day.get("max_temp_c"),
+                "symbol": symbol,
+                "description": WEATHER_SYMBOLS.get(symbol, "Okänd"),
+            }
+        )
+    return daily
+
+
 def get_weather(
     lat: float,
     lon: float,
@@ -118,6 +183,8 @@ def get_weather(
         "precip_mm_h": param_map.get("pmean"),
         "description": WEATHER_SYMBOLS.get(symbol, "Okänd"),
         "forecast_time_utc": selected.get("validTime"),
+        "hourly_24": _build_hourly_forecast(time_series, hours=24),
+        "daily_7": _build_daily_forecast(time_series, days=7),
         "error": None,
     }
     print(

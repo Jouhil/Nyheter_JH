@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,6 +22,7 @@ LOCATION = {
 ROOT = Path(__file__).resolve().parent
 OPML_FILE = ROOT / "youtube_prenumerationer.opml"
 OUTPUT_HTML = ROOT / "docs" / "index.html"
+OUTPUT_WEATHER_JSON = ROOT / "docs" / "data" / "weather-goteborg.json"
 DEBUG_DIR = ROOT / "debug"
 
 
@@ -100,6 +102,28 @@ def main() -> None:
         print(f"[SMHI] Status: FEL - {weather['error']}")
     else:
         print("[SMHI] Status: OK")
+    OUTPUT_WEATHER_JSON.parent.mkdir(parents=True, exist_ok=True)
+    weather_payload = {
+        "location": LOCATION["name"],
+        "lat": LOCATION["lat"],
+        "lon": LOCATION["lon"],
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "current": {
+            "temperature_c": weather.get("temperature_c"),
+            "wind_ms": weather.get("wind_ms"),
+            "precip_mm_h": weather.get("precip_mm_h"),
+            "description": weather.get("description"),
+            "forecast_time_utc": weather.get("forecast_time_utc"),
+        },
+        "hourly_24": weather.get("hourly_24") or [],
+        "daily_7": weather.get("daily_7") or [],
+        "error": weather.get("error"),
+    }
+    OUTPUT_WEATHER_JSON.write_text(
+        json.dumps(weather_payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"[SMHI] Skrev lokal väderfil: {OUTPUT_WEATHER_JSON}")
 
     print("[2/4] Läser OPML och hämtar YouTube-feeds...")
     if OPML_FILE.exists():

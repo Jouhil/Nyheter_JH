@@ -1,5 +1,6 @@
 (function () {
   const GOTHENBURG = { name: "Göteborg", lat: 57.7089, lon: 11.9746 };
+  const LOCAL_WEATHER_PATH = "data/weather-goteborg.json";
   const API = (lat, lon) =>
     `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon}/lat/${lat}/data.json`;
 
@@ -16,6 +17,8 @@
   const pick = (params, name) => (params.find((p) => p.name === name)?.values || [null])[0];
   const fmtHour = (iso) => new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" });
   const fmtDay = (iso) => new Date(iso).toLocaleDateString("sv-SE", { weekday: "short" });
+  const safeNum = (value, digits = 1) => (value == null || Number.isNaN(Number(value)) ? "-" : Number(value).toFixed(digits));
+  const toIsoOrDash = (value) => (value ? new Date(value).toLocaleString("sv-SE") : "-");
 
   function renderNow(data, locationName) {
     const current = data.timeSeries?.[0];
@@ -34,6 +37,19 @@
     byId("weather-wind").textContent = `${ws ?? "-"} m/s`;
     byId("weather-precip").textContent = `${p ?? "-"} mm/h`;
     byId("weather-updated").textContent = new Date(current.validTime).toLocaleString("sv-SE");
+  }
+
+  function renderNowFromLocal(payload) {
+    const current = payload?.current || {};
+    byId("weather-location").textContent = payload?.location || GOTHENBURG.name;
+    byId("weather-temp").textContent = `${safeNum(current.temperature_c, 0)}°C`;
+    byId("weather-desc").textContent = current.description || "Ingen väderbeskrivning";
+    byId("weather-wind").textContent = `${safeNum(current.wind_ms)} m/s`;
+    byId("weather-precip").textContent = `${safeNum(current.precip_mm_h)} mm/h`;
+    byId("weather-updated").textContent = toIsoOrDash(current.forecast_time_utc);
+    const symbol = current.symbol;
+    const [icon] = SYMBOLS[symbol] || ["⛅"];
+    byId("weather-icon").textContent = icon;
   }
 
   function renderHourly(data) {
@@ -84,6 +100,36 @@
       .join("");
   }
 
+  function renderHourlyFromLocal(payload) {
+    const target = byId("weather-hourly");
+    const points = payload?.hourly_24 || [];
+    if (!points.length) {
+      target.innerHTML = "<p class='muted'>Ingen timprognos tillgänglig.</p>";
+      return;
+    }
+    target.innerHTML = points
+      .map((row) => {
+        const [icon] = SYMBOLS[row.symbol] || ["⛅"];
+        return `<article class="hour-card"><p>${fmtHour(row.valid_time)}</p><div>${icon}</div><strong>${safeNum(row.temperature_c, 0)}°</strong></article>`;
+      })
+      .join("");
+  }
+
+  function renderDailyFromLocal(payload) {
+    const target = byId("weather-daily");
+    const days = payload?.daily_7 || [];
+    if (!days.length) {
+      target.innerHTML = "<p class='muted'>Ingen dygnsprognos tillgänglig.</p>";
+      return;
+    }
+    target.innerHTML = days
+      .map((day) => {
+        const [icon] = SYMBOLS[day.symbol] || ["⛅"];
+        return `<article class="day-card"><p>${fmtDay(day.date)}</p><div>${icon}</div><strong>${safeNum(day.max_temp_c, 0)}° / ${safeNum(day.min_temp_c, 0)}°</strong></article>`;
+      })
+      .join("");
+  }
+
   function renderFallback(msg) {
     const app = byId("weather-app");
     const existing = app.querySelector(".weather-fallback");
@@ -100,6 +146,16 @@
     renderDaily(data);
   }
 
+  async function fetchLocalWeather() {
+    const res = await fetch(LOCAL_WEATHER_PATH, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Lokal väderfil saknas (${res.status})`);
+    const payload = await res.json();
+    renderNowFromLocal(payload);
+    renderHourlyFromLocal(payload);
+    renderDailyFromLocal(payload);
+    return payload;
+  }
+
   function fallbackFromHtml() {
     const raw = byId("weather-fallback-data")?.textContent;
     if (!raw) return;
@@ -111,6 +167,8 @@
       byId("weather-wind").textContent = `${data.wind_ms ?? "-"} m/s`;
       byId("weather-precip").textContent = `${data.precip_mm_h ?? "-"} mm/h`;
       byId("weather-updated").textContent = data.forecast_time_utc || "-";
+      byId("weather-hourly").innerHTML = "<p class='muted'>Timprognos saknas lokalt.</p>";
+      byId("weather-daily").innerHTML = "<p class='muted'>Dygnsprognos saknas lokalt.</p>";
     } catch {
       // ignore malformed fallback data
     }
@@ -118,29 +176,24 @@
 
   function init() {
     fallbackFromHtml();
-    if (!navigator.geolocation) {
-      renderFallback("Geolocation stöds inte. Visar Göteborg.");
-      fetchWeather(GOTHENBURG.lat, GOTHENBURG.lon, GOTHENBURG.name).catch(() => {});
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        fetchWeather(pos.coords.latitude, pos.coords.longitude, "Din position").catch(() => {
-          renderFallback("Kunde inte hämta väder för din plats. Visar Göteborg.");
-          fetchWeather(GOTHENBURG.lat, GOTHENBURG.lon, GOTHENBURG.name).catch(() => {
-            renderFallback("Väderdata saknas just nu.");
-          });
-        });
-      },
-      () => {
-        renderFallback("Platsåtkomst nekad eller misslyckades. Visar Göteborg.");
-        fetchWeather(GOTHENBURG.lat, GOTHENBURG.lon, GOTHENBURG.name).catch(() => {
-          renderFallback("Väderdata saknas just nu.");
-        });
-      },
-      { timeout: 8000, enableHighAccuracy: false, maximumAge: 300000 }
-    );
+    fetchLocalWeather()
+      .catch(() => {
+        renderFallback("Kunde inte läsa lokal väderfil. Visar inbäddad fallback för Göteborg.");
+      })
+      .finally(() => {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            fetchWeather(pos.coords.latitude, pos.coords.longitude, "Din position").catch(() => {
+              renderFallback("Kunde inte hämta väder för din plats. Visar Göteborg-data.");
+            });
+          },
+          () => {
+            // best effort only; behåll Göteborg-data
+          },
+          { timeout: 8000, enableHighAccuracy: false, maximumAge: 300000 }
+        );
+      });
   }
 
   init();

@@ -17,6 +17,7 @@ CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 TAG_RE = re.compile(r"<[^>]+>")
 URL_RE = re.compile(r"https?://\S+")
 SPACE_RE = re.compile(r"\s+")
+SENTENCE_TRIM_RE = re.compile(r"\s*[•|]\s*")
 XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 
@@ -76,6 +77,7 @@ def _clean_text(value: str | None) -> str:
     text = unescape(value)
     text = TAG_RE.sub(" ", text)
     text = URL_RE.sub("", text)
+    text = SENTENCE_TRIM_RE.sub(" ", text)
     return SPACE_RE.sub(" ", text).strip()
 
 
@@ -84,28 +86,51 @@ def _split_sentences(text: str) -> list[str]:
     return [chunk.strip() for chunk in chunks if chunk.strip()]
 
 
+def _dedupe_sentences(sentences: list[str]) -> list[str]:
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for sentence in sentences:
+        key = sentence.lower().strip(" .!?")
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        deduped.append(sentence)
+    return deduped
+
+
+def _is_useful_sentence(sentence: str) -> bool:
+    words = sentence.split()
+    if len(words) < 5:
+        return False
+    lowered = sentence.lower()
+    junk_markers = ["subscribe", "follow", "visit ", "patreon", "instagram", "twitter", "tiktok", "sponsor"]
+    return not any(marker in lowered for marker in junk_markers)
+
+
 def _make_video_summary(title: str, channel: str, source_text: str) -> str:
-    clean_source = _clean_text(source_text)
+    clean_source = _clean_text(source_text)[:2200]
     clean_title = _clean_text(title) or "Videon"
     clean_channel = _clean_text(channel) or "kanalen"
 
-    sentences = _split_sentences(clean_source)
-    first = sentences[0] if sentences else f"{clean_title} är en ny video från {clean_channel}."
-    first = first.rstrip(".!?") + "."
+    if not clean_source:
+        return f"{clean_title}. Beskrivning saknas i feeden, så öppna videon för full kontext från {clean_channel}."
 
-    if len(sentences) >= 2:
-        second = sentences[1]
-    elif clean_source:
-        words = clean_source.split()
-        tail = " ".join(words[20:40]).strip()
-        second = tail if tail else f"Videon kommer från {clean_channel} och handlar om ämnet i titeln."
-    else:
-        second = f"Videon kommer från {clean_channel} och handlar om ämnet i titeln."
-    second = second.rstrip(".!?") + "."
+    sentences = [s for s in _dedupe_sentences(_split_sentences(clean_source)) if _is_useful_sentence(s)]
+    if not sentences:
+        return f"I videon från {clean_channel} förklaras huvudpunkterna kring {clean_title.lower()} med exempel och resonemang."
 
-    if first == second:
-        second = f"Öppna länken för att se hela genomgången från {clean_channel}."
-    return f"{first} {second}"
+    selected = sentences[:3]
+    summary_parts = [f"I videon från {clean_channel} lyfts följande:"]
+    for idx, sentence in enumerate(selected, start=1):
+        if idx == 1:
+            summary_parts.append(f"Först: {sentence.rstrip('.!?')}.")
+        elif idx == 2:
+            summary_parts.append(f"Därefter: {sentence.rstrip('.!?')}.")
+        else:
+            summary_parts.append(f"Avslutningsvis: {sentence.rstrip('.!?')}.")
+
+    summary = " ".join(summary_parts)
+    return SPACE_RE.sub(" ", summary).strip()
 
 
 def _tag_name(elem: ET.Element) -> str:
@@ -114,9 +139,29 @@ def _tag_name(elem: ET.Element) -> str:
 
 def _entry_text(entry: ET.Element, names: list[str]) -> str | None:
     for child in entry:
-        if _tag_name(child) in names and child.text:
-            return child.text.strip()
+        if _tag_name(child) in names:
+            text_value = " ".join(part.strip() for part in child.itertext() if part and part.strip())
+            if text_value:
+                return text_value
     return None
+
+
+def _entry_text_candidates(entry: ET.Element) -> str:
+    candidate_names = {
+        "summary",
+        "content",
+        "description",
+        "subtitle",
+        "transcript",
+        "text",
+    }
+    chunks: list[str] = []
+    for elem in entry.iter():
+        if _tag_name(elem) in candidate_names:
+            text_value = " ".join(part.strip() for part in elem.itertext() if part and part.strip())
+            if text_value:
+                chunks.append(text_value)
+    return " ".join(chunks).strip()
 
 
 def _entry_link(entry: ET.Element) -> str:
@@ -167,12 +212,15 @@ def _build_youtube_links(raw_link: str, video_id: str | None) -> dict[str, str |
         return {"primary": clean, "secondary": short}
     return {"primary": raw_link or "#", "secondary": None}
 def _media_group_text(entry: ET.Element) -> str:
+    collected: list[str] = []
     for child in entry:
         if _tag_name(child) == "group":
             for nested in child:
-                if _tag_name(nested) in {"description", "title"} and nested.text:
-                    return nested.text.strip()
-    return ""
+                if _tag_name(nested) in {"description", "title", "content", "transcript"}:
+                    text_value = " ".join(part.strip() for part in nested.itertext() if part and part.strip())
+                    if text_value:
+                        collected.append(text_value)
+    return " ".join(collected).strip()
 
 
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
@@ -185,7 +233,15 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
         for entry in root.findall("{*}entry"):
             published_raw = _entry_text(entry, ["published", "updated"])
             published_dt = _parse_date(published_raw)
-            summary = _entry_text(entry, ["summary", "content"]) or _media_group_text(entry)
+            summary = " ".join(
+                part
+                for part in [
+                    _entry_text(entry, ["summary", "content"]),
+                    _media_group_text(entry),
+                    _entry_text_candidates(entry),
+                ]
+                if part
+            ).strip()
             raw_link = _entry_link(entry)
             video_id = _extract_youtube_video_id(raw_link, entry)
             links = _build_youtube_links(raw_link, video_id)
@@ -214,7 +270,15 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                 channel_name = ch_title.strip()
             for entry in channel.findall("item"):
                 published_dt = _parse_date(entry.findtext("pubDate"))
-                summary = entry.findtext("description") or ""
+                summary = " ".join(
+                    part
+                    for part in [
+                        entry.findtext("description"),
+                        entry.findtext("summary"),
+                        entry.findtext("content"),
+                    ]
+                    if part
+                ).strip()
                 raw_link = (entry.findtext("link") or "#").strip()
                 video_id = _extract_youtube_video_id(raw_link, None)
                 links = _build_youtube_links(raw_link, video_id)
