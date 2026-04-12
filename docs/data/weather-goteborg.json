@@ -1,13 +1,13 @@
 {
   "location": "Göteborg/Säve",
   "current": {
-    "temperature": 8.5,
+    "temperature": 8.2,
     "wind_speed": 10.4,
     "precipitation": 0.0,
     "weather_code": 1,
     "description": "Mest klart",
-    "forecast_time": "2026-04-12T19:00",
-    "feels_like": 4.9,
+    "forecast_time": "2026-04-12T19:15",
+    "feels_like": 4.7,
     "temp_min": 4.4,
     "temp_max": 10.7
   },
