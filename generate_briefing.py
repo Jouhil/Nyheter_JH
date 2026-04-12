@@ -25,6 +25,7 @@ OPML_FILE = ROOT / "youtube_prenumerationer.opml"
 OUTPUT_HTML = ROOT / "docs" / "index.html"
 OUTPUT_WEATHER_JSON = ROOT / "docs" / "data" / "weather-goteborg.json"
 OUTPUT_YOUTUBE_JSON = ROOT / "docs" / "data" / "youtube-latest.json"
+OUTPUT_YOUTUBE_DEBUG_JSON = ROOT / "docs" / "data" / "youtube-debug.json"
 OUTPUT_YOUTUBE_HISTORY_DIR = ROOT / "docs" / "data" / "youtube-history"
 OUTPUT_YOUTUBE_HISTORY_INDEX = OUTPUT_YOUTUBE_HISTORY_DIR / "index.json"
 DEBUG_DIR = ROOT / "debug"
@@ -270,16 +271,19 @@ def main() -> None:
 
     print("[2/4] Läser OPML och hämtar YouTube-feeds...")
     if OPML_FILE.exists():
-        youtube_feeds = parse_opml_feed_urls(str(OPML_FILE), debug=debug)
-        print(f"[YouTube] Antal feeds i OPML: {len(youtube_feeds)}")
+        opml_result = parse_opml_feed_urls(str(OPML_FILE), debug=debug, with_stats=True)
+        youtube_feeds = opml_result["feeds"]
+        print(f"[YouTube] Antal feeds i OPML (total): {opml_result['feeds_total']}")
+        print(f"[YouTube] Antal unika xmlUrl: {opml_result['feeds_unique']}")
     else:
+        opml_result = {"feeds_total": 0, "feeds_unique": 0}
         youtube_feeds = []
         print(f"VARNING: OPML-fil saknas: {OPML_FILE}")
 
     youtube_result = collect_latest_youtube_videos(
         youtube_feeds,
-        max_items=800,
-        per_feed_items=5,
+        max_items=2000,
+        per_feed_items=15,
         lookback_hours=72,
         debug=debug,
         debug_dir=DEBUG_DIR if debug else None,
@@ -302,6 +306,38 @@ def main() -> None:
         ),
         encoding="utf-8",
     )
+
+    youtube_debug_payload = {
+        "generated_at_utc": generated_at_utc,
+        "lookback_hours": 72,
+        "feeds_total": opml_result["feeds_total"],
+        "feeds_unique": youtube_stats["feeds_unique"],
+        "feeds_fetched_ok": youtube_stats["feeds_fetched_ok"],
+        "feeds_failed": youtube_stats["feeds_failed"],
+        "failed_feed_urls": youtube_stats["failed_feed_urls"][:50],
+        "raw_entries_total": youtube_stats["raw_entries_total"],
+        "saved_entries_total": youtube_stats["saved_entries_total"],
+        "per_feed_counts": youtube_stats["per_feed_counts"],
+        "discard_reasons": youtube_stats["discard_reasons"],
+        "per_feed_selected_counts": youtube_stats["per_feed_selected_counts"],
+    }
+    OUTPUT_YOUTUBE_DEBUG_JSON.write_text(
+        json.dumps(youtube_debug_payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"[YouTube] Skrev debugfil: {OUTPUT_YOUTUBE_DEBUG_JSON}")
+
+    if youtube_debug_payload["feeds_total"] >= 100 and youtube_debug_payload["feeds_fetched_ok"] < 50:
+        raise ValidationError(
+            "YouTube feed failure: feeds_total är högt men feeds_fetched_ok är orimligt lågt "
+            f"({youtube_debug_payload['feeds_fetched_ok']} av {youtube_debug_payload['feeds_total']})."
+        )
+    if youtube_debug_payload["saved_entries_total"] < 50:
+        raise ValidationError(
+            "YouTube feed failure: saved_entries_total < 50 "
+            f"({youtube_debug_payload['saved_entries_total']})."
+        )
+
     print(f"[YouTube] Skrev lokal YouTube-fil: {OUTPUT_YOUTUBE_JSON} ({len(videos)} videos)")
     if len(videos) == 0:
         raise ValidationError("youtube-latest.json contains 0 videos")
