@@ -51,7 +51,7 @@ def _build_open_meteo_url(lat: float, lon: float) -> str:
         "longitude": _fmt(lon),
         "current": "temperature_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code",
         "hourly": "temperature_2m,wind_speed_10m,precipitation,weather_code",
-        "daily": "temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum",
+        "daily": "temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum,sunrise,sunset",
         "forecast_days": 10,
         "timezone": "UTC",
     }
@@ -86,6 +86,8 @@ def _build_daily(daily: dict[str, Any], days: int = 10) -> list[dict[str, Any]]:
     min_t = _safe_list(daily, "temperature_2m_min")[:days]
     code = _safe_list(daily, "weather_code")[:days]
     precip = _safe_list(daily, "precipitation_sum")[:days]
+    sunrises = _safe_list(daily, "sunrise")[:days]
+    sunsets = _safe_list(daily, "sunset")[:days]
 
     rows: list[dict[str, Any]] = []
     for idx, date in enumerate(dates):
@@ -97,6 +99,8 @@ def _build_daily(daily: dict[str, Any], days: int = 10) -> list[dict[str, Any]]:
                 "temp_min": min_t[idx] if idx < len(min_t) else None,
                 "weather_code": weather_code,
                 "precipitation_sum": precip[idx] if idx < len(precip) else None,
+                "sunrise": sunrises[idx] if idx < len(sunrises) else None,
+                "sunset": sunsets[idx] if idx < len(sunsets) else None,
             }
         )
     return rows

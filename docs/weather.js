@@ -3,7 +3,7 @@
   const GOTEBORG_LOCATION = { name: "Göteborg", lat: 57.7089, lon: 11.9746 };
   const LOCAL_WEATHER_PATH = "data/weather-goteborg.json";
   const API = (lat, lon) =>
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code&hourly=temperature_2m,wind_speed_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&forecast_days=10&timezone=UTC`;
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code&hourly=temperature_2m,wind_speed_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum,sunrise,sunset&forecast_days=10&timezone=UTC`;
 
   const WEATHER_CODE_MAP = [
     { test: (code) => code === 0, icon: "☀️", text: "Klart", mood: "clear" },
@@ -50,6 +50,8 @@
       temp_min: apiData?.daily?.temperature_2m_min?.[idx] ?? null,
       weather_code: apiData?.daily?.weather_code?.[idx] ?? null,
       precipitation_sum: apiData?.daily?.precipitation_sum?.[idx] ?? null,
+      sunrise: apiData?.daily?.sunrise?.[idx] ?? null,
+      sunset: apiData?.daily?.sunset?.[idx] ?? null,
     }));
 
     return {

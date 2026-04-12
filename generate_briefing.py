@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parent
 OPML_FILE = ROOT / "youtube_prenumerationer.opml"
 OUTPUT_HTML = ROOT / "docs" / "index.html"
 OUTPUT_WEATHER_JSON = ROOT / "docs" / "data" / "weather-goteborg.json"
+OUTPUT_YOUTUBE_JSON = ROOT / "docs" / "data" / "youtube-latest.json"
 DEBUG_DIR = ROOT / "debug"
 
 
@@ -62,6 +63,8 @@ def _default_daily_rows() -> list[dict]:
             "temp_min": None,
             "weather_code": None,
             "precipitation_sum": None,
+            "sunrise": None,
+            "sunset": None,
         })
     return rows
 
@@ -91,10 +94,8 @@ def _validate_counts(weather: dict, videos: list[dict], news: dict[str, list[dic
 def _validate_html_content(html: str, weather: dict, videos: list[dict], news: dict[str, list[dict]]) -> None:
     issues: list[str] = []
 
-    if videos:
-        first_video_title = videos[0].get("title", "")
-        if first_video_title and first_video_title not in html:
-            issues.append("Minst en YouTube-titel hittades inte i HTML")
+    if 'id="youtube-list"' not in html:
+        issues.append("YouTube-listans container saknas i HTML")
     if any(news.values()):
         first_news = next((item.get("title", "") for items in news.values() for item in items if item.get("title")), "")
         if first_news and first_news not in html:
@@ -165,11 +166,27 @@ def main() -> None:
 
     videos = collect_latest_youtube_videos(
         youtube_feeds,
-        max_items=24,
+        max_items=240,
+        per_feed_items=5,
+        lookback_hours=72,
         debug=debug,
         debug_dir=DEBUG_DIR if debug else None,
     )
-    print(f"[YouTube] Antal videor som skickas till rendering: {len(videos)}")
+    OUTPUT_YOUTUBE_JSON.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_YOUTUBE_JSON.write_text(
+        json.dumps(
+            {
+                "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+                "timezone": "Europe/Stockholm",
+                "lookback_hours": 72,
+                "videos": videos,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(f"[YouTube] Skrev lokal YouTube-fil: {OUTPUT_YOUTUBE_JSON} ({len(videos)} videos)")
 
     print("[3/4] Hämtar nyheter från RSS...")
     news = fetch_news(

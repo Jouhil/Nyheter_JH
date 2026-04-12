@@ -272,27 +272,23 @@ def _extract_duration_seconds(entry: ET.Element) -> int | None:
     return None
 
 
-def is_within_last_24h_stockholm(published: datetime) -> bool:
-    now_se = datetime.now(ZoneInfo("Europe/Stockholm"))
-    lower_bound = now_se - timedelta(hours=24)
-    published_se = published.astimezone(ZoneInfo("Europe/Stockholm"))
-    return lower_bound <= published_se <= now_se
-
-
-def _is_short_candidate(item: dict[str, Any]) -> bool:
+def _is_short_candidate(item: dict[str, Any]) -> tuple[bool, list[str]]:
     """
     Shorts-filter med både starka och svagare signaler.
     Vi filtrerar direkt vid tydliga träffar (URL /shorts/), annars krävs minst två
     svagare signaler för att minska risken att kasta bort vanliga videos.
     """
     links = " ".join([item.get("link") or "", item.get("secondary_link") or ""]).lower()
+    signals: list[str] = []
     if "/shorts/" in links:
-        return True
+        signals.append("url_contains_/shorts/")
+        return True, signals
 
     weak_signals = 0
     duration = item.get("duration_seconds")
     if duration is not None and duration <= 60:
         weak_signals += 1
+        signals.append("duration_<=_60s")
 
     meta_blob = " ".join([
         item.get("title") or "",
@@ -301,10 +297,12 @@ def _is_short_candidate(item: dict[str, Any]) -> bool:
     ])
     if SHORT_HINT_RE.search(meta_blob):
         weak_signals += 1
+        signals.append("title_or_text_short_hint")
     if SHORT_METADATA_RE.search(meta_blob):
         weak_signals += 1
+        signals.append("feed_metadata_short_hint")
 
-    return weak_signals >= 2
+    return weak_signals >= 2, signals
 
 
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
@@ -405,9 +403,35 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
     return items
 
 
+def _normalize_video(item: dict[str, Any]) -> dict[str, Any]:
+    published = item.get("published")
+    published_utc = published.astimezone(timezone.utc) if isinstance(published, datetime) else datetime.min.replace(tzinfo=timezone.utc)
+    published_stockholm = published_utc.astimezone(ZoneInfo("Europe/Stockholm"))
+    short_match, short_signals = _is_short_candidate(item)
+
+    return {
+        "video_id": item.get("video_id"),
+        "title": item.get("title") or "Utan titel",
+        "channel": item.get("channel") or "Okänd kanal",
+        "published_at_utc": published_utc.isoformat(),
+        "published_at_stockholm": published_stockholm.isoformat(),
+        "thumbnail": item.get("thumbnail") or (
+            f"https://i.ytimg.com/vi/{item.get('video_id')}/hqdefault.jpg" if item.get("video_id") else None
+        ),
+        "summary_source_text": item.get("summary_source") or "",
+        "summary": item.get("summary") or "",
+        "url": item.get("link") or "#",
+        "duration": item.get("duration_seconds"),
+        "short_signals": short_signals,
+        "is_probable_short": short_match,
+    }
+
+
 def collect_latest_youtube_videos(
     feeds: list[dict[str, str]],
     max_items: int = 24,
+    per_feed_items: int = 5,
+    lookback_hours: int = 72,
     debug: bool = False,
     debug_dir: Path | None = None,
 ) -> list[dict[str, Any]]:
@@ -431,20 +455,26 @@ def collect_latest_youtube_videos(
             feed_items = _parse_feed_xml(xml_text, feed["title"])
             if debug and debug_dir and idx < 3:
                 (debug_dir / f"youtube_feed_sample_{idx + 1}.xml").write_text(xml_text, encoding="utf-8")
-            videos.extend(feed_items[:5])
+            videos.extend(feed_items[: max(3, per_feed_items)])
         except (URLError, TimeoutError, ET.ParseError) as exc:
             print(f"[YouTube] VARNING: kunde inte läsa {feed['xml_url']}: {exc}")
             continue
 
     before_filters = len(videos)
-    last_24h_videos = [item for item in videos if is_within_last_24h_stockholm(item["published"])]
-    non_short_videos = [item for item in last_24h_videos if not _is_short_candidate(item)]
+    now_utc = datetime.now(timezone.utc)
+    lower_bound = now_utc - timedelta(hours=lookback_hours)
+    lookback_videos = [
+        item for item in videos
+        if isinstance(item.get("published"), datetime) and lower_bound <= item["published"].astimezone(timezone.utc) <= now_utc
+    ]
+    normalized = [_normalize_video(item) for item in lookback_videos]
+    non_short_videos = [item for item in normalized if not item["is_probable_short"]]
 
-    non_short_videos.sort(key=lambda x: x["published"], reverse=True)
+    non_short_videos.sort(key=lambda x: x["published_at_utc"], reverse=True)
     filtered = non_short_videos[:max_items]
 
     print(f"[YouTube] Totalt antal poster före filtrering: {before_filters}")
-    print(f"[YouTube] Senaste 24h i Europe/Stockholm: {len(last_24h_videos)}")
+    print(f"[YouTube] Inom lookback {lookback_hours}h: {len(lookback_videos)}")
     print(f"[YouTube] Efter Shorts-filter: {len(non_short_videos)}")
     print(f"[YouTube] Efter sortering/gräns: {len(filtered)}")
     print(f"[YouTube] Totalt testade feeds: {tested}")

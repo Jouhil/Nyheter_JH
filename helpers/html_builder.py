@@ -150,6 +150,17 @@ def _render_list(items: list[dict], item_type: str) -> str:
     return "<ul class='item-list'>" + "".join(rows) + "</ul>"
 
 
+def _render_youtube_shell() -> str:
+    return """
+    <div class="youtube-toolbar">
+      <p class="muted youtube-range" id="youtube-range-label">Senaste 24h från när sidan öppnades (Europe/Stockholm).</p>
+    </div>
+    <div id="youtube-list" class="youtube-list-root">
+      <p class='muted'>Laddar YouTube-videor...</p>
+    </div>
+    """
+
+
 def build_html(
     *,
     generated_at_iso: str,
@@ -191,7 +202,7 @@ def build_html(
 
     <section class="card youtube-card">
       <h2>YouTube från dina prenumerationer (senaste 24h)</h2>
-      {_render_list(videos, 'video')}
+      {_render_youtube_shell()}
     </section>
 
     <section class="card">
@@ -200,6 +211,7 @@ def build_html(
     </section>
   </main>
   <script src="weather.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
 """
