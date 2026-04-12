@@ -578,7 +578,7 @@ def collect_latest_youtube_videos(
     print(f"  - short url: {discarded['short_url']}")
     print(f"  - parse failure: {discarded['parse_failure']}")
     print(f"  - outside lookback: {discarded['outside_lookback']}")
-    print(f"[YouTube] entries saved to youtube-latest.json: {len(filtered)}")
+    print(f"[YouTube] videos saved to youtube-latest.json: {len(filtered)}")
     print(f"[YouTube] final saved count exact: {len(filtered)}")
     print(f"[YouTube] hard cap reached: {'yes' if cap_hit else 'no'} (max_items={max_items})")
     print(f"[YouTube] parse failures (feeds): {parse_failures}")
