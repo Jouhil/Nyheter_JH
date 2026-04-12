@@ -7,6 +7,59 @@
 
   const byId = (id) => document.getElementById(id);
 
+  function renderHiddenChannelsPanel({ root, hiddenChannels, onResetOne, onResetAll }) {
+    let panel = byId('youtube-hidden-panel');
+    if (!panel) {
+      panel = document.createElement('section');
+      panel.id = 'youtube-hidden-panel';
+      panel.className = 'youtube-hidden-panel';
+      root.parentNode?.insertBefore(panel, root);
+    }
+
+    panel.innerHTML = '';
+    const heading = document.createElement('h3');
+    heading.className = 'youtube-hidden-title';
+    heading.textContent = 'Visa dolda kanaler (lokalt)';
+    panel.appendChild(heading);
+
+    const help = document.createElement('p');
+    help.className = 'muted youtube-hidden-help';
+    help.textContent = 'Döljer endast i denna browser via localStorage. Inga filer i repot ändras.';
+    panel.appendChild(help);
+
+    if (!hiddenChannels.length) {
+      const empty = document.createElement('p');
+      empty.className = 'muted';
+      empty.textContent = 'Inga lokalt dolda kanaler.';
+      panel.appendChild(empty);
+      return;
+    }
+
+    const list = document.createElement('ul');
+    list.className = 'youtube-hidden-list';
+    hiddenChannels.forEach((channel) => {
+      const li = document.createElement('li');
+      li.className = 'youtube-hidden-item';
+      const label = document.createElement('span');
+      label.textContent = channel;
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'yt-reset';
+      resetBtn.textContent = 'Återställ';
+      resetBtn.addEventListener('click', () => onResetOne(channel));
+      li.append(label, resetBtn);
+      list.appendChild(li);
+    });
+    panel.appendChild(list);
+
+    const resetAllBtn = document.createElement('button');
+    resetAllBtn.type = 'button';
+    resetAllBtn.className = 'yt-reset-all';
+    resetAllBtn.textContent = 'Återställ alla';
+    resetAllBtn.addEventListener('click', onResetAll);
+    panel.appendChild(resetAllBtn);
+  }
+
   function parseISO(value) {
     if (!value) return null;
     const date = new Date(value);
@@ -159,9 +212,28 @@
         }
       });
 
-      const videos = keptAfterShortFilter
+      const videos24h = keptAfterShortFilter
         .filter((video) => video._published >= lower && video._published <= now)
         .sort((a, b) => b._published.getTime() - a._published.getTime());
+
+      const readHiddenChannels = typeof youtubeUi.readHiddenChannels === 'function'
+        ? youtubeUi.readHiddenChannels
+        : () => [];
+      const isChannelHidden = typeof youtubeUi.isChannelHidden === 'function'
+        ? youtubeUi.isChannelHidden
+        : () => false;
+      const hideChannel = typeof youtubeUi.hideChannel === 'function'
+        ? youtubeUi.hideChannel
+        : () => {};
+      const unhideChannel = typeof youtubeUi.unhideChannel === 'function'
+        ? youtubeUi.unhideChannel
+        : () => {};
+      const clearHiddenChannels = typeof youtubeUi.clearHiddenChannels === 'function'
+        ? youtubeUi.clearHiddenChannels
+        : () => {};
+      const hiddenChannels = readHiddenChannels();
+      const videos = videos24h.filter((video) => !isChannelHidden(video.channel, hiddenChannels));
+      const hiddenByLocal = videos24h.length - videos.length;
 
       console.log('[YouTube debug] total videos in json:', allVideos.length);
       console.log('[YouTube debug] removed by hard short rules:', removedByHardShortRules.length);
@@ -175,12 +247,27 @@
         softSignals: v?._shortDecision?.softSignals || [],
         softScore: v?._shortDecision?.softScore || 0,
       })));
+      console.log('[YouTube debug] hidden by local channel rules:', hiddenByLocal);
       console.log('[YouTube debug] first 15 kept titles:', videos.slice(0, 15).map((v) => v.title || 'Utan titel'));
 
       const label = byId('youtube-range-label');
       if (label) {
-        label.textContent = `Hämtade ${allVideos.length} totalt • ${removedByHardShortRules.length} borttagna som tydliga shorts • ${removedBySoftShortRules.length} borttagna som short-liknande • ${keptAfterShortFilter.length} kvar efter shorts-filter • ${videos.length} senaste 24h (${formatStockholmDateTime(lower)}–${formatStockholmDateTime(now)}, ${STOCKHOLM_TZ}).`;
+        label.textContent = `Hämtade ${allVideos.length} totalt • ${removedByHardShortRules.length} borttagna som tydliga shorts • ${removedBySoftShortRules.length} borttagna som short-liknande • ${keptAfterShortFilter.length} kvar efter shorts-filter • ${videos24h.length} senaste 24h • ${hiddenByLocal} lokalt dolda via kanal • ${videos.length} visas (${formatStockholmDateTime(lower)}–${formatStockholmDateTime(now)}, ${STOCKHOLM_TZ}).`;
       }
+
+      const rerender = () => renderYoutubeLatest();
+      renderHiddenChannelsPanel({
+        root,
+        hiddenChannels,
+        onResetOne: (channel) => {
+          unhideChannel(channel);
+          rerender();
+        },
+        onResetAll: () => {
+          clearHiddenChannels();
+          rerender();
+        },
+      });
 
       if (!videos.length) {
         root.innerHTML = "<p class='muted'>Inga vanliga videos senaste 24h just nu.</p>";
@@ -194,7 +281,14 @@
         root.innerHTML = "<p class='muted'>YouTube-kort kunde inte laddas (saknad helper).</p>";
         return;
       }
-      videos.forEach((video) => list.appendChild(youtubeUi.createVideoCard(video)));
+      videos.forEach((video) => {
+        list.appendChild(youtubeUi.createVideoCard(video, {
+          onHideChannel: (channel) => {
+            hideChannel(channel);
+            rerender();
+          },
+        }));
+      });
       root.appendChild(list);
     } catch (error) {
       root.innerHTML = `<p class='muted'>Kunde inte läsa YouTube-listan: ${error.message}</p>`;
