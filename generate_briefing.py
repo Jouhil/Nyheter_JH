@@ -26,6 +26,7 @@ OUTPUT_HTML = ROOT / "docs" / "index.html"
 OUTPUT_WEATHER_JSON = ROOT / "docs" / "data" / "weather-goteborg.json"
 OUTPUT_YOUTUBE_JSON = ROOT / "docs" / "data" / "youtube-latest.json"
 OUTPUT_YOUTUBE_DEBUG_JSON = ROOT / "docs" / "data" / "youtube-debug.json"
+OUTPUT_YOUTUBE_OPML_DEBUG_JSON = ROOT / "docs" / "data" / "youtube-opml-debug.json"
 OUTPUT_YOUTUBE_HISTORY_DIR = ROOT / "docs" / "data" / "youtube-history"
 OUTPUT_YOUTUBE_HISTORY_INDEX = OUTPUT_YOUTUBE_HISTORY_DIR / "index.json"
 DEBUG_DIR = ROOT / "debug"
@@ -276,12 +277,51 @@ def main() -> None:
     if OPML_FILE.exists():
         opml_result = parse_opml_feed_urls(str(OPML_FILE), debug=debug, with_stats=True)
         youtube_feeds = opml_result["feeds"]
-        print(f"[YouTube] Antal feeds i OPML (total): {opml_result['feeds_total']}")
-        print(f"[YouTube] Antal unika xmlUrl: {opml_result['feeds_unique']}")
+        print(f"[YouTube] xmlUrl found in OPML file: {opml_result['xmlurl_count_in_file']}")
+        print(f"[YouTube] feeds returned by parser: {opml_result['feeds_total']}")
+        print(f"[YouTube] unique feeds after dedupe: {opml_result['feeds_unique']}")
+        print(f"[YouTube] first 20 feed-url:er: {opml_result['first_20_feeds']}")
+        print(f"[YouTube] last 20 feed-url:er: {opml_result['last_20_feeds']}")
     else:
-        opml_result = {"feeds_total": 0, "feeds_unique": 0}
+        opml_result = {
+            "xmlurl_count_in_file": 0,
+            "feeds_total": 0,
+            "feeds_unique": 0,
+            "first_20_feeds": [],
+            "last_20_feeds": [],
+        }
         youtube_feeds = []
         print(f"VARNING: OPML-fil saknas: {OPML_FILE}")
+
+    OUTPUT_YOUTUBE_OPML_DEBUG_JSON.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_YOUTUBE_OPML_DEBUG_JSON.write_text(
+        json.dumps(
+            {
+                "xmlurl_count_in_file": opml_result["xmlurl_count_in_file"],
+                "parsed_feed_count": opml_result["feeds_total"],
+                "unique_feed_count": opml_result["feeds_unique"],
+                "first_20_feeds": opml_result["first_20_feeds"],
+                "last_20_feeds": opml_result["last_20_feeds"],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(f"[YouTube] Skrev OPML-debugfil: {OUTPUT_YOUTUBE_OPML_DEBUG_JSON}")
+
+    xmlurl_count_in_file = int(opml_result["xmlurl_count_in_file"])
+    parsed_feed_count = int(opml_result["feeds_total"])
+    if xmlurl_count_in_file > 100 and parsed_feed_count < 100:
+        raise ValidationError(
+            "YouTube OPML parsing failure: xmlUrl i filen > 100 men parsern returnerade < 100 "
+            f"({parsed_feed_count} av {xmlurl_count_in_file})."
+        )
+    if xmlurl_count_in_file > 0 and parsed_feed_count < (xmlurl_count_in_file * 0.8):
+        raise ValidationError(
+            "YouTube OPML parsing failure: parsern returnerade mindre än 80% av xmlUrl-count "
+            f"({parsed_feed_count} av {xmlurl_count_in_file})."
+        )
 
     youtube_result = collect_latest_youtube_videos(
         youtube_feeds,

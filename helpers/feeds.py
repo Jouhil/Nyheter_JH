@@ -38,21 +38,29 @@ def parse_opml_feed_urls(
 ) -> list[dict[str, str]] | dict[str, Any]:
     raw = open(opml_path, "rb").read()
     text = CONTROL_CHARS_RE.sub("", raw.decode("utf-8", errors="replace"))
+    xmlurl_count_in_file = len(XMLURL_RE.findall(text))
 
     feeds: list[dict[str, str]] = []
+    parsed_from_xml = 0
     try:
         root = ET.fromstring(text)
-        for outline in root.findall(".//outline"):
-            xml_url = (
-                outline.attrib.get("xmlUrl")
-                or outline.attrib.get("xmlurl")
-                or outline.attrib.get("xmlURL")
-            )
+        for outline in root.iter():
+            if _tag_name(outline) != "outline":
+                continue
+            attr_lc = {k.lower(): v for k, v in outline.attrib.items()}
+            xml_url = attr_lc.get("xmlurl")
             if xml_url:
+                parsed_from_xml += 1
                 feeds.append({"title": outline.attrib.get("text", "Okänd kanal"), "xml_url": xml_url})
     except ET.ParseError:
+        parsed_from_xml = 0
+
+    # Robust fallback: om XML-parsern missar poster, fyll på med regex-träffar.
+    if parsed_from_xml < xmlurl_count_in_file:
         for index, match in enumerate(XMLURL_RE.findall(text), start=1):
             feeds.append({"title": f"Kanal {index}", "xml_url": match})
+
+    parsed_feed_count = len(feeds)
 
     unique: list[dict[str, str]] = []
     seen = set()
@@ -61,15 +69,20 @@ def parse_opml_feed_urls(
             seen.add(item["xml_url"])
             unique.append(item)
 
-    print(f"[YouTube] OPML: hittade {len(feeds)} xmlUrl, {len(unique)} unika feed-url:er.")
+    print(f"[YouTube] xmlUrl found in OPML file: {xmlurl_count_in_file}")
+    print(f"[YouTube] feeds returned by parser: {parsed_feed_count}")
+    print(f"[YouTube] unique feeds after dedupe: {len(unique)}")
     if debug and unique:
         sample_urls = [f["xml_url"] for f in unique[:3]]
         print(f"[YouTube][DEBUG] Exempel feed-url: {sample_urls}")
     if with_stats:
         return {
             "feeds": unique,
-            "feeds_total": len(feeds),
+            "xmlurl_count_in_file": xmlurl_count_in_file,
+            "feeds_total": parsed_feed_count,
             "feeds_unique": len(unique),
+            "first_20_feeds": [item["xml_url"] for item in unique[:20]],
+            "last_20_feeds": [item["xml_url"] for item in unique[-20:]],
         }
     return unique
 
