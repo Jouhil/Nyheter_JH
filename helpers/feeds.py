@@ -445,8 +445,8 @@ def _normalize_video(item: dict[str, Any]) -> dict[str, Any]:
 
 def collect_latest_youtube_videos(
     feeds: list[dict[str, str]],
-    max_items: int = 400,
-    per_feed_items: int = 5,
+    max_items: int = 5000,
+    per_feed_items: int = 0,
     lookback_hours: int = 168,
     debug: bool = False,
     debug_dir: Path | None = None,
@@ -495,7 +495,10 @@ def collect_latest_youtube_videos(
             per_feed_counts[feed_key] = len(feed_items)
             if debug and debug_dir and idx < 3:
                 (debug_dir / f"youtube_feed_sample_{idx + 1}.xml").write_text(xml_text, encoding="utf-8")
-            selected_items = feed_items[: max(10, per_feed_items)]
+            if per_feed_items and per_feed_items > 0:
+                selected_items = feed_items[:per_feed_items]
+            else:
+                selected_items = feed_items
             per_feed_selected_counts[feed_key] = len(selected_items)
             videos.extend(selected_items)
             raw_entries.extend(selected_items)
@@ -540,6 +543,7 @@ def collect_latest_youtube_videos(
         deduped.append(item)
 
     filtered = deduped[:max_items]
+    cap_hit = bool(max_items > 0 and len(deduped) > max_items)
 
     top_feeds = sorted(per_feed_counts.items(), key=lambda kv: kv[1], reverse=True)[:20]
     print(f"[YouTube] OPML feeds found (total): {feeds_total}")
@@ -548,6 +552,8 @@ def collect_latest_youtube_videos(
     print(f"[YouTube] feeds fetched OK: {feeds_ok}")
     print(f"[YouTube] feeds failed: {parse_failures}")
     print(f"[YouTube] raw video entries total: {before_filters}")
+    print(f"[YouTube] entries after normalization/filtering: {len(normalized_candidates)}")
+    print(f"[YouTube] entries after dedupe: {len(deduped)}")
     print("[YouTube] top feeds by raw entries (top 20):")
     for feed_key, count in top_feeds:
         selected_count = per_feed_selected_counts.get(feed_key, 0)
@@ -559,7 +565,9 @@ def collect_latest_youtube_videos(
     print(f"  - short url: {discarded['short_url']}")
     print(f"  - parse failure: {discarded['parse_failure']}")
     print(f"  - outside lookback: {discarded['outside_lookback']}")
-    print(f"[YouTube] saved to youtube-latest.json: {len(filtered)}")
+    print(f"[YouTube] entries saved to youtube-latest.json: {len(filtered)}")
+    print(f"[YouTube] final saved count exact: {len(filtered)}")
+    print(f"[YouTube] hard cap reached: {'yes' if cap_hit else 'no'} (max_items={max_items})")
     print(f"[YouTube] parse failures (feeds): {parse_failures}")
     if failed_feed_urls:
         print(f"[YouTube] failed feed urls (first 10): {failed_feed_urls[:10]}")
@@ -571,15 +579,19 @@ def collect_latest_youtube_videos(
             "feed_urls_used_count": feeds_attempted,
             "feeds_fetched_ok": feeds_ok,
             "feeds_failed": parse_failures,
-            "failed_feed_urls": failed_feed_urls[:50],
+            "failed_feed_urls": failed_feed_urls[:200],
             "feed_url_examples": [f.get("xml_url") for f in feeds[:20]],
             "raw_entries_first_20": raw_entries[:20],
             "normalized_entries_first_20": normalized_candidates[:20],
             "per_feed_counts": per_feed_counts,
             "per_feed_selected_counts": per_feed_selected_counts,
             "raw_entries_total": before_filters,
+            "normalized_entries_total": len(normalized_candidates),
+            "deduped_entries_total": len(deduped),
             "discard_reasons": discarded,
             "saved_entries_total": len(filtered),
+            "cap_hit": cap_hit,
+            "max_items": max_items,
             "lookback_hours": lookback_hours,
         }
         (debug_dir / "youtube-debug.json").write_text(
@@ -592,12 +604,16 @@ def collect_latest_youtube_videos(
         "feeds_attempted": feeds_attempted,
         "feeds_fetched_ok": feeds_ok,
         "feeds_failed": parse_failures,
-        "failed_feed_urls": failed_feed_urls[:50],
+        "failed_feed_urls": failed_feed_urls[:200],
         "raw_entries_total": before_filters,
+        "normalized_entries_total": len(normalized_candidates),
+        "deduped_entries_total": len(deduped),
         "per_feed_counts": per_feed_counts,
         "per_feed_selected_counts": per_feed_selected_counts,
         "discard_reasons": discarded,
         "saved_entries_total": len(filtered),
+        "cap_hit": cap_hit,
+        "max_items": max_items,
         "parse_failures": parse_failures,
     }
 
