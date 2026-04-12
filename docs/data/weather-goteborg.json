@@ -2,11 +2,11 @@
   "location": "Göteborg/Säve",
   "current": {
     "temperature": 6.8,
-    "wind_speed": 10.4,
+    "wind_speed": 10.8,
     "precipitation": 0.0,
     "weather_code": 2,
     "description": "Delvis molnigt",
-    "forecast_time": "2026-04-12T21:15",
+    "forecast_time": "2026-04-12T21:30",
     "feels_like": 3.2,
     "temp_min": 4.4,
     "temp_max": 10.7
