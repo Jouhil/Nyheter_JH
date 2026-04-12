@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from html import unescape
 from pathlib import Path
@@ -25,6 +25,10 @@ XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 SHORT_HINT_RE = re.compile(r"\b(shorts?|#shorts|vertical|reel)\b", re.IGNORECASE)
 SHORT_METADATA_RE = re.compile(r"(yt:short|shorts|reel|portrait|9:16)", re.IGNORECASE)
+SWEDISH_SUMMARY_HINT_RE = re.compile(
+    r"\b(videon|klippet|kanalen|reportaget|genomgång|förklarar|visar|diskuterar)\b",
+    re.IGNORECASE,
+)
 
 
 def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, str]]:
@@ -118,6 +122,28 @@ def _is_useful_sentence(sentence: str) -> bool:
     return True
 
 
+def _to_swedish_sentence(sentence: str) -> str:
+    cleaned = _clean_text(sentence).rstrip(" .!?")
+    if not cleaned:
+        return ""
+
+    # Om feed-texten redan innehåller svenska signalord behåll den i stort.
+    if SWEDISH_SUMMARY_HINT_RE.search(cleaned):
+        return cleaned + "."
+
+    replacements = {
+        "video": "videon",
+        "episode": "avsnittet",
+        "explains": "förklarar",
+        "shows": "visar",
+        "discusses": "diskuterar",
+        "review": "genomgång",
+    }
+    words = cleaned.split()
+    translated_words = [replacements.get(word.lower(), word) for word in words]
+    return " ".join(translated_words).rstrip(" .!?") + "."
+
+
 def _make_video_summary(title: str, source_texts: list[str]) -> str:
     clean_title = _clean_text(title) or "videon"
     text_pool = " ".join(_clean_text(v) for v in source_texts if v)[:2600]
@@ -132,8 +158,8 @@ def _make_video_summary(title: str, source_texts: list[str]) -> str:
             candidates.append(cleaned.rstrip(" .!?") + ".")
 
     if len(candidates) >= 2:
-        first = candidates[0][:220].rstrip(" ,;:.!?") + "."
-        second = candidates[1][:220].rstrip(" ,;:.!?") + "."
+        first = _to_swedish_sentence(candidates[0][:220])
+        second = _to_swedish_sentence(candidates[1][:220])
         return f"{first} {second}"
     if len(candidates) == 1:
         return f"{candidates[0]} Videon kompletterar med konkreta detaljer och exempel kring ämnet."
@@ -246,10 +272,11 @@ def _extract_duration_seconds(entry: ET.Element) -> int | None:
     return None
 
 
-def is_today_in_stockholm(published: datetime) -> bool:
+def is_within_last_24h_stockholm(published: datetime) -> bool:
     now_se = datetime.now(ZoneInfo("Europe/Stockholm"))
+    lower_bound = now_se - timedelta(hours=24)
     published_se = published.astimezone(ZoneInfo("Europe/Stockholm"))
-    return published_se.date() == now_se.date()
+    return lower_bound <= published_se <= now_se
 
 
 def _is_short_candidate(item: dict[str, Any]) -> bool:
@@ -410,14 +437,14 @@ def collect_latest_youtube_videos(
             continue
 
     before_filters = len(videos)
-    today_videos = [item for item in videos if is_today_in_stockholm(item["published"])]
-    non_short_videos = [item for item in today_videos if not _is_short_candidate(item)]
+    last_24h_videos = [item for item in videos if is_within_last_24h_stockholm(item["published"])]
+    non_short_videos = [item for item in last_24h_videos if not _is_short_candidate(item)]
 
     non_short_videos.sort(key=lambda x: x["published"], reverse=True)
     filtered = non_short_videos[:max_items]
 
     print(f"[YouTube] Totalt antal poster före filtrering: {before_filters}")
-    print(f"[YouTube] Idag i Europe/Stockholm: {len(today_videos)}")
+    print(f"[YouTube] Senaste 24h i Europe/Stockholm: {len(last_24h_videos)}")
     print(f"[YouTube] Efter Shorts-filter: {len(non_short_videos)}")
     print(f"[YouTube] Efter sortering/gräns: {len(filtered)}")
     print(f"[YouTube] Totalt testade feeds: {tested}")

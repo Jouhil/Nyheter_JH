@@ -1,18 +1,18 @@
 (function () {
-  const DEFAULT_LOCATION = { name: "Göteborg/Säve", lat: 57.7807, lon: 11.8704 };
+  const SAVE_LOCATION = { name: "Säve", lat: 57.7807, lon: 11.8704 };
+  const GOTEBORG_LOCATION = { name: "Göteborg", lat: 57.7089, lon: 11.9746 };
   const LOCAL_WEATHER_PATH = "data/weather-goteborg.json";
   const API = (lat, lon) =>
     `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,apparent_temperature,wind_speed_10m,precipitation,weather_code&hourly=temperature_2m,wind_speed_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&forecast_days=10&timezone=UTC`;
 
   const WEATHER_CODE_MAP = [
-    { test: (code) => code === 0, icon: "☀️", text: "Klart" },
-    { test: (code) => code === 1, icon: "🌤️", text: "Lätt molnigt" },
-    { test: (code) => code === 2 || code === 3, icon: "☁️", text: "Molnigt" },
-    { test: (code) => code === 45 || code === 48, icon: "🌫️", text: "Dimma" },
-    { test: (code) => [51, 53, 55, 61, 63, 65].includes(code), icon: "🌧️", text: "Regn" },
-    { test: (code) => [80, 81, 82].includes(code), icon: "🌦️", text: "Skurar" },
-    { test: (code) => [95, 96, 99].includes(code), icon: "⛈️", text: "Åska" },
-    { test: (code) => [71, 73, 75, 77, 85, 86].includes(code), icon: "❄️", text: "Snö" },
+    { test: (code) => code === 0, icon: "☀️", text: "Klart", mood: "clear" },
+    { test: (code) => code === 1, icon: "🌤️", text: "Delvis molnigt", mood: "partly-cloudy" },
+    { test: (code) => code === 2 || code === 3, icon: "☁️", text: "Molnigt", mood: "cloudy" },
+    { test: (code) => code === 45 || code === 48, icon: "🌫️", text: "Dimma", mood: "fog" },
+    { test: (code) => [51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code), icon: "🌧️", text: "Regn", mood: "rain" },
+    { test: (code) => [95, 96, 99].includes(code), icon: "⛈️", text: "Åska", mood: "rain" },
+    { test: (code) => [71, 73, 75, 77, 85, 86].includes(code), icon: "❄️", text: "Snö", mood: "snow" },
   ];
 
   const byId = (id) => document.getElementById(id);
@@ -21,10 +21,25 @@
   const fmtHour = (iso) => (iso ? new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Stockholm" }) : "Tid saknas");
   const fmtDay = (iso) => (iso ? new Date(iso).toLocaleDateString("sv-SE", { weekday: "short", timeZone: "Europe/Stockholm" }) : "Okänd dag");
   const fmtDateTime = (iso) => (iso ? new Date(iso).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" }) : "Okänd tid");
+
   const getWeatherSymbol = (code) => {
     const value = Number(code);
-    return WEATHER_CODE_MAP.find((row) => row.test(value)) || { icon: "🌤️", text: "Växlande molnighet" };
+    return WEATHER_CODE_MAP.find((row) => row.test(value)) || { icon: "🌤️", text: "Växlande molnighet", mood: "partly-cloudy" };
   };
+
+  function moodFromCurrent(current = {}) {
+    const hourInStockholm = Number(new Date().toLocaleString("en-US", { hour: "2-digit", hour12: false, timeZone: "Europe/Stockholm" }));
+    const isNight = hourInStockholm >= 21 || hourInStockholm <= 5;
+    if (isNight) return "night";
+    return getWeatherSymbol(current.weather_code).mood;
+  }
+
+  function applyMood(app, mood) {
+    if (!app) return;
+    const moodClasses = ["clear", "partly-cloudy", "cloudy", "rain", "fog", "snow", "night"];
+    app.classList.remove(...moodClasses.map((name) => `weather-mood-${name}`));
+    app.classList.add(`weather-mood-${mood}`);
+  }
 
   function normalizeApiToWeatherJson(apiData, locationName) {
     const current = apiData?.current || {};
@@ -63,16 +78,19 @@
   }
 
   function renderWeather(data) {
+    const app = byId("weather-app");
     const current = data?.current || {};
     const symbol = getWeatherSymbol(current.weather_code);
 
-    byId("weather-location").textContent = data?.location || DEFAULT_LOCATION.name;
+    applyMood(app, moodFromCurrent(current));
+
+    byId("weather-location").textContent = data?.location || SAVE_LOCATION.name;
     byId("weather-temp").textContent = valueOrText(current.temperature, "°", "Temperatur saknas");
     byId("weather-desc").textContent = current.description || symbol.text;
     byId("weather-icon").textContent = symbol.icon;
     byId("weather-feels-like").textContent = valueOrText(current.feels_like, "°", "okänt");
     byId("weather-hilo").textContent = `${valueOrText(current.temp_max, "°", "okänt")} / ${valueOrText(current.temp_min, "°", "okänt")}`;
-    byId("weather-wind").textContent = safeNum(current.wind_speed) ? `${safeNum(current.wind_speed)} m/s` : "Ingen vinddata";
+    byId("weather-wind").textContent = safeNum(current.wind_speed) ? `${safeNum(current.wind_speed)} m/s` : "Vinddata saknas";
     byId("weather-precip").textContent = safeNum(current.precipitation) ? `${safeNum(current.precipitation)} mm/h` : "Ingen nederbörd just nu";
     byId("weather-updated").textContent = fmtDateTime(current.forecast_time);
 
@@ -94,7 +112,7 @@
     }
 
     const dailyTarget = byId("weather-daily");
-    const days = Array.isArray(data?.daily_10) ? data.daily_10.slice(0, 10) : [];
+    const days = Array.isArray(data?.daily_10) ? data.daily_10.slice(0, 7) : [];
     if (!days.length) {
       dailyTarget.innerHTML = "<p class='muted'>Ingen dygnsprognos tillgänglig.</p>";
       return;
@@ -125,6 +143,13 @@
     else app.insertAdjacentHTML("afterbegin", `<p class="weather-fallback">${msg}</p>`);
   }
 
+  async function fetchWeatherForLocation(location) {
+    const res = await fetch(API(location.lat, location.lon));
+    if (!res.ok) throw new Error(`Open-Meteo svarade ${res.status}`);
+    const apiData = await res.json();
+    renderWeather(normalizeApiToWeatherJson(apiData, location.name));
+  }
+
   async function fetchLocalWeather() {
     const res = await fetch(LOCAL_WEATHER_PATH, { cache: "no-store" });
     if (!res.ok) throw new Error(`Lokal väderfil saknas (${res.status})`);
@@ -132,31 +157,42 @@
     renderWeather(data);
   }
 
-  async function fetchGeoWeather(lat, lon) {
-    const res = await fetch(API(lat, lon));
-    if (!res.ok) throw new Error(`Open-Meteo svarade ${res.status}`);
-    const apiData = await res.json();
-    const data = normalizeApiToWeatherJson(apiData, "Din position");
-    renderWeather(data);
+  async function loadWithFallbackLocations() {
+    try {
+      await fetchWeatherForLocation(SAVE_LOCATION);
+      renderFallback("Geolocation nekades eller misslyckades. Visar Säve som fallback.");
+      return;
+    } catch (_) {
+      try {
+        await fetchWeatherForLocation(GOTEBORG_LOCATION);
+        renderFallback("Säve saknas just nu. Visar Göteborg som fallback.");
+      } catch (error) {
+        renderFallback("Kunde inte hämta fallback-väder. Visar senaste lokala väderdata.");
+      }
+    }
   }
 
   function init() {
-    fetchLocalWeather()
-      .catch(() => {
-        renderFallback("Kunde inte läsa lokal väderfil. Visar inbäddad fallback för Göteborg/Säve.");
-      })
-      .finally(() => {
-        if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            fetchGeoWeather(pos.coords.latitude, pos.coords.longitude).catch(() => {
-              renderFallback("Kunde inte hämta väder för din plats. Visar Göteborg/Säve-data.");
-            });
-          },
-          () => {},
-          { timeout: 8000, enableHighAccuracy: false, maximumAge: 300000 }
-        );
-      });
+    fetchLocalWeather().catch(() => {
+      renderFallback("Kunde inte läsa lokal väderfil. Hämtar live-väder i stället.");
+    });
+
+    if (!navigator.geolocation) {
+      loadWithFallbackLocations();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        fetchWeatherForLocation({ name: "Din position", lat: pos.coords.latitude, lon: pos.coords.longitude }).catch(() => {
+          loadWithFallbackLocations();
+        });
+      },
+      () => {
+        loadWithFallbackLocations();
+      },
+      { timeout: 9000, enableHighAccuracy: false, maximumAge: 240000 }
+    );
   }
 
   init();

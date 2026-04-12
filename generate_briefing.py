@@ -78,7 +78,7 @@ def _validate_counts(weather: dict, videos: list[dict], news: dict[str, list[dic
         print(f"[VALIDERING] VARNING: {weather_warning}")
         print("[VALIDERING] VARNING: Fortsätter ändå (väder är inte blockerande)")
     if len(videos) == 0:
-        print("[VALIDERING] VARNING: Inga YouTube-videos för idag efter filtrering.")
+        print("[VALIDERING] VARNING: Inga YouTube-videos från senaste 24h efter filtrering.")
     if total_news < 3:
         errors.append(f"Nyheter har för få poster totalt ({total_news} < 3)")
 
