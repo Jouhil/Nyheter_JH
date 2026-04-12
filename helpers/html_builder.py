@@ -109,9 +109,16 @@ def _render_list(items: list[dict], item_type: str) -> str:
         else:
             cta = ""
 
+        thumbnail = item.get("thumbnail") if item_type == "video" else None
+        thumbnail_html = (
+            f"<a class='thumb-link' href='{escape(item.get('link', '#'))}' target='_blank' rel='noopener noreferrer'><img class='video-thumb' src='{escape(thumbnail)}' alt='Thumbnail för {escape(item.get('title', 'video'))}' loading='lazy' /></a>"
+            if thumbnail
+            else ""
+        )
         rows.append(
-            "<li><a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
+            "<li>{thumbnail}<a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
             "<div class='meta'>{subtitle}</div>{cta}{summary}</li>".format(
+                thumbnail=thumbnail_html,
                 link=escape(item.get("link", "#")),
                 title=escape(item.get("title", "Utan titel")),
                 subtitle=subtitle,

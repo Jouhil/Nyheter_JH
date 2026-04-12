@@ -1,97 +1,105 @@
-"""SMHI weather utilities."""
+"""Weather utilities backed by Open-Meteo."""
 
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
 from urllib.request import ProxyHandler, Request, build_opener
 
-SMHI_URL_TEMPLATE = (
-    "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/"
-    "geotype/point/lon/{lon}/lat/{lat}/data.json"
-)
-SMHI_FALLBACK_URL_TEMPLATE = (
-    "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/"
-    "geotype/point/lon/{lon}/lat/{lat}/data.json"
-)
+OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 
-WEATHER_SYMBOLS = {1: "Klart", 2: "Nästan klart", 3: "Växlande molnighet", 4: "Halvklart", 5: "Molnigt", 6: "Mulet", 7: "Dimma", 8: "Lätta regnskurar", 9: "Måttliga regnskurar", 10: "Kraftiga regnskurar", 11: "Åskväder", 12: "Lätta byar av snöblandat regn", 13: "Måttliga byar av snöblandat regn", 14: "Kraftiga byar av snöblandat regn", 15: "Lätta snöbyar", 16: "Måttliga snöbyar", 17: "Kraftiga snöbyar", 18: "Lätt regn", 19: "Måttligt regn", 20: "Kraftigt regn", 21: "Åska", 22: "Lätt snöblandat regn", 23: "Måttligt snöblandat regn", 24: "Kraftigt snöblandat regn", 25: "Lätt snöfall", 26: "Måttligt snöfall", 27: "Kraftigt snöfall"}
+WEATHER_CODES = {
+    0: "Klart",
+    1: "Mest klart",
+    2: "Delvis molnigt",
+    3: "Mulet",
+    45: "Dimma",
+    48: "Dimma",
+    51: "Lätt duggregn",
+    53: "Duggregn",
+    55: "Tätt duggregn",
+    61: "Lätt regn",
+    63: "Regn",
+    65: "Kraftigt regn",
+    71: "Lätt snö",
+    73: "Snö",
+    75: "Kraftig snö",
+    80: "Regnskurar",
+    81: "Kraftiga regnskurar",
+    82: "Mycket kraftiga regnskurar",
+    95: "Åska",
+    96: "Åska med hagel",
+    99: "Åska med hagel",
+}
 
 
-def _timeseries_param_map(timeseries: dict[str, Any]) -> dict[str, Any]:
-    return {p.get("name"): p.get("values", [None])[0] for p in timeseries.get("parameters", [])}
+def _fmt(value: float) -> str:
+    return f"{value:.4f}".rstrip("0").rstrip(".")
 
 
-def _format_coord(value: float) -> str:
-    return f"{value:.6f}".rstrip("0").rstrip(".")
+def _safe_list(payload: dict[str, Any], key: str) -> list[Any]:
+    value = payload.get(key)
+    return value if isinstance(value, list) else []
 
 
-def _build_hourly_forecast(time_series: list[dict[str, Any]], hours: int = 24) -> list[dict[str, Any]]:
-    hourly: list[dict[str, Any]] = []
-    for row in time_series[:hours]:
-        params = _timeseries_param_map(row)
-        symbol = int(params.get("Wsymb2") or 0)
-        hourly.append(
+def _build_open_meteo_url(lat: float, lon: float) -> str:
+    params = {
+        "latitude": _fmt(lat),
+        "longitude": _fmt(lon),
+        "current": "temperature_2m,wind_speed_10m,precipitation,weather_code,time",
+        "hourly": "temperature_2m,wind_speed_10m,precipitation_probability,weather_code",
+        "daily": "temperature_2m_max,temperature_2m_min,weather_code",
+        "forecast_days": 7,
+        "timezone": "UTC",
+    }
+    return f"{OPEN_METEO_URL}?{urlencode(params)}"
+
+
+def _build_hourly(hourly: dict[str, Any], hours: int = 24) -> list[dict[str, Any]]:
+    times = _safe_list(hourly, "time")[:hours]
+    temps = _safe_list(hourly, "temperature_2m")[:hours]
+    wind = _safe_list(hourly, "wind_speed_10m")[:hours]
+    precip = _safe_list(hourly, "precipitation_probability")[:hours]
+    code = _safe_list(hourly, "weather_code")[:hours]
+
+    rows: list[dict[str, Any]] = []
+    for idx, valid_time in enumerate(times):
+        weather_code = int(code[idx]) if idx < len(code) and code[idx] is not None else 0
+        rows.append(
             {
-                "valid_time": row.get("validTime"),
-                "temperature_c": params.get("t"),
-                "wind_ms": params.get("ws"),
-                "precip_mm_h": params.get("pmean"),
-                "symbol": symbol,
-                "description": WEATHER_SYMBOLS.get(symbol, "Okänd"),
+                "valid_time": valid_time,
+                "temperature_c": temps[idx] if idx < len(temps) else None,
+                "wind_ms": wind[idx] if idx < len(wind) else None,
+                "precip_mm_h": precip[idx] if idx < len(precip) else None,
+                "symbol": weather_code,
+                "description": WEATHER_CODES.get(weather_code, "Okänd"),
             }
         )
-    return hourly
+    return rows
 
 
-def _build_daily_forecast(time_series: list[dict[str, Any]], days: int = 7) -> list[dict[str, Any]]:
-    daily_map: dict[str, dict[str, Any]] = {}
-    for row in time_series:
-        valid_time = row.get("validTime")
-        if not valid_time:
-            continue
-        day_key = valid_time[:10]
-        params = _timeseries_param_map(row)
-        temp = params.get("t")
-        symbol = int(params.get("Wsymb2") or 0)
+def _build_daily(daily: dict[str, Any], days: int = 7) -> list[dict[str, Any]]:
+    dates = _safe_list(daily, "time")[:days]
+    max_t = _safe_list(daily, "temperature_2m_max")[:days]
+    min_t = _safe_list(daily, "temperature_2m_min")[:days]
+    code = _safe_list(daily, "weather_code")[:days]
 
-        if day_key not in daily_map:
-            daily_map[day_key] = {
-                "date": day_key,
-                "min_temp_c": temp,
-                "max_temp_c": temp,
-                "symbol": symbol,
-            }
-        else:
-            if temp is not None:
-                if daily_map[day_key]["min_temp_c"] is None:
-                    daily_map[day_key]["min_temp_c"] = temp
-                else:
-                    daily_map[day_key]["min_temp_c"] = min(daily_map[day_key]["min_temp_c"], temp)
-                if daily_map[day_key]["max_temp_c"] is None:
-                    daily_map[day_key]["max_temp_c"] = temp
-                else:
-                    daily_map[day_key]["max_temp_c"] = max(daily_map[day_key]["max_temp_c"], temp)
-
-        if len(daily_map) >= days:
-            break
-
-    daily: list[dict[str, Any]] = []
-    for day in daily_map.values():
-        symbol = int(day.get("symbol") or 0)
-        daily.append(
+    rows: list[dict[str, Any]] = []
+    for idx, date in enumerate(dates):
+        weather_code = int(code[idx]) if idx < len(code) and code[idx] is not None else 0
+        rows.append(
             {
-                "date": day.get("date"),
-                "min_temp_c": day.get("min_temp_c"),
-                "max_temp_c": day.get("max_temp_c"),
-                "symbol": symbol,
-                "description": WEATHER_SYMBOLS.get(symbol, "Okänd"),
+                "date": date,
+                "min_temp_c": min_t[idx] if idx < len(min_t) else None,
+                "max_temp_c": max_t[idx] if idx < len(max_t) else None,
+                "symbol": weather_code,
+                "description": WEATHER_CODES.get(weather_code, "Okänd"),
             }
         )
-    return daily
+    return rows
 
 
 def get_weather(
@@ -102,95 +110,33 @@ def get_weather(
     debug: bool = False,
     debug_dir: Path | None = None,
 ) -> dict[str, Any]:
-    lat_str = _format_coord(lat)
-    lon_str = _format_coord(lon)
-    urls = [
-        SMHI_URL_TEMPLATE.format(lat=lat_str, lon=lon_str),
-        SMHI_FALLBACK_URL_TEMPLATE.format(lat=lat_str, lon=lon_str),
-    ]
     opener = build_opener(ProxyHandler({}))
-    payload: dict[str, Any] | None = None
-    chosen_url = ""
-    last_error: Exception | None = None
+    url = _build_open_meteo_url(lat, lon)
+    print(f"[WEATHER] Anropar Open-Meteo: {url}")
 
-    for url in urls:
-        chosen_url = url
-        print(f"[SMHI] Anropar URL: {url}")
-        request = Request(url, headers={"User-Agent": "DailyBriefingBot/1.1 (+https://github.com/actions)"})
-        try:
-            with opener.open(request, timeout=timeout) as response:
-                status = getattr(response, "status", 200)
-                content_type = response.headers.get("Content-Type", "okänd")
-                raw = response.read()
-            if debug:
-                print(
-                    f"[SMHI][DEBUG] status={status} content-type={content_type} bytes={len(raw)}"
-                )
-                preview = raw.decode("utf-8", errors="replace")[:300].replace("\n", " ")
-                print(f"[SMHI][DEBUG] response preview: {preview}")
-            payload = json.loads(raw.decode("utf-8"))
-            if "json" not in content_type.lower():
-                raise ValueError(f"SMHI svarade med oväntad content-type: {content_type}")
-            if not isinstance(payload.get("timeSeries"), list) or not payload.get("timeSeries"):
-                raise ValueError("SMHI JSON saknar timeSeries/prognosdata")
-            if debug and debug_dir:
-                (debug_dir / "smhi_response.json").write_text(
-                    json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-                )
-            print(f"[SMHI] JSON verifierad från: {url}")
-            break
-        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, ValueError) as exc:
-            last_error = exc
-            print(f"[SMHI] FEL på URL {url}: {exc}")
-            payload = None
-            continue
+    request = Request(url, headers={"User-Agent": "DailyBriefingBot/1.1 (+https://github.com/actions)"})
+    try:
+        with opener.open(request, timeout=timeout) as response:
+            raw = response.read()
+        payload = json.loads(raw.decode("utf-8"))
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
+        return {"location": location_name, "error": f"Kunde inte hämta väderdata: {exc}"}
 
-    if payload is None:
-        print(f"SMHI parse failed because {last_error}")
-        if debug and debug_dir:
-            (debug_dir / "smhi_response.json").write_text(
-                json.dumps({"error": str(last_error), "url": chosen_url}, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        return {"location": location_name, "error": f"Kunde inte hämta väderdata: {last_error}"}
+    if debug and debug_dir:
+        (debug_dir / "smhi_response.json").write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
-    now_utc = datetime.now(timezone.utc)
-    time_series = payload.get("timeSeries", [])
-    if debug:
-        print(f"[SMHI][DEBUG] timeSeries count: {len(time_series)}")
-    selected = None
-    for item in time_series:
-        valid = item.get("validTime")
-        if not valid:
-            continue
-        valid_dt = datetime.fromisoformat(valid.replace("Z", "+00:00"))
-        if valid_dt >= now_utc:
-            selected = item
-            break
-    if not selected and time_series:
-        selected = time_series[0]
-    if not selected:
-        print("[SMHI] FEL: svar innehöll ingen prognosrad.")
-        print("SMHI parse failed because timeSeries saknar användbar prognos")
-        return {"location": location_name, "error": "SMHI svarade utan prognosdata."}
-
-    param_map = _timeseries_param_map(selected)
-    symbol = int(param_map.get("Wsymb2") or 0)
-    weather = {
+    current = payload.get("current") or {}
+    code = int(current.get("weather_code") or 0)
+    return {
         "location": location_name,
-        "temperature_c": param_map.get("t"),
-        "wind_ms": param_map.get("ws"),
-        "precip_mm_h": param_map.get("pmean"),
-        "description": WEATHER_SYMBOLS.get(symbol, "Okänd"),
-        "forecast_time_utc": selected.get("validTime"),
-        "hourly_24": _build_hourly_forecast(time_series, hours=24),
-        "daily_7": _build_daily_forecast(time_series, days=7),
+        "temperature_c": current.get("temperature_2m"),
+        "wind_ms": current.get("wind_speed_10m"),
+        "precip_mm_h": current.get("precipitation"),
+        "description": WEATHER_CODES.get(code, "Okänd"),
+        "forecast_time_utc": current.get("time"),
+        "hourly_24": _build_hourly(payload.get("hourly") or {}, hours=24),
+        "daily_7": _build_daily(payload.get("daily") or {}, days=7),
         "error": None,
     }
-    print(
-        "[SMHI] OK: "
-        f"{location_name} {weather['temperature_c']}°C, "
-        f"{weather['description']}, vind {weather['wind_ms']} m/s"
-    )
-    print("SMHI fetch OK")
-    return weather
