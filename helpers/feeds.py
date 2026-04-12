@@ -447,7 +447,7 @@ def collect_latest_youtube_videos(
     feeds: list[dict[str, str]],
     max_items: int = 400,
     per_feed_items: int = 5,
-    lookback_hours: int = 72,
+    lookback_hours: int = 168,
     debug: bool = False,
     debug_dir: Path | None = None,
     with_stats: bool = False,

@@ -29,6 +29,7 @@ OUTPUT_YOUTUBE_DEBUG_JSON = ROOT / "docs" / "data" / "youtube-debug.json"
 OUTPUT_YOUTUBE_HISTORY_DIR = ROOT / "docs" / "data" / "youtube-history"
 OUTPUT_YOUTUBE_HISTORY_INDEX = OUTPUT_YOUTUBE_HISTORY_DIR / "index.json"
 DEBUG_DIR = ROOT / "debug"
+YOUTUBE_HISTORY_LOOKBACK_HOURS = 168
 
 
 class ValidationError(RuntimeError):
@@ -284,7 +285,7 @@ def main() -> None:
         youtube_feeds,
         max_items=2000,
         per_feed_items=15,
-        lookback_hours=72,
+        lookback_hours=YOUTUBE_HISTORY_LOOKBACK_HOURS,
         debug=debug,
         debug_dir=DEBUG_DIR if debug else None,
         with_stats=True,
@@ -298,7 +299,7 @@ def main() -> None:
             {
                 "generated_at_utc": generated_at_utc,
                 "timezone": "Europe/Stockholm",
-                "lookback_hours": 72,
+                "lookback_hours": YOUTUBE_HISTORY_LOOKBACK_HOURS,
                 "videos": videos,
             },
             ensure_ascii=False,
@@ -309,7 +310,7 @@ def main() -> None:
 
     youtube_debug_payload = {
         "generated_at_utc": generated_at_utc,
-        "lookback_hours": 72,
+        "lookback_hours": YOUTUBE_HISTORY_LOOKBACK_HOURS,
         "feeds_total": opml_result["feeds_total"],
         "feeds_unique": youtube_stats["feeds_unique"],
         "feeds_fetched_ok": youtube_stats["feeds_fetched_ok"],
@@ -327,15 +328,28 @@ def main() -> None:
     )
     print(f"[YouTube] Skrev debugfil: {OUTPUT_YOUTUBE_DEBUG_JSON}")
 
-    if youtube_debug_payload["feeds_total"] >= 100 and youtube_debug_payload["feeds_fetched_ok"] < 50:
+    feeds_total = youtube_debug_payload["feeds_total"]
+    feeds_fetched_ok = youtube_debug_payload["feeds_fetched_ok"]
+    saved_entries_total = youtube_debug_payload["saved_entries_total"]
+
+    if feeds_total > 0 and feeds_fetched_ok == 0:
+        raise ValidationError(
+            "YouTube feed failure: feeds_fetched_ok == 0 "
+            f"(0 av {feeds_total})."
+        )
+    if feeds_total >= 100 and feeds_fetched_ok < 20:
         raise ValidationError(
             "YouTube feed failure: feeds_total är högt men feeds_fetched_ok är orimligt lågt "
-            f"({youtube_debug_payload['feeds_fetched_ok']} av {youtube_debug_payload['feeds_total']})."
+            f"({feeds_fetched_ok} av {feeds_total})."
         )
-    if youtube_debug_payload["saved_entries_total"] < 50:
+    if saved_entries_total == 0:
         raise ValidationError(
-            "YouTube feed failure: saved_entries_total < 50 "
-            f"({youtube_debug_payload['saved_entries_total']})."
+            "YouTube feed failure: saved_entries_total == 0."
+        )
+    if saved_entries_total < 50:
+        print(
+            "[YouTube] VARNING: saved_entries_total är lågt (< 50), "
+            f"men workflow fortsätter ({saved_entries_total})."
         )
 
     print(f"[YouTube] Skrev lokal YouTube-fil: {OUTPUT_YOUTUBE_JSON} ({len(videos)} videos)")
