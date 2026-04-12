@@ -38,6 +38,34 @@ def _has_weather_value(weather: dict) -> bool:
     return weather.get("temperature_c") is not None or weather.get("wind_ms") is not None
 
 
+
+
+def _default_hourly_rows() -> list[dict]:
+    rows = []
+    for _ in range(24):
+        rows.append({
+            "valid_time": None,
+            "temperature_c": None,
+            "wind_ms": None,
+            "precip_mm_h": None,
+            "symbol": 0,
+            "description": "Okänd",
+        })
+    return rows
+
+
+def _default_daily_rows() -> list[dict]:
+    rows = []
+    for _ in range(7):
+        rows.append({
+            "date": None,
+            "min_temp_c": None,
+            "max_temp_c": None,
+            "symbol": 0,
+            "description": "Okänd",
+        })
+    return rows
+
 def _validate_counts(weather: dict, videos: list[dict], news: dict[str, list[dict]]) -> None:
     total_news = sum(len(items) for items in news.values())
     errors: list[str] = []
@@ -90,7 +118,7 @@ def main() -> None:
         DEBUG_DIR.mkdir(parents=True, exist_ok=True)
         print(f"[DEBUG] Aktiverat. Skriver debugfiler till: {DEBUG_DIR}")
 
-    print("[1/4] Hämtar väder från SMHI...")
+    print("[1/4] Hämtar väder från Open-Meteo...")
     weather = get_weather(
         lat=LOCATION["lat"],
         lon=LOCATION["lon"],
@@ -99,9 +127,9 @@ def main() -> None:
         debug_dir=DEBUG_DIR if debug else None,
     )
     if weather.get("error"):
-        print(f"[SMHI] Status: FEL - {weather['error']}")
+        print(f"[WEATHER] Status: FEL - {weather['error']}")
     else:
-        print("[SMHI] Status: OK")
+        print("[WEATHER] Status: OK")
     OUTPUT_WEATHER_JSON.parent.mkdir(parents=True, exist_ok=True)
     weather_payload = {
         "location": LOCATION["name"],
@@ -115,15 +143,15 @@ def main() -> None:
             "description": weather.get("description"),
             "forecast_time_utc": weather.get("forecast_time_utc"),
         },
-        "hourly_24": weather.get("hourly_24") or [],
-        "daily_7": weather.get("daily_7") or [],
+        "hourly_24": weather.get("hourly_24") or _default_hourly_rows(),
+        "daily_7": weather.get("daily_7") or _default_daily_rows(),
         "error": weather.get("error"),
     }
     OUTPUT_WEATHER_JSON.write_text(
         json.dumps(weather_payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    print(f"[SMHI] Skrev lokal väderfil: {OUTPUT_WEATHER_JSON}")
+    print(f"[WEATHER] Skrev lokal väderfil: {OUTPUT_WEATHER_JSON}")
 
     print("[2/4] Läser OPML och hämtar YouTube-feeds...")
     if OPML_FILE.exists():

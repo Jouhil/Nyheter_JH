@@ -2,41 +2,35 @@
   const GOTHENBURG = { name: "Göteborg", lat: 57.7089, lon: 11.9746 };
   const LOCAL_WEATHER_PATH = "data/weather-goteborg.json";
   const API = (lat, lon) =>
-    `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon}/lat/${lat}/data.json`;
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,wind_speed_10m,precipitation,weather_code,time&hourly=temperature_2m,wind_speed_10m,precipitation_probability,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&forecast_days=7&timezone=UTC`;
 
   const SYMBOLS = {
-    1: ["☀️", "Klart"], 2: ["🌤️", "Nästan klart"], 3: ["⛅", "Växlande molnighet"],
-    4: ["🌥️", "Halvklart"], 5: ["☁️", "Molnigt"], 6: ["☁️", "Mulet"], 7: ["🌫️", "Dimma"],
-    8: ["🌦️", "Lätta regnskurar"], 9: ["🌧️", "Regnskurar"], 10: ["⛈️", "Kraftiga regnskurar"],
-    11: ["⛈️", "Åska"], 18: ["🌦️", "Lätt regn"], 19: ["🌧️", "Regn"], 20: ["🌧️", "Kraftigt regn"],
-    21: ["⛈️", "Åska"], 22: ["🌨️", "Snöblandat regn"], 23: ["🌨️", "Snöblandat regn"],
-    24: ["🌨️", "Kraftigt snöblandat regn"], 25: ["❄️", "Snöfall"], 26: ["❄️", "Snöfall"], 27: ["❄️", "Kraftigt snöfall"],
+    0: ["☀️", "Klart"], 1: ["🌤️", "Mest klart"], 2: ["⛅", "Delvis molnigt"], 3: ["☁️", "Mulet"],
+    45: ["🌫️", "Dimma"], 48: ["🌫️", "Dimma"], 51: ["🌦️", "Lätt duggregn"], 53: ["🌦️", "Duggregn"],
+    55: ["🌧️", "Tätt duggregn"], 61: ["🌦️", "Lätt regn"], 63: ["🌧️", "Regn"], 65: ["🌧️", "Kraftigt regn"],
+    71: ["🌨️", "Lätt snö"], 73: ["❄️", "Snö"], 75: ["❄️", "Kraftig snö"], 80: ["🌧️", "Regnskurar"],
+    81: ["🌧️", "Kraftiga regnskurar"], 82: ["⛈️", "Mycket kraftiga regnskurar"], 95: ["⛈️", "Åska"],
+    96: ["⛈️", "Åska med hagel"], 99: ["⛈️", "Åska med hagel"],
   };
 
   const byId = (id) => document.getElementById(id);
-  const pick = (params, name) => (params.find((p) => p.name === name)?.values || [null])[0];
-  const fmtHour = (iso) => new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" });
-  const fmtDay = (iso) => new Date(iso).toLocaleDateString("sv-SE", { weekday: "short" });
+  const fmtHour = (iso) => (iso ? new Date(iso).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" }) : "--:--");
+  const fmtDay = (iso) => (iso ? new Date(iso).toLocaleDateString("sv-SE", { weekday: "short" }) : "-" );
   const safeNum = (value, digits = 1) => (value == null || Number.isNaN(Number(value)) ? "-" : Number(value).toFixed(digits));
   const toIsoOrDash = (value) => (value ? new Date(value).toLocaleString("sv-SE") : "-");
 
-  function renderNow(data, locationName) {
-    const current = data.timeSeries?.[0];
-    if (!current) throw new Error("Ingen aktuell prognosrad");
-
-    const t = pick(current.parameters, "t");
-    const ws = pick(current.parameters, "ws");
-    const p = pick(current.parameters, "pmean");
-    const symbol = pick(current.parameters, "Wsymb2");
-    const [icon, text] = SYMBOLS[symbol] || ["⛅", "Okänd"];
+  function renderNowFromApi(data, locationName) {
+    const current = data.current || {};
+    const code = Number(current.weather_code ?? 0);
+    const [icon, text] = SYMBOLS[code] || ["⛅", "Okänd"];
 
     byId("weather-location").textContent = locationName;
-    byId("weather-temp").textContent = `${Math.round(t)}°C`;
+    byId("weather-temp").textContent = `${safeNum(current.temperature_2m, 0)}°C`;
     byId("weather-desc").textContent = text;
     byId("weather-icon").textContent = icon;
-    byId("weather-wind").textContent = `${ws ?? "-"} m/s`;
-    byId("weather-precip").textContent = `${p ?? "-"} mm/h`;
-    byId("weather-updated").textContent = new Date(current.validTime).toLocaleString("sv-SE");
+    byId("weather-wind").textContent = `${safeNum(current.wind_speed_10m)} m/s`;
+    byId("weather-precip").textContent = `${safeNum(current.precipitation)} mm/h`;
+    byId("weather-updated").textContent = toIsoOrDash(current.time);
   }
 
   function renderNowFromLocal(payload) {
@@ -47,55 +41,44 @@
     byId("weather-wind").textContent = `${safeNum(current.wind_ms)} m/s`;
     byId("weather-precip").textContent = `${safeNum(current.precip_mm_h)} mm/h`;
     byId("weather-updated").textContent = toIsoOrDash(current.forecast_time_utc);
-    const symbol = current.symbol;
-    const [icon] = SYMBOLS[symbol] || ["⛅"];
+    const [icon] = SYMBOLS[current.symbol] || ["⛅"];
     byId("weather-icon").textContent = icon;
   }
 
-  function renderHourly(data) {
+  function renderHourlyFromApi(data) {
     const target = byId("weather-hourly");
-    const points = (data.timeSeries || []).slice(0, 24);
-    if (!points.length) {
+    const time = (data.hourly?.time || []).slice(0, 24);
+    const temp = (data.hourly?.temperature_2m || []).slice(0, 24);
+    const code = (data.hourly?.weather_code || []).slice(0, 24);
+
+    if (!time.length) {
       target.innerHTML = "<p class='muted'>Ingen timprognos tillgänglig.</p>";
       return;
     }
-    target.innerHTML = points
-      .map((row) => {
-        const t = pick(row.parameters, "t");
-        const symbol = pick(row.parameters, "Wsymb2");
-        const [icon] = SYMBOLS[symbol] || ["⛅"];
-        return `<article class="hour-card"><p>${fmtHour(row.validTime)}</p><div>${icon}</div><strong>${Math.round(t)}°</strong></article>`;
+    target.innerHTML = time
+      .map((validTime, idx) => {
+        const [icon] = SYMBOLS[Number(code[idx] ?? 0)] || ["⛅"];
+        return `<article class="hour-card"><p>${fmtHour(validTime)}</p><div>${icon}</div><strong>${safeNum(temp[idx], 0)}°</strong></article>`;
       })
       .join("");
   }
 
-  function renderDaily(data) {
+  function renderDailyFromApi(data) {
     const target = byId("weather-daily");
-    const rows = data.timeSeries || [];
-    const days = new Map();
+    const days = (data.daily?.time || []).slice(0, 7);
+    const max = (data.daily?.temperature_2m_max || []).slice(0, 7);
+    const min = (data.daily?.temperature_2m_min || []).slice(0, 7);
+    const code = (data.daily?.weather_code || []).slice(0, 7);
 
-    for (const row of rows) {
-      const d = row.validTime.slice(0, 10);
-      const temp = pick(row.parameters, "t");
-      const symbol = pick(row.parameters, "Wsymb2");
-      if (!days.has(d)) days.set(d, { min: temp, max: temp, symbol });
-      else {
-        const day = days.get(d);
-        day.min = Math.min(day.min, temp);
-        day.max = Math.max(day.max, temp);
-      }
-      if (days.size >= 7) break;
-    }
-
-    if (!days.size) {
+    if (!days.length) {
       target.innerHTML = "<p class='muted'>Ingen dygnsprognos tillgänglig.</p>";
       return;
     }
 
-    target.innerHTML = [...days.entries()]
-      .map(([date, day]) => {
-        const [icon] = SYMBOLS[day.symbol] || ["⛅"];
-        return `<article class="day-card"><p>${fmtDay(date)}</p><div>${icon}</div><strong>${Math.round(day.max)}° / ${Math.round(day.min)}°</strong></article>`;
+    target.innerHTML = days
+      .map((day, idx) => {
+        const [icon] = SYMBOLS[Number(code[idx] ?? 0)] || ["⛅"];
+        return `<article class="day-card"><p>${fmtDay(day)}</p><div>${icon}</div><strong>${safeNum(max[idx], 0)}° / ${safeNum(min[idx], 0)}°</strong></article>`;
       })
       .join("");
   }
@@ -138,12 +121,12 @@
   }
 
   async function fetchWeather(lat, lon, name) {
-    const res = await fetch(API(lat.toFixed(6), lon.toFixed(6)));
-    if (!res.ok) throw new Error(`SMHI svarade ${res.status}`);
+    const res = await fetch(API(lat, lon));
+    if (!res.ok) throw new Error(`Open-Meteo svarade ${res.status}`);
     const data = await res.json();
-    renderNow(data, name);
-    renderHourly(data);
-    renderDaily(data);
+    renderNowFromApi(data, name);
+    renderHourlyFromApi(data);
+    renderDailyFromApi(data);
   }
 
   async function fetchLocalWeather() {
@@ -189,7 +172,7 @@
             });
           },
           () => {
-            // best effort only; behåll Göteborg-data
+            // behåll Göteborg-data
           },
           { timeout: 8000, enableHighAccuracy: false, maximumAge: 300000 }
         );

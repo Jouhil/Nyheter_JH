@@ -131,6 +131,19 @@ body {
 .summary { margin: 0.45rem 0 0; line-height: 1.45; font-size: 0.92rem; }
 .muted { color: var(--muted); }
 
+
+.video-thumb {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin: 0.1rem 0 0.5rem;
+  display: block;
+}
+.thumb-link { display: inline-block; }
+
 .video-links { display: flex; gap: 0.55rem; margin-top: 0.45rem; flex-wrap: wrap; }
 .yt-open, .yt-alt {
   font-size: 0.82rem;

@@ -18,6 +18,8 @@ TAG_RE = re.compile(r"<[^>]+>")
 URL_RE = re.compile(r"https?://\S+")
 SPACE_RE = re.compile(r"\s+")
 SENTENCE_TRIM_RE = re.compile(r"\s*[•|]\s*")
+EMOJI_RE = re.compile(r"[\U00010000-\U0010ffff]", flags=re.UNICODE)
+PROMO_RE = re.compile(r"\b(subscribe|follow|patreon|sponsor|sponsored|instagram|twitter|tiktok|merch|affiliate|rabattkod|annons)\b", re.IGNORECASE)
 XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 
@@ -78,7 +80,10 @@ def _clean_text(value: str | None) -> str:
     text = TAG_RE.sub(" ", text)
     text = URL_RE.sub("", text)
     text = SENTENCE_TRIM_RE.sub(" ", text)
-    return SPACE_RE.sub(" ", text).strip()
+    text = EMOJI_RE.sub("", text)
+    text = re.sub(r"[\*_=~]{2,}", " ", text)
+    text = re.sub(r"\s+", " ", text)
+    return SPACE_RE.sub(" ", text).strip(" -|•")
 
 
 def _split_sentences(text: str) -> list[str]:
@@ -102,35 +107,33 @@ def _is_useful_sentence(sentence: str) -> bool:
     words = sentence.split()
     if len(words) < 5:
         return False
+    if PROMO_RE.search(sentence):
+        return False
     lowered = sentence.lower()
-    junk_markers = ["subscribe", "follow", "visit ", "patreon", "instagram", "twitter", "tiktok", "sponsor"]
-    return not any(marker in lowered for marker in junk_markers)
+    if "http" in lowered or "www." in lowered:
+        return False
+    return True
 
 
-def _make_video_summary(title: str, channel: str, source_text: str) -> str:
-    clean_source = _clean_text(source_text)[:2200]
-    clean_title = _clean_text(title) or "Videon"
-    clean_channel = _clean_text(channel) or "kanalen"
+def _first_entry_text(entry: ET.Element, names: list[str]) -> str:
+    value = _entry_text(entry, names)
+    return value or ""
 
-    if not clean_source:
-        return f"{clean_title}. Beskrivning saknas i feeden, så öppna videon för full kontext från {clean_channel}."
 
-    sentences = [s for s in _dedupe_sentences(_split_sentences(clean_source)) if _is_useful_sentence(s)]
+def _make_video_summary(title: str, source_texts: list[str]) -> str:
+    text_pool = " ".join(_clean_text(v) for v in source_texts if v)[:2400]
+    clean_title = _clean_text(title) or "videon"
+
+    if not text_pool:
+        return f"Videon handlar om {clean_title.lower()}. Mer detaljer saknas i feeden."
+
+    sentences = [s.rstrip(" .!?") + "." for s in _dedupe_sentences(_split_sentences(text_pool)) if _is_useful_sentence(s)]
     if not sentences:
-        return f"I videon från {clean_channel} förklaras huvudpunkterna kring {clean_title.lower()} med exempel och resonemang."
+        return f"Videon handlar om {clean_title.lower()}. Mer detaljer saknas i feeden."
 
-    selected = sentences[:3]
-    summary_parts = [f"I videon från {clean_channel} lyfts följande:"]
-    for idx, sentence in enumerate(selected, start=1):
-        if idx == 1:
-            summary_parts.append(f"Först: {sentence.rstrip('.!?')}.")
-        elif idx == 2:
-            summary_parts.append(f"Därefter: {sentence.rstrip('.!?')}.")
-        else:
-            summary_parts.append(f"Avslutningsvis: {sentence.rstrip('.!?')}.")
-
-    summary = " ".join(summary_parts)
-    return SPACE_RE.sub(" ", summary).strip()
+    first = sentences[0]
+    second = sentences[1] if len(sentences) > 1 else "Inslaget fokuserar på huvudpoängen och konkreta detaljer i ämnet."
+    return f"{first} {second}"
 
 
 def _tag_name(elem: ET.Element) -> str:
@@ -223,6 +226,16 @@ def _media_group_text(entry: ET.Element) -> str:
     return " ".join(collected).strip()
 
 
+
+
+def _media_thumbnail(entry: ET.Element) -> str | None:
+    for elem in entry.iter():
+        if _tag_name(elem) == "thumbnail":
+            url = elem.attrib.get("url")
+            if url:
+                return url.strip()
+    return None
+
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
     root = ET.fromstring(CONTROL_CHARS_RE.sub("", xml_text))
     root_name = _tag_name(root)
@@ -233,15 +246,13 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
         for entry in root.findall("{*}entry"):
             published_raw = _entry_text(entry, ["published", "updated"])
             published_dt = _parse_date(published_raw)
-            summary = " ".join(
-                part
-                for part in [
-                    _entry_text(entry, ["summary", "content"]),
-                    _media_group_text(entry),
-                    _entry_text_candidates(entry),
-                ]
-                if part
-            ).strip()
+            summary_sources = [
+                _first_entry_text(entry, ["description"]),
+                _first_entry_text(entry, ["summary"]),
+                _first_entry_text(entry, ["content"]),
+                _media_group_text(entry),
+                _entry_text_candidates(entry),
+            ]
             raw_link = _entry_link(entry)
             video_id = _extract_youtube_video_id(raw_link, entry)
             links = _build_youtube_links(raw_link, video_id)
@@ -254,10 +265,10 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                     "link": links["primary"],
                     "secondary_link": links["secondary"],
                     "video_id": video_id,
+                    "thumbnail": _media_thumbnail(entry),
                     "summary": _make_video_summary(
                         title=_entry_text(entry, ["title"]) or "",
-                        channel=feed_title,
-                        source_text=summary or "",
+                        source_texts=summary_sources,
                     ),
                 }
             )
@@ -270,15 +281,26 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                 channel_name = ch_title.strip()
             for entry in channel.findall("item"):
                 published_dt = _parse_date(entry.findtext("pubDate"))
-                summary = " ".join(
-                    part
-                    for part in [
-                        entry.findtext("description"),
-                        entry.findtext("summary"),
-                        entry.findtext("content"),
-                    ]
-                    if part
-                ).strip()
+                media_group_parts: list[str] = []
+                thumbnail = None
+                for child in list(entry):
+                    tag = _tag_name(child)
+                    if tag == "thumbnail" and child.attrib.get("url"):
+                        thumbnail = child.attrib.get("url", "").strip()
+                    if tag == "group":
+                        for nested in list(child):
+                            ntag = _tag_name(nested)
+                            if ntag == "thumbnail" and nested.attrib.get("url") and not thumbnail:
+                                thumbnail = nested.attrib.get("url", "").strip()
+                            if ntag in {"description", "content", "title", "text"}:
+                                media_group_parts.append(" ".join(part.strip() for part in nested.itertext() if part and part.strip()))
+
+                summary_sources = [
+                    entry.findtext("description") or "",
+                    entry.findtext("summary") or "",
+                    entry.findtext("content") or "",
+                    " ".join(media_group_parts),
+                ]
                 raw_link = (entry.findtext("link") or "#").strip()
                 video_id = _extract_youtube_video_id(raw_link, None)
                 links = _build_youtube_links(raw_link, video_id)
@@ -291,10 +313,10 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                         "link": links["primary"],
                         "secondary_link": links["secondary"],
                         "video_id": video_id,
+                        "thumbnail": thumbnail,
                         "summary": _make_video_summary(
                             title=(entry.findtext("title") or ""),
-                            channel=channel_name,
-                            source_text=summary,
+                            source_texts=summary_sources,
                         ),
                     }
                 )
