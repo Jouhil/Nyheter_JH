@@ -2,15 +2,208 @@
   "location": "Göteborg",
   "lat": 57.7089,
   "lon": 11.9746,
-  "generated_at": "2026-04-12T13:38:38.787293+00:00",
+  "generated_at": "2026-04-12T13:42:33.794803+00:00",
   "current": {
     "temperature_c": null,
     "wind_ms": null,
     "precip_mm_h": null,
-    "description": null,
+    "description": "Okänd",
     "forecast_time_utc": null
   },
-  "hourly_24": [],
+  "hourly_24": [
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    },
+    {
+      "valid_time": null,
+      "temperature_c": null,
+      "wind_ms": null,
+      "precip_mm_h": null,
+      "symbol": 0,
+      "description": "Okänd"
+    }
+  ],
   "daily_7": [],
-  "error": "Kunde inte hämta väderdata: <urlopen error [Errno 101] Network is unreachable>"
+  "error": null
 }
