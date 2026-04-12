@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+<head><title>YouTube Subs</title></head>
+<body>
+<outline text="YouTube">
+<outline type="rss" text="Mat Armstrong" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCcLYOTz3ct6_lk9iLToxxAw" htmlUrl="https://www.youtube.com/@MatArmstrongbmx"/>
+<outline type="rss" text="carwow" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUhFaUpnq31m6TNX2VKVSVA" htmlUrl="https://www.youtube.com/@carwow"/>
+<outline type="rss" text="AI Revolution" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC5l7RouTQ60oUjLjt1Nh-UQ" htmlUrl="https://www.youtube.com/@airevolutionx"/>
+<outline type="rss" text="Matt Wolfe" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UChpleBmo18P08aKCIgti38g" htmlUrl="https://www.youtube.com/@mreflow"/>
+<outline type="rss" text="Marques Brownlee" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ" htmlUrl="https://www.youtube.com/@mkbhd"/>
+<outline type="rss" text="Linus Tech Tips" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw" htmlUrl="https://www.youtube.com/@LinusTechTips"/>
+<outline type="rss" text="Mrwhosetheboss" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCMiJRAwDNSNzuYeN2uWa0pA" htmlUrl="https://www.youtube.com/@Mrwhosetheboss"/>
+<outline type="rss" text="AppleTrack" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC2VrA-oteANZQ07TquwBvAQ" htmlUrl="https://www.youtube.com/@AppleTrack"/>
+<outline type="rss" text="Creator Magic" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC08Fah8EIryeOZRkjBRohcQ" htmlUrl="https://www.youtube.com/@CreatorMagicAI"/>
+<outline type="rss" text="OpenAI" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXZCJLdBC09xxGZ6gcdrc6A" htmlUrl="https://www.youtube.com/@OpenAI"/>
+</outline>
+</body>
+</opml>

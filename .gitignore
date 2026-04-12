@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Local tooling
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+
+# Generated at runtime
+logs/
