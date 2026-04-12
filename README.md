@@ -3,10 +3,11 @@
 Den här lösningen bygger en **automatisk daglig briefing** som publiceras som statisk HTML via GitHub Pages.
 Ingen dator behöver vara igång när den körs.
 
-## Vad version 1 innehåller
+## Vad version 1.1 innehåller
 
 - Väder från SMHI (standard: Stockholm)
 - Senaste YouTube-videos från `youtube_prenumerationer.opml`
+- Svensk videosammanfattning (ca 2 meningar) per YouTube-post
 - Dagliga nyheter via öppna RSS-flöden (AI, teknik, Sverige)
 - Statisk och mobilvänlig sida i `docs/index.html`
 - Automatisk uppdatering varje morgon via GitHub Actions
@@ -106,8 +107,10 @@ Redigera `youtube_prenumerationer.opml`.
 
 ## Robusthet i lösningen
 
+- HTTP-anrop använder Python standardbibliotek med tydlig timeout och egen User-Agent
+- Proxy-bypass används i hämtningarna för att undvika 403 tunnel-fel i vissa miljöer
 - Nätverksfel fångas så att hela bygget inte kraschar
-- Timeout används för väderanrop
 - Trasiga feeds hoppas över istället för att stoppa processen
 - Datum normaliseras och sorteras konsekvent
-- OPML parser hanterar dåliga tecken via UTF-8 decode + sanering
+- OPML-parser hanterar dåliga tecken och har regex-fallback om XML är trasig
+- Workflown loggar antal hittade OPML-feeds, videos, nyheter per kategori och SMHI-status

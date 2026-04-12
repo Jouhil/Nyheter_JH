@@ -7,20 +7,23 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Any
 from urllib.error import URLError
-from urllib.request import urlopen
+from urllib.request import ProxyHandler, Request, build_opener
 
 NEWS_FEEDS: dict[str, list[tuple[str, str]]] = {
     "AI": [
         ("MIT AI News", "https://news.mit.edu/rss/topic/artificial-intelligence2"),
         ("Hugging Face Blog", "https://huggingface.co/blog/feed.xml"),
+        ("Google DeepMind", "https://deepmind.google/blog/rss.xml"),
     ],
     "Teknik": [
         ("The Verge", "https://www.theverge.com/rss/index.xml"),
         ("Ars Technica", "https://feeds.arstechnica.com/arstechnica/index"),
+        ("Wired", "https://www.wired.com/feed/rss"),
     ],
     "Sverige": [
         ("SVT Nyheter", "https://www.svt.se/nyheter/rss.xml"),
-        ("Sveriges Radio Ekot", "https://feeds.sr.se/P3Nyheter"),
+        ("Ekot", "https://feeds.sr.se/sr-ekot"),
+        ("Omni", "https://rss.omni.se/"),
     ],
 }
 
@@ -90,17 +93,30 @@ def _extract_items(xml_text: str, source: str) -> list[dict[str, Any]]:
 
 
 def fetch_news(max_per_category: int = 8) -> dict[str, list[dict[str, Any]]]:
+    opener = build_opener(ProxyHandler({}))
     result: dict[str, list[dict[str, Any]]] = {}
     for category, sources in NEWS_FEEDS.items():
         collected: list[dict[str, Any]] = []
         for source_name, url in sources:
+            request = Request(
+                url,
+                headers={
+                    "User-Agent": "DailyBriefingBot/1.1 (+https://github.com/actions)",
+                    "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml",
+                },
+            )
             try:
-                with urlopen(url, timeout=12) as response:
+                with opener.open(request, timeout=15) as response:
                     xml_text = response.read().decode("utf-8", errors="replace")
-                collected.extend(_extract_items(xml_text, source_name))
-            except (URLError, TimeoutError, ET.ParseError):
+                source_items = _extract_items(xml_text, source_name)
+                if not source_items:
+                    print(f"[Nyheter/{category}] VARNING: 0 poster från {source_name} ({url})")
+                collected.extend(source_items)
+            except (URLError, TimeoutError, ET.ParseError) as exc:
+                print(f"[Nyheter/{category}] VARNING: kunde inte läsa {source_name}: {exc}")
                 continue
 
         collected.sort(key=lambda x: x["published"], reverse=True)
         result[category] = collected[:max_per_category]
+        print(f"[Nyheter/{category}] OK: {len(result[category])} poster efter sortering.")
     return result
