@@ -123,7 +123,7 @@ def _render_list(items: list[dict], item_type: str) -> str:
                     "<a class='video-title' href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
                     "<div class='meta'>{subtitle}</div>"
                     "<p class='summary' aria-label='Sammanfattning'>{summary}</p>"
-                    "<div class='video-links'><a class='yt-open' href='{link}' target='_blank' rel='noopener noreferrer'>Öppna i YouTube</a></div>"
+                    "<div class='video-links'><a class='yt-open' href='{link}' target='_blank' rel='noopener noreferrer'>Öppna video</a></div>"
                     "</div></li>"
                 ).format(
                     link=escape(item.get("link", "#")),
@@ -159,7 +159,7 @@ def _render_youtube_shell() -> str:
       <p class="muted youtube-range" id="youtube-range-label">Senaste 24h från när sidan öppnades (Europe/Stockholm).</p>
     </div>
     <div id="youtube-list" class="youtube-list-root">
-      <p class='muted'>Laddar YouTube-videor...</p>
+      <p class='muted'>Laddar videor...</p>
     </div>
     """
 

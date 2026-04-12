@@ -134,7 +134,7 @@
     img.loading = 'lazy';
     img.referrerPolicy = 'no-referrer';
     img.src = video.thumbnail || (video.video_id ? `https://i.ytimg.com/vi/${video.video_id}/hqdefault.jpg` : 'https://i.ytimg.com/vi_webp/default/hqdefault.webp');
-    img.alt = `Thumbnail för ${video.title || 'YouTube-video'}`;
+    img.alt = `Thumbnail för ${video.title || 'video'}`;
     thumbWrap.appendChild(img);
 
     const content = document.createElement('div');
@@ -161,7 +161,7 @@
     openBtn.target = '_blank';
     openBtn.rel = 'noopener noreferrer';
     openBtn.referrerPolicy = 'no-referrer';
-    openBtn.textContent = 'Öppna i YouTube';
+    openBtn.textContent = 'Öppna video';
     links.append(openBtn);
 
     const copyBtn = document.createElement('button');
