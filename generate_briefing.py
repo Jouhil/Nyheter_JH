@@ -166,7 +166,7 @@ def main() -> None:
 
     videos = collect_latest_youtube_videos(
         youtube_feeds,
-        max_items=240,
+        max_items=800,
         per_feed_items=5,
         lookback_hours=72,
         debug=debug,
