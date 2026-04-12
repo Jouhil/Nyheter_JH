@@ -172,7 +172,13 @@ def main() -> None:
     print(f"[YouTube] Antal videor som skickas till rendering: {len(videos)}")
 
     print("[3/4] Hämtar nyheter från RSS...")
-    news = fetch_news(max_per_category=8, debug=debug, debug_dir=DEBUG_DIR if debug else None)
+    news = fetch_news(
+        max_per_category=8,
+        debug=debug,
+        debug_dir=DEBUG_DIR if debug else None,
+        interests_path=ROOT / 'config' / 'interests.json',
+        opml_path=OPML_FILE,
+    )
     for category, items in news.items():
         print(f"[Nyheter] {category}: {len(items)} poster till rendering")
 

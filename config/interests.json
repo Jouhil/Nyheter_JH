@@ -1,0 +1,30 @@
+{
+  "primary_topics": {
+    "hockey": [
+      "Frölunda",
+      "NHL",
+      "New York Rangers",
+      "NY Rangers",
+      "Carolina Hurricanes",
+      "Dallas Stars",
+      "Florida Panthers"
+    ],
+    "football": [
+      "ÖIS",
+      "Örgryte IS"
+    ],
+    "golf": [
+      "golf",
+      "PGA",
+      "DP World Tour",
+      "majors"
+    ]
+  },
+  "secondary_topics": {
+    "tech_ai": [
+      "AI",
+      "artificiell intelligens",
+      "teknik"
+    ]
+  }
+}
