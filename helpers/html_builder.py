@@ -16,17 +16,25 @@ def _format_sv_datetime(iso_value: str | None) -> str:
 
 
 def _render_weather(weather: dict) -> str:
-    if weather.get("error"):
-        return f"<p class='muted'>{escape(weather['error'])}</p>"
+    error = weather.get("error")
+    if error:
+        return f"<p class='muted'>{escape(str(error))}</p>"
+
+    location = weather.get("location") or "-"
+    temperature_c = weather.get("temperature_c") or weather.get("temperature") or "-"
+    description = weather.get("description") or "Ingen väderbeskrivning"
+    wind_ms = weather.get("wind_ms") or weather.get("wind") or "-"
+    precip_mm_h = weather.get("precip_mm_h") or weather.get("precipitation") or "-"
+    forecast_time_utc = weather.get("forecast_time_utc") or "-"
 
     return f"""
     <div class="weather-grid">
-      <div class="metric"><span>Plats</span><strong>{escape(weather['location'])}</strong></div>
-      <div class="metric"><span>Temperatur</span><strong>{weather.get('temperature_c', '–')} °C</strong></div>
-      <div class="metric"><span>Väder</span><strong>{escape(weather.get('description', 'Okänt'))}</strong></div>
-      <div class="metric"><span>Vind</span><strong>{weather.get('wind_ms', '–')} m/s</strong></div>
-      <div class="metric"><span>Nederbörd</span><strong>{weather.get('precip_mm_h', '–')} mm/h</strong></div>
-      <div class="metric"><span>Prognostid (UTC)</span><strong>{escape(weather.get('forecast_time_utc', '–'))}</strong></div>
+      <div class="metric"><span>Plats</span><strong>{escape(str(location))}</strong></div>
+      <div class="metric"><span>Temperatur</span><strong>{temperature_c} °C</strong></div>
+      <div class="metric"><span>Väder</span><strong>{escape(str(description))}</strong></div>
+      <div class="metric"><span>Vind</span><strong>{wind_ms} m/s</strong></div>
+      <div class="metric"><span>Nederbörd</span><strong>{precip_mm_h} mm/h</strong></div>
+      <div class="metric"><span>Prognostid (UTC)</span><strong>{escape(str(forecast_time_utc))}</strong></div>
     </div>
     """
 
