@@ -408,12 +408,14 @@ def _normalize_video(item: dict[str, Any]) -> dict[str, Any]:
     published_utc = published.astimezone(timezone.utc) if isinstance(published, datetime) else datetime.min.replace(tzinfo=timezone.utc)
     published_stockholm = published_utc.astimezone(ZoneInfo("Europe/Stockholm"))
     short_match, short_signals = _is_short_candidate(item)
+    published_unix = int(published_utc.timestamp()) if published_utc != datetime.min.replace(tzinfo=timezone.utc) else None
 
     return {
         "video_id": item.get("video_id"),
         "title": item.get("title") or "Utan titel",
         "channel": item.get("channel") or "Okänd kanal",
         "published_at_utc": published_utc.isoformat(),
+        "published_at_unix": published_unix,
         "published_at_stockholm": published_stockholm.isoformat(),
         "thumbnail": item.get("thumbnail") or (
             f"https://i.ytimg.com/vi/{item.get('video_id')}/hqdefault.jpg" if item.get("video_id") else None
@@ -422,14 +424,14 @@ def _normalize_video(item: dict[str, Any]) -> dict[str, Any]:
         "summary": item.get("summary") or "",
         "url": item.get("link") or "#",
         "duration": item.get("duration_seconds"),
-        "short_signals": short_signals,
-        "is_probable_short": short_match,
+        "raw_short_signals": short_signals,
+        "is_short_candidate": short_match,
     }
 
 
 def collect_latest_youtube_videos(
     feeds: list[dict[str, str]],
-    max_items: int = 24,
+    max_items: int = 400,
     per_feed_items: int = 5,
     lookback_hours: int = 72,
     debug: bool = False,
@@ -468,15 +470,23 @@ def collect_latest_youtube_videos(
         if isinstance(item.get("published"), datetime) and lower_bound <= item["published"].astimezone(timezone.utc) <= now_utc
     ]
     normalized = [_normalize_video(item) for item in lookback_videos]
-    non_short_videos = [item for item in normalized if not item["is_probable_short"]]
 
-    non_short_videos.sort(key=lambda x: x["published_at_utc"], reverse=True)
-    filtered = non_short_videos[:max_items]
+    deduped: list[dict[str, Any]] = []
+    seen_keys: set[str] = set()
+    for item in sorted(normalized, key=lambda x: x["published_at_utc"], reverse=True):
+        unique_key = item.get("video_id") or item.get("url") or f"{item.get('channel')}::{item.get('title')}"
+        if unique_key in seen_keys:
+            continue
+        seen_keys.add(unique_key)
+        deduped.append(item)
+
+    filtered = deduped[:max_items]
 
     print(f"[YouTube] Totalt antal poster före filtrering: {before_filters}")
     print(f"[YouTube] Inom lookback {lookback_hours}h: {len(lookback_videos)}")
-    print(f"[YouTube] Efter Shorts-filter: {len(non_short_videos)}")
-    print(f"[YouTube] Efter sortering/gräns: {len(filtered)}")
+    print(f"[YouTube] Efter normalisering: {len(normalized)}")
+    print(f"[YouTube] Efter deduplicering: {len(deduped)}")
+    print(f"[YouTube] Poster sparade till JSON: {len(filtered)}")
     print(f"[YouTube] Totalt testade feeds: {tested}")
 
     if debug and debug_dir:

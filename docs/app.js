@@ -12,6 +12,13 @@
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
+  function parsePublishedDate(video) {
+    if (Number.isFinite(Number(video?.published_at_unix))) {
+      return new Date(Number(video.published_at_unix) * 1000);
+    }
+    return parseISO(video?.published_at_utc);
+  }
+
   function formatStockholmDateTime(date) {
     return new Intl.DateTimeFormat('sv-SE', {
       timeZone: STOCKHOLM_TZ,
@@ -26,16 +33,22 @@
   function isLikelyShort(video) {
     const signals = [];
     const url = String(video?.url || '').toLowerCase();
-    if (url.includes('/shorts/')) signals.push('url_contains_/shorts/');
+    if (url.includes('/shorts/')) {
+      signals.push('url_contains_/shorts/');
+      return { isShort: true, isCandidate: true, signals };
+    }
 
     const duration = Number(video?.duration);
-    if (Number.isFinite(duration) && duration <= 60) signals.push('duration_<=_60s');
+    if (Number.isFinite(duration) && duration <= 60) {
+      signals.push('duration_<=_60s');
+      return { isShort: true, isCandidate: true, signals };
+    }
 
-    const textBlob = [video?.title, video?.summary_source_text, ...(video?.short_signals || [])].join(' ').toLowerCase();
-    if (/\b(shorts?|#shorts|vertical|reel)\b/.test(textBlob)) signals.push('title_or_metadata_hint');
-
-    if (signals.includes('url_contains_/shorts/')) return { isShort: true, signals };
-    return { isShort: signals.length >= 2, signals };
+    const rawSignals = Array.isArray(video?.raw_short_signals) ? video.raw_short_signals : [];
+    if (rawSignals.length > 0) signals.push(...rawSignals);
+    const textBlob = [video?.title, video?.summary_source_text, ...rawSignals].join(' ').toLowerCase();
+    const metadataCandidate = /\b(shorts?|#shorts|vertical|reel)\b/.test(textBlob) || rawSignals.length > 0 || video?.is_short_candidate === true;
+    return { isShort: false, isCandidate: metadataCandidate, signals };
   }
 
   function createVideoCard(video) {
@@ -68,7 +81,7 @@
 
     const meta = document.createElement('div');
     meta.className = 'meta';
-    const published = parseISO(video.published_at_utc);
+    const published = parsePublishedDate(video);
     meta.textContent = `${video.channel || 'Okänd kanal'} • ${published ? formatStockholmDateTime(published) : 'Okänd tid'}`;
 
     const summary = document.createElement('p');
@@ -100,20 +113,38 @@
       const payload = await response.json();
       const now = new Date();
       const lower = new Date(now.getTime() - 24 * 3600 * 1000);
+      const allVideos = Array.isArray(payload?.videos) ? payload.videos : [];
 
-      const videos = (Array.isArray(payload?.videos) ? payload.videos : [])
-        .filter((video) => {
-          const published = parseISO(video.published_at_utc);
-          if (!published) return false;
-          if (published < lower || published > now) return false;
-          const shortDecision = isLikelyShort(video);
-          return !shortDecision.isShort;
+      const parsedVideos = allVideos
+        .map((video) => {
+          const published = parsePublishedDate(video);
+          return { ...video, _published: published };
         })
-        .sort((a, b) => new Date(b.published_at_utc).getTime() - new Date(a.published_at_utc).getTime());
+        .filter((video) => video._published && !Number.isNaN(video._published.getTime()));
+
+      const afterShortFilter = parsedVideos.filter((video) => {
+        const shortDecision = isLikelyShort(video);
+        video._shortDecision = shortDecision;
+        return !shortDecision.isShort;
+      });
+
+      const videos = afterShortFilter
+        .filter((video) => video._published >= lower && video._published <= now)
+        .sort((a, b) => b._published.getTime() - a._published.getTime());
+
+      console.log('[YouTube] Totalt antal videor i JSON:', allVideos.length);
+      console.log('[YouTube] Antal efter short-filter:', afterShortFilter.length);
+      console.log('[YouTube] Antal efter 24h-filter:', videos.length);
+      console.log('[YouTube] Första 5 parsed publiceringstider:', parsedVideos.slice(0, 5).map((v) => ({
+        title: v.title,
+        published_at_utc: v.published_at_utc,
+        published_at_unix: v.published_at_unix,
+        parsed_iso: v._published ? v._published.toISOString() : null,
+      })));
 
       const label = byId('youtube-range-label');
       if (label) {
-        label.textContent = `Visar ${videos.length} videor publicerade mellan ${formatStockholmDateTime(lower)} och ${formatStockholmDateTime(now)} (${STOCKHOLM_TZ}).`;
+        label.textContent = `Hämtade ${allVideos.length} totalt • ${afterShortFilter.length} efter shorts-filter • ${videos.length} senaste 24h (${formatStockholmDateTime(lower)}–${formatStockholmDateTime(now)}, ${STOCKHOLM_TZ}).`;
       }
 
       if (!videos.length) {
