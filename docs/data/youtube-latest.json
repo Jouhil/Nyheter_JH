@@ -1,8 +1,23 @@
 {
-  "generated_at_utc": "2026-04-12T17:01:05.486717+00:00",
+  "generated_at_utc": "2026-04-12T17:14:37.543371+00:00",
   "timezone": "Europe/Stockholm",
   "lookback_hours": 72,
   "videos": [
+    {
+      "video_id": "Ww8XkiOFWIQ",
+      "title": "Copper Thieves Stole Our EV Charging Cables",
+      "channel": "Linus Tech Tips",
+      "published_at_utc": "2026-04-12T17:00:00+00:00",
+      "published_at_unix": 1776013200,
+      "published_at_stockholm": "2026-04-12T19:00:00+02:00",
+      "thumbnail": "https://i4.ytimg.com/vi/Ww8XkiOFWIQ/hqdefault.jpg",
+      "summary_source_text": "   Copper Thieves Stole Our EV Charging Cables Get 20% off DeleteMe US consumer plans when you go to http://joindeleteme.com/LTT20 and use promo code LTT20 at checkout.\n\nDeleteMe International Plans: https://international.joindeleteme.com/\n\nGet 20% off DeleteMe US consumer plans when you go to http://joindeleteme.com/LTT20 and use promo code LTT20 at checkout.\n\nDeleteMe International Plans: https://international.joindeleteme.com/\n\nWhen life gives you lemons, you make lemonade. Or in our case, when life steals your EV charging cables for the copper, you make content out of it.\n\nDiscuss on the forum: https://linustechtips.com/topic/1635554-copper-thieves-stole-our-ev-charging-cables/\n\nCheck out Ubiquiti's EV Station Lite level 2 charger: https://store.ui.com/us/en/category/premium-iot/products/uc-ev-station-lite\n\nCheck out our Channel Partners:\nSecretlab - Grab a TITAN Evo ergonomic gaming chair:  https://lmg.gg/secretlabltt\nPIA - Get the VPN of our choice: https://www.piavpn.com/ltt\ndbrand - Buy a \"Circuit\" series skin for your device: https://dbrand.com/pcb\n\n► SHOP LTT PRODUCTS: https://lttstore.com\n► GET EXCLUSIVE CONTENT ON FLOATPLANE: https://lmg.gg/lttfloatplane\n► DIVE DEEPER ON THE LTT LABS WEBSITE: https://lmg.gg/labs\n► SPONSORS, AFFILIATES, AND PARTNERS: https://lmg.gg/partners\n\nPurchases made through some store links may provide some compensation to Linus Media Group. Affiliate links powered in part by https://affilimate.com/?aid=ghz1izbpb\n\nLinus Sebastian is an investor in Framework Computer, Inc and HexOS by Eshtek.\n\nCHAPTERS\n---------------------------------------------------\n0:00 Intro\n1:22 We had to get new chargers\n1:54 How do level 2 chargers work?\n2:22 We couldn't fix the chargers\n3:39 Interrupting Linus' vacation\n4:01 The silver lining\n5:17 The install\n5:59 Another opportunity\n8:27 Outro Get 20% off DeleteMe US consumer plans when you go to http://joindeleteme.com/LTT20 and use promo code LTT20 at checkout.\n\nDeleteMe International Plans: https://international.joindeleteme.com/\n\nGet 20% off DeleteMe US consumer plans when you go to http://joindeleteme.com/LTT20 and use promo code LTT20 at checkout.\n\nDeleteMe International Plans: https://international.joindeleteme.com/\n\nWhen life gives you lemons, you make lemonade. Or in our case, when life steals your EV charging cables for the copper, you make content out of it.\n\nDiscuss on the forum: https://linustechtips.com/topic/1635554-copper-thieves-stole-our-ev-charging-cables/\n\nCheck out Ubiquiti's EV Station Lite level 2 charger: https://store.ui.com/us/en/category/premium-iot/products/uc-ev-station-lite\n\nCheck out our Channel Partners:\nSecretlab - Grab a TITAN Evo ergonomic gaming chair:  https://lmg.gg/secretlabltt\nPIA - Get the VPN of our choice: https://www.piavpn.com/ltt\ndbrand - Buy a \"Circuit\" series skin for your device: https://dbrand.com/pcb\n\n► SHOP LTT PRODUCTS: https://lttstore.com\n► GET EXCLUSIVE CONTENT ON FLOATPLANE: https://lmg.gg/lttfloatplane\n► DIVE DEEPER ON THE LTT LABS WEBSITE: https://lmg.gg/labs\n► SPONSORS, AFFILIATES, AND PARTNERS: https://lmg.gg/partners\n\nPurchases made through some store links may provide some compensation to Linus Media Group. Affiliate links powered in part by https://affilimate.com/?aid=ghz1izbpb\n\nLinus Sebastian is an investor in Framework Computer, Inc and HexOS by Eshtek.\n\nCHAPTERS\n---------------------------------------------------\n0:00 Intro\n1:22 We had to get new chargers\n1:54 How do level 2 chargers work?\n2:22 We couldn't fix the chargers\n3:39 Interrupting Linus' vacation\n4:01 The silver lining\n5:17 The install\n5:59 Another opportunity\n8:27 Outro",
+      "summary": "Copper Thieves Stole Our EV Charging Cables Get 20% off DeleteMe US consumer plans when you go to and use promo code LTT20 at checkout. DeleteMe International Plans: Get 20% off DeleteMe US consumer plans when you go to and use promo code LTT20 at checkout.",
+      "url": "https://www.youtube.com/watch?v=Ww8XkiOFWIQ",
+      "duration": null,
+      "raw_short_signals": [],
+      "is_short_candidate": false
+    },
     {
       "video_id": "ByZsafOOKoM",
       "title": "ANOTHER Big AI Leak?!",
@@ -349,54 +364,6 @@
         "feed_metadata_short_hint"
       ],
       "is_short_candidate": true
-    },
-    {
-      "video_id": "AIZ_v_Xfb2k",
-      "title": "What Codex Unlocks for Braintrust",
-      "channel": "OpenAI",
-      "published_at_utc": "2026-04-09T17:09:11+00:00",
-      "published_at_unix": 1775754551,
-      "published_at_stockholm": "2026-04-09T19:09:11+02:00",
-      "thumbnail": "https://i2.ytimg.com/vi/AIZ_v_Xfb2k/hqdefault.jpg",
-      "summary_source_text": "   What Codex Unlocks for Braintrust “The really cool thing with Codex is that we get to iterate and ideate on feature requests with the customer in real time.” \n\nAnkur Goyal, founder & CEO of Braintrust dropped some builder knowledge in our latest episode of What Codex Unlocks. \n\nLearn more: https://openai.com/codex/\n\n#Codex #openaicodex #shorts “The really cool thing with Codex is that we get to iterate and ideate on feature requests with the customer in real time.” \n\nAnkur Goyal, founder & CEO of Braintrust dropped some builder knowledge in our latest episode of What Codex Unlocks. \n\nLearn more: https://openai.com/codex/\n\n#Codex #openaicodex #shorts",
-      "summary": "What Codex Unlocks for Braintrust “The really cool thing with Codex is that we get to iterate and ideate on feature requests with the customer in real time.” Ankur Goyal, founder & CEO of Braintrust dropped some builder. Learn more: “The really cool thing with Codex is that we get to iterate and ideate on feature requests with the customer in real time.” Ankur Goyal, founder & CEO of Braintrust dropped some builder knowledge in our lates.",
-      "url": "https://www.youtube.com/watch?v=AIZ_v_Xfb2k",
-      "duration": null,
-      "raw_short_signals": [
-        "title_or_text_short_hint",
-        "feed_metadata_short_hint"
-      ],
-      "is_short_candidate": true
-    },
-    {
-      "video_id": "WxUBCrr4CdE",
-      "title": "The Worst is Almost Over",
-      "channel": "Linus Tech Tips",
-      "published_at_utc": "2026-04-09T17:04:56+00:00",
-      "published_at_unix": 1775754296,
-      "published_at_stockholm": "2026-04-09T19:04:56+02:00",
-      "thumbnail": "https://i4.ytimg.com/vi/WxUBCrr4CdE/hqdefault.jpg",
-      "summary_source_text": "   The Worst is Almost Over We're all Born Private, and it should stay that way. Create a free account with Proton Mail - https://proton.me/ltt\n\nIs the AI bubble getting ready to burst? We’re seeing major spending cuts at OpenAI, Mass Layoffs at Oracle, and ludicrous valuations for companies that don’t have the revenues to back those values up, and DDR5 prices are dropping around the world. It’s starting to look like the RAM crisis won’t last forever.\n\nDiscuss on our Forums https://linustechtips.com/topic/1635378-the-worst-is-almost-over/\n► SHOP LTT PRODUCTS: https://lttstore.com\n► GET EXCLUSIVE CONTENT ON FLOATPLANE: https://lmg.gg/lttfloatplane\n► DIVE DEEPER ON THE LTT LABS WEBSITE: https://lmg.gg/labs\n► SPONSORS, AFFILIATES, AND PARTNERS: https://lmg.gg/partners\n\nPurchases made through some store links may provide some compensation to Linus Media Group. Affiliate links powered in part by https://affilimate.com/\n\nLinus Sebastian is an investor in Framework Computer, Inc and HexOS by Eshtek.\n\nCHAPTERS\n---------------------------------------------------\n0:00 Intro\n2:05 Tell me about the Tulips\n4:08 Where's the Profit?\n6:03 Why focus on OpenAI?\n8:08 But what about...?\n12:00 Credits We're all Born Private, and it should stay that way. Create a free account with Proton Mail - https://proton.me/ltt\n\nIs the AI bubble getting ready to burst? We’re seeing major spending cuts at OpenAI, Mass Layoffs at Oracle, and ludicrous valuations for companies that don’t have the revenues to back those values up, and DDR5 prices are dropping around the world. It’s starting to look like the RAM crisis won’t last forever.\n\nDiscuss on our Forums https://linustechtips.com/topic/1635378-the-worst-is-almost-over/\n► SHOP LTT PRODUCTS: https://lttstore.com\n► GET EXCLUSIVE CONTENT ON FLOATPLANE: https://lmg.gg/lttfloatplane\n► DIVE DEEPER ON THE LTT LABS WEBSITE: https://lmg.gg/labs\n► SPONSORS, AFFILIATES, AND PARTNERS: https://lmg.gg/partners\n\nPurchases made through some store links may provide some compensation to Linus Media Group. Affiliate links powered in part by https://affilimate.com/\n\nLinus Sebastian is an investor in Framework Computer, Inc and HexOS by Eshtek.\n\nCHAPTERS\n---------------------------------------------------\n0:00 Intro\n2:05 Tell me about the Tulips\n4:08 Where's the Profit?\n6:03 Why focus on OpenAI?\n8:08 But what about...?\n12:00 Credits",
-      "summary": "The Worst is Almost Over We're all Born Private, and it should stay that way. Create a free account with Proton Mail - Is the AI bubble getting ready to burst.",
-      "url": "https://www.youtube.com/watch?v=WxUBCrr4CdE",
-      "duration": null,
-      "raw_short_signals": [],
-      "is_short_candidate": false
-    },
-    {
-      "video_id": "pLyVlqhaieI",
-      "title": "What Codex Unlocks for Braintrust",
-      "channel": "OpenAI",
-      "published_at_utc": "2026-04-09T17:04:48+00:00",
-      "published_at_unix": 1775754288,
-      "published_at_stockholm": "2026-04-09T19:04:48+02:00",
-      "thumbnail": "https://i1.ytimg.com/vi/pLyVlqhaieI/hqdefault.jpg",
-      "summary_source_text": "   What Codex Unlocks for Braintrust \"The really cool thing with Codex, is that we get to iterate and ideate on feature requests with the customer in real time.”\n\nAnkur Goyal, founder & CEO of Braintrust dropped some builder knowledge in our latest episode of What Codex Unlocks. \n\nLearn more: https://openai.com/codex/ \"The really cool thing with Codex, is that we get to iterate and ideate on feature requests with the customer in real time.”\n\nAnkur Goyal, founder & CEO of Braintrust dropped some builder knowledge in our latest episode of What Codex Unlocks. \n\nLearn more: https://openai.com/codex/",
-      "summary": "What Codex Unlocks for Braintrust \"The really cool thing with Codex, is that we get to iterate and ideate on feature requests with the customer in real time.” Ankur Goyal, founder & CEO of Braintrust dropped some builder. Learn more: \"The really cool thing with Codex, is that we get to iterate and ideate on feature requests with the customer in real time.” Ankur Goyal, founder & CEO of Braintrust dropped some builder knowledge in our late.",
-      "url": "https://www.youtube.com/watch?v=pLyVlqhaieI",
-      "duration": null,
-      "raw_short_signals": [],
-      "is_short_candidate": false
     }
   ]
 }
