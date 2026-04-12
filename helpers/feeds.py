@@ -25,6 +25,11 @@ XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"', re.IGNORECASE)
 YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 SHORT_HINT_RE = re.compile(r"\b(shorts?|#shorts|vertical|reel)\b", re.IGNORECASE)
 SHORT_METADATA_RE = re.compile(r"(yt:short|shorts|reel|portrait|9:16)", re.IGNORECASE)
+SHORT_HASHTAG_RE = re.compile(r"#(?:shorts|ytshorts)\b", re.IGNORECASE)
+SOCIAL_SHORT_STYLE_RE = re.compile(
+    r"\b(?:follow|subscribe|like\s+and\s+subscribe|watch\s+till\s+the\s+end|part\s*\d+|link\s+in\s+bio|viral)\b",
+    re.IGNORECASE,
+)
 SWEDISH_SUMMARY_HINT_RE = re.compile(
     r"\b(videon|klippet|kanalen|reportaget|genomgång|förklarar|visar|diskuterar)\b",
     re.IGNORECASE,
@@ -276,13 +281,37 @@ def _media_group_text(entry: ET.Element) -> str:
     return " ".join(collected).strip()
 
 
-def _media_thumbnail(entry: ET.Element) -> str | None:
+def _thumbnail_dimensions_from_url(url: str | None) -> tuple[int | None, int | None]:
+    if not url:
+        return None, None
+    match = re.search(r"/(\d+)[xX](\d+)/", url)
+    if match:
+        return int(match.group(1)), int(match.group(2))
+    return None, None
+
+
+def _to_int_or_none(value: str | None) -> int | None:
+    if not value:
+        return None
+    cleaned = value.strip()
+    if cleaned.isdigit():
+        return int(cleaned)
+    return None
+
+
+def _media_thumbnail(entry: ET.Element) -> tuple[str | None, int | None, int | None]:
     for elem in entry.iter():
         if _tag_name(elem) == "thumbnail":
             url = elem.attrib.get("url")
             if url:
-                return url.strip()
-    return None
+                width = _to_int_or_none(elem.attrib.get("width"))
+                height = _to_int_or_none(elem.attrib.get("height"))
+                if width is None or height is None:
+                    inferred_width, inferred_height = _thumbnail_dimensions_from_url(url)
+                    width = width or inferred_width
+                    height = height or inferred_height
+                return url.strip(), width, height
+    return None, None, None
 
 
 def _extract_duration_seconds(entry: ET.Element) -> int | None:
@@ -309,17 +338,41 @@ def _is_short_candidate(item: dict[str, Any]) -> tuple[bool, list[str]]:
     signals: list[str] = []
     if "/shorts/" in links:
         signals.append("url_contains_/shorts/")
-        return True, signals
-
     weak_signals = 0
     duration = item.get("duration_seconds")
-    if duration is not None and duration <= 60:
+    if duration is not None and duration <= 70:
         weak_signals += 1
-        signals.append("duration_<=_60s")
+        signals.append("duration_<=_70s")
+
+    title = item.get("title") or ""
+    if re.search(r"#shorts\b", title, flags=re.IGNORECASE):
+        signals.append("title_contains_#shorts")
+    if re.search(r"\bshorts\b", title, flags=re.IGNORECASE):
+        weak_signals += 1
+        signals.append("title_contains_word_shorts")
+
+    summary_source = item.get("summary_source") or ""
+    cleaned_source = _clean_text(summary_source)
+    text_length = len(cleaned_source)
+    if SHORT_HASHTAG_RE.search(summary_source):
+        weak_signals += 1
+        signals.append("source_contains_short_hashtag")
+    if text_length > 0 and text_length <= 80:
+        weak_signals += 1
+        signals.append("very_short_source_text")
+    if SOCIAL_SHORT_STYLE_RE.search(summary_source):
+        weak_signals += 1
+        signals.append("social_caption_style")
+
+    width = item.get("thumbnail_width")
+    height = item.get("thumbnail_height")
+    if isinstance(width, int) and isinstance(height, int) and width > 0 and height > 0 and height > width:
+        weak_signals += 1
+        signals.append("thumbnail_vertical")
 
     meta_blob = " ".join([
         item.get("title") or "",
-        item.get("summary_source") or "",
+        summary_source,
         item.get("feed_metadata_blob") or "",
     ])
     if SHORT_HINT_RE.search(meta_blob):
@@ -329,7 +382,10 @@ def _is_short_candidate(item: dict[str, Any]) -> tuple[bool, list[str]]:
         weak_signals += 1
         signals.append("feed_metadata_short_hint")
 
-    return weak_signals >= 2, signals
+    is_candidate = "/shorts/" in links or weak_signals >= 2 or any(
+        signal in {"title_contains_#shorts", "source_contains_short_hashtag"} for signal in signals
+    )
+    return is_candidate, signals
 
 
 def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]]:
@@ -358,6 +414,7 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                 f"{elem.tag} {' '.join(f'{k}:{v}' for k, v in elem.attrib.items())}"
                 for elem in entry.iter()
             )
+            thumbnail_url, thumbnail_width, thumbnail_height = _media_thumbnail(entry)
             items.append(
                 {
                     "title": title,
@@ -367,7 +424,9 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                     "link": links["primary"],
                     "secondary_link": links["secondary"],
                     "video_id": video_id,
-                    "thumbnail": _media_thumbnail(entry),
+                    "thumbnail": thumbnail_url,
+                    "thumbnail_width": thumbnail_width,
+                    "thumbnail_height": thumbnail_height,
                     "duration_seconds": _extract_duration_seconds(entry),
                     "feed_metadata_blob": metadata_blob,
                     "summary_source": summary_source_text,
@@ -385,17 +444,26 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                 published_dt = _parse_date(entry.findtext("pubDate"))
                 media_group_parts: list[str] = []
                 thumbnail = None
+                thumbnail_width = None
+                thumbnail_height = None
                 for child in list(entry):
                     tag = _tag_name(child)
                     if tag == "thumbnail" and child.attrib.get("url"):
                         thumbnail = child.attrib.get("url", "").strip()
+                        thumbnail_width = _to_int_or_none(child.attrib.get("width"))
+                        thumbnail_height = _to_int_or_none(child.attrib.get("height"))
                     if tag == "group":
                         for nested in list(child):
                             ntag = _tag_name(nested)
                             if ntag == "thumbnail" and nested.attrib.get("url") and not thumbnail:
                                 thumbnail = nested.attrib.get("url", "").strip()
+                                thumbnail_width = _to_int_or_none(nested.attrib.get("width"))
+                                thumbnail_height = _to_int_or_none(nested.attrib.get("height"))
                             if ntag in {"description", "content", "title", "text"}:
                                 media_group_parts.append(" ".join(part.strip() for part in nested.itertext() if part and part.strip()))
+                inferred_width, inferred_height = _thumbnail_dimensions_from_url(thumbnail)
+                thumbnail_width = thumbnail_width or inferred_width
+                thumbnail_height = thumbnail_height or inferred_height
 
                 summary_sources = [
                     entry.findtext("description") or "",
@@ -421,6 +489,8 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
                         "secondary_link": links["secondary"],
                         "video_id": video_id,
                         "thumbnail": thumbnail,
+                        "thumbnail_width": thumbnail_width,
+                        "thumbnail_height": thumbnail_height,
                         "duration_seconds": _extract_duration_seconds(entry),
                         "feed_metadata_blob": metadata_blob,
                         "summary_source": " ".join(summary_sources),
@@ -436,6 +506,8 @@ def _normalize_video(item: dict[str, Any]) -> dict[str, Any]:
     published_stockholm = published_utc.astimezone(ZoneInfo("Europe/Stockholm"))
     short_match, short_signals = _is_short_candidate(item)
     published_unix = int(published_utc.timestamp()) if published_utc != datetime.min.replace(tzinfo=timezone.utc) else None
+    summary_source_text = item.get("summary_source") or ""
+    cleaned_text_length = len(_clean_text(summary_source_text))
 
     return {
         "video_id": item.get("video_id"),
@@ -453,6 +525,9 @@ def _normalize_video(item: dict[str, Any]) -> dict[str, Any]:
         "duration": item.get("duration_seconds"),
         "raw_short_signals": short_signals,
         "is_short_candidate": short_match,
+        "thumbnail_width": item.get("thumbnail_width"),
+        "thumbnail_height": item.get("thumbnail_height"),
+        "text_length": cleaned_text_length,
     }
 
 
@@ -539,9 +614,6 @@ def collect_latest_youtube_videos(
         url = (normalized.get("url") or "").strip()
         if not url.startswith("http"):
             discarded["invalid_url"] += 1
-            continue
-        if "/shorts/" in url.lower():
-            discarded["short_url"] += 1
             continue
         normalized_candidates.append(normalized)
 
