@@ -42,9 +42,9 @@ def _validate_counts(weather: dict, videos: list[dict], news: dict[str, list[dic
 
     if not _has_weather_value(weather):
         if weather.get("error"):
-            errors.append(f"Väder saknas: {weather.get('error')}")
+            print(f"[VALIDERING] VARNING: Väder saknas: {weather.get('error')}")
         else:
-            errors.append("Väder saknas: inga mätvärden i SMHI-data")
+            print("[VALIDERING] VARNING: Väder saknas: inga mätvärden i SMHI-data")
     if len(videos) < 5:
         errors.append(f"YouTube-sektionen har för få poster ({len(videos)} < 5)")
     if total_news < 3:

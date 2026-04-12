@@ -6,10 +6,14 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.request import ProxyHandler, Request, build_opener
 
 SMHI_URL_TEMPLATE = (
+    "https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1/"
+    "geotype/point/lon/{lon}/lat/{lat}/data.json"
+)
+SMHI_FALLBACK_URL_TEMPLATE = (
     "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/"
     "geotype/point/lon/{lon}/lat/{lat}/data.json"
 )
@@ -21,6 +25,10 @@ def _timeseries_param_map(timeseries: dict[str, Any]) -> dict[str, Any]:
     return {p.get("name"): p.get("values", [None])[0] for p in timeseries.get("parameters", [])}
 
 
+def _format_coord(value: float) -> str:
+    return f"{value:.6f}".rstrip("0").rstrip(".")
+
+
 def get_weather(
     lat: float,
     lon: float,
@@ -29,38 +37,57 @@ def get_weather(
     debug: bool = False,
     debug_dir: Path | None = None,
 ) -> dict[str, Any]:
-    url = SMHI_URL_TEMPLATE.format(lat=lat, lon=lon)
+    lat_str = _format_coord(lat)
+    lon_str = _format_coord(lon)
+    urls = [
+        SMHI_URL_TEMPLATE.format(lat=lat_str, lon=lon_str),
+        SMHI_FALLBACK_URL_TEMPLATE.format(lat=lat_str, lon=lon_str),
+    ]
     opener = build_opener(ProxyHandler({}))
-    request = Request(url, headers={"User-Agent": "DailyBriefingBot/1.1 (+https://github.com/actions)"})
+    payload: dict[str, Any] | None = None
+    chosen_url = ""
+    last_error: Exception | None = None
 
-    if debug:
-        print(f"[SMHI][DEBUG] URL: {url}")
+    for url in urls:
+        chosen_url = url
+        print(f"[SMHI] Anropar URL: {url}")
+        request = Request(url, headers={"User-Agent": "DailyBriefingBot/1.1 (+https://github.com/actions)"})
+        try:
+            with opener.open(request, timeout=timeout) as response:
+                status = getattr(response, "status", 200)
+                content_type = response.headers.get("Content-Type", "okänd")
+                raw = response.read()
+            if debug:
+                print(
+                    f"[SMHI][DEBUG] status={status} content-type={content_type} bytes={len(raw)}"
+                )
+                preview = raw.decode("utf-8", errors="replace")[:300].replace("\n", " ")
+                print(f"[SMHI][DEBUG] response preview: {preview}")
+            payload = json.loads(raw.decode("utf-8"))
+            if "json" not in content_type.lower():
+                raise ValueError(f"SMHI svarade med oväntad content-type: {content_type}")
+            if not isinstance(payload.get("timeSeries"), list) or not payload.get("timeSeries"):
+                raise ValueError("SMHI JSON saknar timeSeries/prognosdata")
+            if debug and debug_dir:
+                (debug_dir / "smhi_response.json").write_text(
+                    json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            print(f"[SMHI] JSON verifierad från: {url}")
+            break
+        except (HTTPError, URLError, TimeoutError, json.JSONDecodeError, ValueError) as exc:
+            last_error = exc
+            print(f"[SMHI] FEL på URL {url}: {exc}")
+            payload = None
+            continue
 
-    try:
-        with opener.open(request, timeout=timeout) as response:
-            status = getattr(response, "status", 200)
-            content_type = response.headers.get("Content-Type", "okänd")
-            raw = response.read()
-        if debug:
-            print(
-                f"[SMHI][DEBUG] status={status} content-type={content_type} bytes={len(raw)}"
-            )
-            preview = raw.decode("utf-8", errors="replace")[:300].replace("\n", " ")
-            print(f"[SMHI][DEBUG] response preview: {preview}")
-        payload = json.loads(raw.decode("utf-8"))
+    if payload is None:
+        print(f"SMHI parse failed because {last_error}")
         if debug and debug_dir:
             (debug_dir / "smhi_response.json").write_text(
-                json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
-    except (URLError, TimeoutError, json.JSONDecodeError) as exc:
-        print(f"[SMHI] FEL: kunde inte hämta väder från {url}: {exc}")
-        print(f"SMHI parse failed because {exc}")
-        if debug and debug_dir:
-            (debug_dir / "smhi_response.json").write_text(
-                json.dumps({"error": str(exc), "url": url}, ensure_ascii=False, indent=2),
+                json.dumps({"error": str(last_error), "url": chosen_url}, ensure_ascii=False, indent=2),
                 encoding="utf-8",
             )
-        return {"location": location_name, "error": f"Kunde inte hämta väderdata: {exc}"}
+        return {"location": location_name, "error": f"Kunde inte hämta väderdata: {last_error}"}
 
     now_utc = datetime.now(timezone.utc)
     time_series = payload.get("timeSeries", [])
