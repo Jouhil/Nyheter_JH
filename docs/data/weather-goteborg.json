@@ -1,13 +1,13 @@
 {
   "location": "Göteborg/Säve",
   "current": {
-    "temperature": 9.9,
-    "wind_speed": 13.0,
+    "temperature": 9.4,
+    "wind_speed": 11.5,
     "precipitation": 0.0,
     "weather_code": 3,
     "description": "Mulet",
-    "forecast_time": "2026-04-12T17:30",
-    "feels_like": 6.2,
+    "forecast_time": "2026-04-12T17:45",
+    "feels_like": 5.8,
     "temp_min": 4.4,
     "temp_max": 10.7
   },
@@ -133,35 +133,35 @@
     },
     {
       "time": "2026-04-12T17:00",
-      "temperature": 10.3,
+      "temperature": 10.0,
       "weather_code": 3,
       "precipitation": 0.0,
       "wind_speed": 15.1
     },
     {
       "time": "2026-04-12T18:00",
-      "temperature": 9.6,
+      "temperature": 9.3,
       "weather_code": 3,
       "precipitation": 0.0,
       "wind_speed": 10.8
     },
     {
       "time": "2026-04-12T19:00",
-      "temperature": 8.7,
+      "temperature": 8.5,
       "weather_code": 1,
       "precipitation": 0.0,
       "wind_speed": 10.4
     },
     {
       "time": "2026-04-12T20:00",
-      "temperature": 7.6,
+      "temperature": 7.5,
       "weather_code": 1,
       "precipitation": 0.0,
       "wind_speed": 10.4
     },
     {
       "time": "2026-04-12T21:00",
-      "temperature": 6.8,
+      "temperature": 6.7,
       "weather_code": 2,
       "precipitation": 0.0,
       "wind_speed": 10.4
@@ -193,8 +193,8 @@
     },
     {
       "date": "2026-04-13",
-      "temp_max": 14.7,
-      "temp_min": 5.9,
+      "temp_max": 14.6,
+      "temp_min": 5.8,
       "weather_code": 3,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-13T04:07",
@@ -202,8 +202,8 @@
     },
     {
       "date": "2026-04-14",
-      "temp_max": 11.8,
-      "temp_min": 7.5,
+      "temp_max": 11.7,
+      "temp_min": 7.4,
       "weather_code": 55,
       "precipitation_sum": 3.23,
       "sunrise": "2026-04-14T04:04",
