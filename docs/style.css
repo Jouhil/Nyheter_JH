@@ -18,24 +18,16 @@ body {
 
 .topbar {
   padding: 1.2rem 1rem;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(6px);
   position: sticky;
   top: 0;
+  z-index: 10;
 }
 
-.topbar h1 {
-  margin: 0;
-  font-size: 1.35rem;
-}
-
-.topbar p,
-.updated {
-  margin: 0.3rem 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
+.topbar h1 { margin: 0; font-size: 1.35rem; }
+.topbar p, .updated { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.92rem; }
 
 .container {
   max-width: 900px;
@@ -48,74 +40,106 @@ body {
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 1rem;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 }
 
-.card h2, .card h3 {
-  margin-top: 0;
+.card h2, .card h3 { margin-top: 0; }
+.subheading { margin: 1rem 0 0.6rem; font-size: 1rem; }
+
+.weather-now-card {
+  background: linear-gradient(180deg, #f8fbff, #ffffff);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem;
 }
+.weather-now-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.weather-label { margin: 0; color: var(--muted); font-size: 0.8rem; }
+#weather-location { margin: 0.2rem 0 0; font-size: 1.25rem; }
+.weather-icon { font-size: 2rem; line-height: 1; }
+.weather-temp { font-size: 2.1rem; font-weight: 700; margin-top: 0.4rem; }
+.weather-desc { margin: 0.2rem 0 0.8rem; color: var(--muted); }
 
 .weather-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 0.65rem;
 }
-
 .metric {
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.7rem;
+  padding: 0.65rem;
   background: #fbfdff;
 }
+.metric span { display: block; color: var(--muted); font-size: 0.8rem; }
 
-.metric span {
-  display: block;
-  color: var(--muted);
-  font-size: 0.8rem;
+.hourly-scroll {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(72px, 1fr);
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.3rem;
+  scrollbar-width: thin;
+}
+.hour-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  padding: 0.55rem 0.35rem;
+  background: #fbfdff;
+}
+.hour-card p { margin: 0; color: var(--muted); font-size: 0.8rem; }
+.hour-card div { font-size: 1.1rem; margin: 0.25rem 0; }
+.hour-card strong { font-size: 0.95rem; }
+
+.daily-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 0.55rem;
+}
+.day-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  padding: 0.55rem 0.35rem;
+  background: #fbfdff;
+}
+.day-card p { margin: 0; color: var(--muted); text-transform: capitalize; }
+.day-card div { margin: 0.2rem 0; }
+.weather-fallback {
+  margin: 0 0 0.8rem;
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  font-size: 0.9rem;
 }
 
-.item-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+.item-list { list-style: none; margin: 0; padding: 0; }
+.item-list li { border-top: 1px solid var(--border); padding: 0.75rem 0; }
+.item-list li:first-child { border-top: none; }
+.item-list a { color: var(--text); text-decoration: none; font-weight: 600; }
+.item-list a:hover { color: var(--accent); }
+.meta { color: var(--muted); font-size: 0.84rem; margin-top: 0.25rem; }
+.summary { margin: 0.45rem 0 0; line-height: 1.45; font-size: 0.92rem; }
+.muted { color: var(--muted); }
 
-.item-list li {
-  border-top: 1px solid var(--border);
-  padding: 0.65rem 0;
-}
-
-.item-list li:first-child {
-  border-top: none;
-}
-
-.item-list a {
-  color: var(--text);
+.video-links { display: flex; gap: 0.55rem; margin-top: 0.45rem; flex-wrap: wrap; }
+.yt-open, .yt-alt {
+  font-size: 0.82rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.24rem 0.6rem;
   text-decoration: none;
-  font-weight: 600;
 }
-
-.item-list a:hover {
-  color: var(--accent);
-}
-
-.meta {
-  color: var(--muted);
-  font-size: 0.84rem;
-  margin-top: 0.25rem;
-}
-
-.summary {
-  margin: 0.45rem 0 0;
-  line-height: 1.45;
-  font-size: 0.92rem;
-}
-
-.muted {
-  color: var(--muted);
-}
+.yt-open { background: #eff6ff; border-color: #bfdbfe; }
 
 @media (min-width: 768px) {
   .topbar {
@@ -124,8 +148,5 @@ body {
     justify-content: space-between;
     align-items: baseline;
   }
-
-  .container {
-    padding: 0 1rem;
-  }
+  .container { padding: 0 1rem; }
 }

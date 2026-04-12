@@ -18,6 +18,7 @@ TAG_RE = re.compile(r"<[^>]+>")
 URL_RE = re.compile(r"https?://\S+")
 SPACE_RE = re.compile(r"\s+")
 XMLURL_RE = re.compile(r'xmlUrl="([^"]+)"')
+YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/)([A-Za-z0-9_-]{11})")
 
 
 def parse_opml_feed_urls(opml_path: str, debug: bool = False) -> list[dict[str, str]]:
@@ -129,6 +130,42 @@ def _entry_link(entry: ET.Element) -> str:
     return "#"
 
 
+
+
+def _extract_youtube_video_id(link: str | None, entry: ET.Element | None = None) -> str | None:
+    candidates: list[str] = []
+    if link:
+        candidates.append(link)
+    if entry is not None:
+        for child in entry:
+            name = _tag_name(child)
+            if name == "videoId" and child.text:
+                value = child.text.strip()
+                if value:
+                    return value
+            if name == "id" and child.text:
+                candidates.append(child.text.strip())
+            if name == "link":
+                href = child.attrib.get("href")
+                if href:
+                    candidates.append(href)
+
+    for candidate in candidates:
+        match = YOUTUBE_ID_RE.search(candidate)
+        if match:
+            return match.group(1)
+        tail = candidate.rsplit(":", 1)[-1].strip()
+        if re.fullmatch(r"[A-Za-z0-9_-]{11}", tail):
+            return tail
+    return None
+
+
+def _build_youtube_links(raw_link: str, video_id: str | None) -> dict[str, str | None]:
+    if video_id:
+        clean = f"https://www.youtube.com/watch?v={video_id}"
+        short = f"https://youtu.be/{video_id}"
+        return {"primary": clean, "secondary": short}
+    return {"primary": raw_link or "#", "secondary": None}
 def _media_group_text(entry: ET.Element) -> str:
     for child in entry:
         if _tag_name(child) == "group":
@@ -149,13 +186,18 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
             published_raw = _entry_text(entry, ["published", "updated"])
             published_dt = _parse_date(published_raw)
             summary = _entry_text(entry, ["summary", "content"]) or _media_group_text(entry)
+            raw_link = _entry_link(entry)
+            video_id = _extract_youtube_video_id(raw_link, entry)
+            links = _build_youtube_links(raw_link, video_id)
             items.append(
                 {
                     "title": _entry_text(entry, ["title"]) or "Utan titel",
                     "channel": feed_title,
                     "published": published_dt,
                     "published_iso": published_dt.isoformat(),
-                    "link": _entry_link(entry),
+                    "link": links["primary"],
+                    "secondary_link": links["secondary"],
+                    "video_id": video_id,
                     "summary": _make_video_summary(
                         title=_entry_text(entry, ["title"]) or "",
                         channel=feed_title,
@@ -173,13 +215,18 @@ def _parse_feed_xml(xml_text: str, fallback_channel: str) -> list[dict[str, Any]
             for entry in channel.findall("item"):
                 published_dt = _parse_date(entry.findtext("pubDate"))
                 summary = entry.findtext("description") or ""
+                raw_link = (entry.findtext("link") or "#").strip()
+                video_id = _extract_youtube_video_id(raw_link, None)
+                links = _build_youtube_links(raw_link, video_id)
                 items.append(
                     {
                         "title": (entry.findtext("title") or "Utan titel").strip(),
                         "channel": channel_name,
                         "published": published_dt,
                         "published_iso": published_dt.isoformat(),
-                        "link": (entry.findtext("link") or "#").strip(),
+                        "link": links["primary"],
+                        "secondary_link": links["secondary"],
+                        "video_id": video_id,
                         "summary": _make_video_summary(
                             title=(entry.findtext("title") or ""),
                             channel=channel_name,

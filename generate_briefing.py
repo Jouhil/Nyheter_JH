@@ -13,9 +13,9 @@ from helpers.news import fetch_news
 from helpers.smhi import get_weather
 
 LOCATION = {
-    "name": "Stockholm",
-    "lat": 59.3293,
-    "lon": 18.0686,
+    "name": "Göteborg",
+    "lat": 57.7089,
+    "lon": 11.9746,
 }
 
 ROOT = Path(__file__).resolve().parent
