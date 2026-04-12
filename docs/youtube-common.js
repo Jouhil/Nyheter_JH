@@ -1,5 +1,6 @@
 (function () {
   const STOCKHOLM_TZ = 'Europe/Stockholm';
+  const HIDDEN_CHANNELS_KEY = 'briefing-hidden-youtube-channels-v1';
 
   function parseISO(value) {
     if (!value) return null;
@@ -58,7 +59,69 @@
     return ok;
   }
 
-  function createVideoCard(video) {
+  function normalizeChannelName(value) {
+    return String(value || '').trim();
+  }
+
+  function normalizeChannelKey(value) {
+    return normalizeChannelName(value).toLocaleLowerCase('sv-SE');
+  }
+
+  function readHiddenChannels() {
+    try {
+      const raw = localStorage.getItem(HIDDEN_CHANNELS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      const deduped = [];
+      const seen = new Set();
+      parsed.forEach((entry) => {
+        const name = normalizeChannelName(entry);
+        const key = normalizeChannelKey(name);
+        if (!name || seen.has(key)) return;
+        seen.add(key);
+        deduped.push(name);
+      });
+      return deduped;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function writeHiddenChannels(channels) {
+    localStorage.setItem(HIDDEN_CHANNELS_KEY, JSON.stringify(channels));
+  }
+
+  function hideChannel(channelName) {
+    const name = normalizeChannelName(channelName);
+    if (!name) return;
+    const channels = readHiddenChannels();
+    const exists = channels.some((entry) => normalizeChannelKey(entry) === normalizeChannelKey(name));
+    if (exists) return;
+    channels.push(name);
+    channels.sort((a, b) => a.localeCompare(b, 'sv-SE', { sensitivity: 'base' }));
+    writeHiddenChannels(channels);
+  }
+
+  function unhideChannel(channelName) {
+    const target = normalizeChannelKey(channelName);
+    if (!target) return;
+    const next = readHiddenChannels().filter((entry) => normalizeChannelKey(entry) !== target);
+    writeHiddenChannels(next);
+  }
+
+  function clearHiddenChannels() {
+    localStorage.removeItem(HIDDEN_CHANNELS_KEY);
+  }
+
+  function isChannelHidden(channelName, hiddenChannels) {
+    const target = normalizeChannelKey(channelName);
+    if (!target) return false;
+    return hiddenChannels.some((entry) => normalizeChannelKey(entry) === target);
+  }
+
+  function createVideoCard(video, options = {}) {
+    const onHideChannel = typeof options.onHideChannel === 'function' ? options.onHideChannel : null;
     const videoLink = buildVideoUrl(video);
     const article = document.createElement('article');
     article.className = 'video-item';
@@ -115,6 +178,17 @@
     });
     links.append(copyBtn);
 
+    if (onHideChannel) {
+      const hideBtn = document.createElement('button');
+      hideBtn.type = 'button';
+      hideBtn.className = 'yt-hide';
+      hideBtn.textContent = 'Dölj kanal';
+      hideBtn.addEventListener('click', () => {
+        onHideChannel(video.channel || 'Okänd kanal');
+      });
+      links.append(hideBtn);
+    }
+
     content.append(title, meta, summary, links);
     article.append(thumbWrap, content);
     return article;
@@ -122,8 +196,14 @@
 
   window.YouTubeBriefing = {
     STOCKHOLM_TZ,
+    HIDDEN_CHANNELS_KEY,
     parsePublishedDate,
     formatStockholmDateTime,
+    readHiddenChannels,
+    hideChannel,
+    unhideChannel,
+    clearHiddenChannels,
+    isChannelHidden,
     createVideoCard,
   };
 })();

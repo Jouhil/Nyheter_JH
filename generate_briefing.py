@@ -27,6 +27,7 @@ OUTPUT_WEATHER_JSON = ROOT / "docs" / "data" / "weather-goteborg.json"
 OUTPUT_YOUTUBE_JSON = ROOT / "docs" / "data" / "youtube-latest.json"
 OUTPUT_YOUTUBE_DEBUG_JSON = ROOT / "docs" / "data" / "youtube-debug.json"
 OUTPUT_YOUTUBE_OPML_DEBUG_JSON = ROOT / "docs" / "data" / "youtube-opml-debug.json"
+YOUTUBE_FILTERS_FILE = ROOT / "config" / "youtube_filters.json"
 OUTPUT_YOUTUBE_HISTORY_DIR = ROOT / "docs" / "data" / "youtube-history"
 OUTPUT_YOUTUBE_HISTORY_INDEX = OUTPUT_YOUTUBE_HISTORY_DIR / "index.json"
 DEBUG_DIR = ROOT / "debug"
@@ -37,6 +38,86 @@ YOUTUBE_PER_FEED_ITEMS = 0  # 0 = behåll alla poster per feed inom lookback
 
 class ValidationError(RuntimeError):
     """Raised when the generated briefing does not meet minimum content requirements."""
+
+
+def _load_youtube_filters(path: Path) -> dict[str, object]:
+    default_filters = {
+        "version": 1,
+        "exclude_channels_exact": [],
+        "exclude_channel_contains": [],
+        "exclude_title_contains": [],
+        "notes": "Manuell filtrering av YouTube-prenumerationer",
+    }
+    if not path.exists():
+        print(f"[YouTube][Config] Ingen filterfil hittades ({path}). Kör med tom standard.")
+        return default_filters
+
+    raw_text = path.read_text(encoding="utf-8").strip()
+    if not raw_text:
+        print(f"[YouTube][Config] Filterfilen är tom ({path}). Kör med tom standard.")
+        return default_filters
+
+    try:
+        payload = json.loads(raw_text)
+    except json.JSONDecodeError as exc:
+        print(f"[YouTube][Config] Kunde inte tolka filterfil ({path}): {exc}. Kör med tom standard.")
+        return default_filters
+
+    if not isinstance(payload, dict):
+        print(f"[YouTube][Config] Ogiltigt format i filterfil ({path}). Kör med tom standard.")
+        return default_filters
+
+    merged = dict(default_filters)
+    merged.update(payload)
+    return merged
+
+
+def _prepare_filter_terms(values: object) -> list[str]:
+    if not isinstance(values, list):
+        return []
+    terms: list[str] = []
+    for value in values:
+        text = str(value).strip().casefold()
+        if text:
+            terms.append(text)
+    return terms
+
+
+def _apply_youtube_filters(videos: list[dict], filters: dict[str, object]) -> tuple[list[dict], dict[str, int]]:
+    exact_channels = set(_prepare_filter_terms(filters.get("exclude_channels_exact")))
+    channel_contains = _prepare_filter_terms(filters.get("exclude_channel_contains"))
+    title_contains = _prepare_filter_terms(filters.get("exclude_title_contains"))
+
+    stats = {
+        "excluded_channels_exact": 0,
+        "excluded_channel_contains": 0,
+        "excluded_title_contains": 0,
+        "excluded_total": 0,
+    }
+
+    kept: list[dict] = []
+    for video in videos:
+        channel_value = str(video.get("channel") or "").strip()
+        title_value = str(video.get("title") or "").strip()
+        channel_norm = channel_value.casefold()
+        title_norm = title_value.casefold()
+
+        if channel_norm and channel_norm in exact_channels:
+            stats["excluded_channels_exact"] += 1
+            stats["excluded_total"] += 1
+            continue
+        if channel_norm and any(term in channel_norm for term in channel_contains):
+            stats["excluded_channel_contains"] += 1
+            stats["excluded_total"] += 1
+            continue
+        if title_norm and any(term in title_norm for term in title_contains):
+            stats["excluded_title_contains"] += 1
+            stats["excluded_total"] += 1
+            continue
+
+        kept.append(video)
+
+    return kept, stats
 
 
 def _is_debug_enabled() -> bool:
@@ -333,7 +414,17 @@ def main() -> None:
         with_stats=True,
     )
     videos = youtube_result["videos"]
+    youtube_filters = _load_youtube_filters(YOUTUBE_FILTERS_FILE)
+    videos, filter_stats = _apply_youtube_filters(videos, youtube_filters)
     youtube_stats = youtube_result["stats"]
+    youtube_stats["config_filter"] = filter_stats
+    print(
+        "[YouTube][Config] Filtrering klar: "
+        f"totalt borttagna={filter_stats['excluded_total']} "
+        f"(exact={filter_stats['excluded_channels_exact']}, "
+        f"channel_contains={filter_stats['excluded_channel_contains']}, "
+        f"title_contains={filter_stats['excluded_title_contains']})"
+    )
     OUTPUT_YOUTUBE_JSON.parent.mkdir(parents=True, exist_ok=True)
     generated_at_utc = datetime.now(timezone.utc).isoformat()
     OUTPUT_YOUTUBE_JSON.write_text(
@@ -342,6 +433,14 @@ def main() -> None:
                 "generated_at_utc": generated_at_utc,
                 "timezone": "Europe/Stockholm",
                 "lookback_hours": YOUTUBE_HISTORY_LOOKBACK_HOURS,
+                "config_filter": {
+                    "path": str(YOUTUBE_FILTERS_FILE.relative_to(ROOT)),
+                    "version": youtube_filters.get("version"),
+                    "exclude_channels_exact": len(_prepare_filter_terms(youtube_filters.get("exclude_channels_exact"))),
+                    "exclude_channel_contains": len(_prepare_filter_terms(youtube_filters.get("exclude_channel_contains"))),
+                    "exclude_title_contains": len(_prepare_filter_terms(youtube_filters.get("exclude_title_contains"))),
+                    "excluded_total": filter_stats["excluded_total"],
+                },
                 "videos": videos,
             },
             ensure_ascii=False,
@@ -367,6 +466,7 @@ def main() -> None:
         "per_feed_counts": youtube_stats["per_feed_counts"],
         "discard_reasons": youtube_stats["discard_reasons"],
         "per_feed_selected_counts": youtube_stats["per_feed_selected_counts"],
+        "config_filter": youtube_stats.get("config_filter", {}),
     }
     OUTPUT_YOUTUBE_DEBUG_JSON.write_text(
         json.dumps(youtube_debug_payload, ensure_ascii=False, indent=2),

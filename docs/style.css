@@ -256,7 +256,10 @@ body {
 
 .video-links { display: flex; gap: 0.55rem; margin-top: 0.2rem; flex-wrap: wrap; }
 .yt-open,
-.yt-copy {
+.yt-copy,
+.yt-hide,
+.yt-reset,
+.yt-reset-all {
   font-size: 0.88rem;
   border: 1px solid #93c5fd;
   border-radius: 999px;
@@ -274,11 +277,42 @@ body {
 .yt-open:hover,
 .yt-open:focus-visible,
 .yt-copy:hover,
-.yt-copy:focus-visible {
+.yt-copy:focus-visible,
+.yt-hide:hover,
+.yt-hide:focus-visible,
+.yt-reset:hover,
+.yt-reset:focus-visible,
+.yt-reset-all:hover,
+.yt-reset-all:focus-visible {
   background: #dbeafe;
   border-color: #60a5fa;
   outline: none;
 }
+
+.youtube-hidden-panel {
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 12px;
+  padding: 0.7rem;
+  margin: 0 0 0.75rem;
+  background: rgba(255, 255, 255, 0.55);
+}
+.youtube-hidden-title { margin: 0; font-size: 0.96rem; }
+.youtube-hidden-help { margin: 0.35rem 0 0.55rem; font-size: 0.84rem; }
+.youtube-hidden-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+.youtube-hidden-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.yt-reset-all { margin-top: 0.55rem; }
 
 .history-link-btn {
   font-size: 0.88rem;
@@ -334,7 +368,7 @@ body {
   .video-item { gap: 0.62rem; }
   .video-content { gap: 0.34rem; }
   .video-title { -webkit-line-clamp: 3; }
-  .yt-open, .yt-copy { width: 100%; justify-content: center; min-height: 44px; }
+  .yt-open, .yt-copy, .yt-hide, .yt-reset, .yt-reset-all { width: 100%; justify-content: center; min-height: 44px; }
   .history-link-btn { width: 100%; justify-content: center; min-height: 44px; }
   .youtube-header-row { justify-content: stretch; }
   .item-list li { padding: 0.68rem; }
@@ -423,11 +457,19 @@ body {
 
 :root[data-theme='dark'] .yt-open,
 :root[data-theme='dark'] .yt-copy,
+:root[data-theme='dark'] .yt-hide,
+:root[data-theme='dark'] .yt-reset,
+:root[data-theme='dark'] .yt-reset-all,
 :root[data-theme='dark'] .theme-toggle,
 :root[data-theme='dark'] .history-link-btn {
   background: rgba(37, 99, 235, 0.18);
   border-color: rgba(147, 197, 253, 0.6);
   color: #dbeafe;
+}
+
+:root[data-theme='dark'] .youtube-hidden-panel {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: var(--border);
 }
 
 @media (min-width: 1100px) {

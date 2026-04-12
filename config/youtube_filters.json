@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "exclude_channels_exact": [],
+  "exclude_channel_contains": [],
+  "exclude_title_contains": [],
+  "notes": "Manuell filtrering av YouTube-prenumerationer"
+}
