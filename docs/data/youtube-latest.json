@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-12T20:24:27.022517+00:00",
+  "generated_at_utc": "2026-04-12T20:42:28.901090+00:00",
   "timezone": "Europe/Stockholm",
   "lookback_hours": 168,
   "config_filter": {
@@ -11,6 +11,28 @@
     "excluded_total": 0
   },
   "videos": [
+    {
+      "video_id": "O0TrIM1Szms",
+      "title": "Desperation defending with NO stick",
+      "channel": "NHL",
+      "published_at_utc": "2026-04-12T20:27:34+00:00",
+      "published_at_unix": 1776025654,
+      "published_at_stockholm": "2026-04-12T22:27:34+02:00",
+      "thumbnail": "https://i4.ytimg.com/vi/O0TrIM1Szms/hqdefault.jpg",
+      "summary_source_text": "   Desperation defending with NO stick Capitals defenseman Jacob Chychrun is able to deny Bryan Rust of a great opportunity, despite not having a stick!\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews Capitals defenseman Jacob Chychrun is able to deny Bryan Rust of a great opportunity, despite not having a stick!\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews",
+      "summary": "Desperation defending with NO stick Capitals defenseman Jacob Chychrun is able to deny Bryan Rust of a great opportunity, despite not having a stick. Your official home for NHL hockey coverage.",
+      "url": "https://www.youtube.com/watch?v=O0TrIM1Szms",
+      "duration": null,
+      "raw_short_signals": [
+        "social_caption_style",
+        "title_or_text_short_hint",
+        "feed_metadata_short_hint"
+      ],
+      "is_short_candidate": true,
+      "thumbnail_width": 480,
+      "thumbnail_height": 360,
+      "text_length": 969
+    },
     {
       "video_id": "WBkiJC96lnc",
       "title": "J. Cole made his debut with the Nanjing Monkey Kings",
@@ -532,21 +554,21 @@
     },
     {
       "video_id": "YJfca70vES0",
-      "title": "RAV4 vs bZ4X: Vilken Toyota är egentligen det bästa köpet?",
+      "title": "Nya RAV4: Bästa bilen – sämsta affären?",
       "channel": "Alriks Bilar",
       "published_at_utc": "2026-04-12T17:44:41+00:00",
       "published_at_unix": 1776015881,
       "published_at_stockholm": "2026-04-12T19:44:41+02:00",
       "thumbnail": "https://i2.ytimg.com/vi/YJfca70vES0/hqdefault.jpg",
-      "summary_source_text": "   RAV4 vs bZ4X: Vilken Toyota är egentligen det bästa köpet? I den här filmen gör jag en djupdykning i sjätte generationen av världens mest sålda bil – Toyota RAV4. Den har blivit både snyggare, tystare och mer digital, men hur står den sig egentligen mot sitt helelektriska syskon bZ4X?\n\nJag har räknat på priser, privatleasing och milkostnader för att hitta det som verkligen \"skaver\" i kalkylen. Är det värt att betala extra för laddhybridens flexibilitet, eller har elbilen sprungit förbi rent ekonomiskt?\n\nVi kollar även närmare på:\nSkillnaderna mellan hybrid och laddhybrid (PHEV).\nDet nya infotainment-systemet och designen \"Hammerhead\".\nBagageutrymme och komfort – vad har hänt med utrymmet?\nKöregenskaperna på både motorväg och grusväg.\n\nBli gärna medlem och stöd kanalen, som blir reklamfri! 29 kr/månad\nhttps://www.youtube.com/channel/UCU-4UJDGqQWK5Iv4wXDlzGQ/join\n\n⚡️ Köp eller sälj elbil via Carla: https://carla.se\n📉 Kolla vad din bil är värd hos Bilpriser: https://bilpriser.se\n🔌 Smartare laddlösningar från Phasebox: https://phasebox.se\n\n#elbil#toyota #rav4 #toyotarav4 #bz4x #laddhybrid #hybrid. #braköp I den här filmen gör jag en djupdykning i sjätte generationen av världens mest sålda bil – Toyota RAV4. Den har blivit både snyggare, tystare och mer digital, men hur står den sig egentligen mot sitt helelektriska syskon bZ4X?\n\nJag har räknat på priser, privatleasing och milkostnader för att hitta det som verkligen \"skaver\" i kalkylen. Är det värt att betala extra för laddhybridens flexibilitet, eller har elbilen sprungit förbi rent ekonomiskt?\n\nVi kollar även närmare på:\nSkillnaderna mellan hybrid och laddhybrid (PHEV).\nDet nya infotainment-systemet och designen \"Hammerhead\".\nBagageutrymme och komfort – vad har hänt med utrymmet?\nKöregenskaperna på både motorväg och grusväg.\n\nBli gärna medlem och stöd kanalen, som blir reklamfri! 29 kr/månad\nhttps://www.youtube.com/channel/UCU-4UJDGqQWK5Iv4wXDlzGQ/join\n\n⚡️ Köp eller sälj elbil via Carla: https://carla.se\n📉 Kolla vad din bil är värd hos Bilpriser: https://bilpriser.se\n🔌 Smartare laddlösningar från Phasebox: https://phasebox.se\n\n#elbil#toyota #rav4 #toyotarav4 #bz4x #laddhybrid #hybrid. #braköp",
-      "summary": "RAV4 vs bZ4X: Vilken Toyota är egentligen det bästa köpet. I den här filmen gör jag en djupdykning i sjätte generationen av världens mest sålda bil – Toyota RAV4.",
+      "summary_source_text": "   Nya RAV4: Bästa bilen – sämsta affären? I den här filmen gör jag en djupdykning i sjätte generationen av världens mest sålda bil – Toyota RAV4. Den har blivit både snyggare, tystare och mer digital, men hur står den sig egentligen mot sitt helelektriska syskon bZ4X?\n\nJag har räknat på priser, privatleasing och milkostnader för att hitta det som verkligen \"skaver\" i kalkylen. Är det värt att betala extra för laddhybridens flexibilitet, eller har elbilen sprungit förbi rent ekonomiskt?\n\nVi kollar även närmare på:\nSkillnaderna mellan hybrid och laddhybrid (PHEV).\nDet nya infotainment-systemet och designen \"Hammerhead\".\nBagageutrymme och komfort – vad har hänt med utrymmet?\nKöregenskaperna på både motorväg och grusväg.\n\nBli gärna medlem och stöd kanalen, som blir reklamfri! 29 kr/månad\nhttps://www.youtube.com/channel/UCU-4UJDGqQWK5Iv4wXDlzGQ/join\n\n⚡️ Köp eller sälj elbil via Carla: https://carla.se\n📉 Kolla vad din bil är värd hos Bilpriser: https://bilpriser.se\n🔌 Smartare laddlösningar från Phasebox: https://phasebox.se\n\n\nPriser.       Hybrid.         Laddhybrid\nActive.      459 900.       525 900\nStyle.        502 800.        568 800\nGR Sport. 549 800.       620 800\nExecutive.555 800.       626 800\n\nMetallic. 8 900\nPremium lack. 13 900\nTech Pack 17 000.      22 000\nPanoramaglastak.  16 000.    \n\n#elbil#toyota #rav4 #toyotarav4 #bz4x #laddhybrid #hybrid. #braköp I den här filmen gör jag en djupdykning i sjätte generationen av världens mest sålda bil – Toyota RAV4. Den har blivit både snyggare, tystare och mer digital, men hur står den sig egentligen mot sitt helelektriska syskon bZ4X?\n\nJag har räknat på priser, privatleasing och milkostnader för att hitta det som verkligen \"skaver\" i kalkylen. Är det värt att betala extra för laddhybridens flexibilitet, eller har elbilen sprungit förbi rent ekonomiskt?\n\nVi kollar även närmare på:\nSkillnaderna mellan hybrid och laddhybrid (PHEV).\nDet nya infotainment-systemet och designen \"Hammerhead\".\nBagageutrymme och komfort – vad har hänt med utrymmet?\nKöregenskaperna på både motorväg och grusväg.\n\nBli gärna medlem och stöd kanalen, som blir reklamfri! 29 kr/månad\nhttps://www.youtube.com/channel/UCU-4UJDGqQWK5Iv4wXDlzGQ/join\n\n⚡️ Köp eller sälj elbil via Carla: https://carla.se\n📉 Kolla vad din bil är värd hos Bilpriser: https://bilpriser.se\n🔌 Smartare laddlösningar från Phasebox: https://phasebox.se\n\n\nPriser.       Hybrid.         Laddhybrid\nActive.      459 900.       525 900\nStyle.        502 800.        568 800\nGR Sport. 549 800.       620 800\nExecutive.555 800.       626 800\n\nMetallic. 8 900\nPremium lack. 13 900\nTech Pack 17 000.      22 000\nPanoramaglastak.  16 000.    \n\n#elbil#toyota #rav4 #toyotarav4 #bz4x #laddhybrid #hybrid. #braköp",
+      "summary": "Nya RAV4: Bästa bilen – sämsta affären. I den här filmen gör jag en djupdykning i sjätte generationen av världens mest sålda bil – Toyota RAV4.",
       "url": "https://www.youtube.com/watch?v=YJfca70vES0",
       "duration": null,
       "raw_short_signals": [],
       "is_short_candidate": false,
       "thumbnail_width": 480,
       "thumbnail_height": 360,
-      "text_length": 1790
+      "text_length": 2205
     },
     {
       "video_id": "TKFfnKGSQJk",
@@ -2498,28 +2520,6 @@
       "thumbnail_width": 480,
       "thumbnail_height": 360,
       "text_length": 831
-    },
-    {
-      "video_id": "WurHNViVwf4",
-      "title": "GOLDEN GOAL for Jack Eichel! 🤩",
-      "channel": "NHL",
-      "published_at_utc": "2026-04-12T03:09:55+00:00",
-      "published_at_unix": 1775963395,
-      "published_at_stockholm": "2026-04-12T05:09:55+02:00",
-      "thumbnail": "https://i4.ytimg.com/vi/WurHNViVwf4/hqdefault.jpg",
-      "summary_source_text": "   GOLDEN GOAL for Jack Eichel! 🤩 Vegas Golden Knights forward Jack Eichel scores in overtime to secure his team a spot in the 2026 Stanley Cup Playoffs!\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews Vegas Golden Knights forward Jack Eichel scores in overtime to secure his team a spot in the 2026 Stanley Cup Playoffs!\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews",
-      "summary": "Vegas Golden Knights forward Jack Eichel scores in overtime to secure his team a spot in the 2026 Stanley Cup Playoffs. Your official home for NHL hockey coverage.",
-      "url": "https://www.youtube.com/watch?v=WurHNViVwf4",
-      "duration": null,
-      "raw_short_signals": [
-        "social_caption_style",
-        "title_or_text_short_hint",
-        "feed_metadata_short_hint"
-      ],
-      "is_short_candidate": true,
-      "thumbnail_width": 480,
-      "thumbnail_height": 360,
-      "text_length": 974
     },
     {
       "video_id": "sjB-0Y5lT3g",
