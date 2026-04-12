@@ -1,8 +1,30 @@
 {
-  "generated_at_utc": "2026-04-12T19:37:00.354456+00:00",
+  "generated_at_utc": "2026-04-12T19:48:40.351113+00:00",
   "timezone": "Europe/Stockholm",
   "lookback_hours": 168,
   "videos": [
+    {
+      "video_id": "scTuJdg0JKA",
+      "title": "Brushed is AWESOME",
+      "channel": "Takomo Golf",
+      "published_at_utc": "2026-04-12T19:30:09+00:00",
+      "published_at_unix": 1776022209,
+      "published_at_stockholm": "2026-04-12T21:30:09+02:00",
+      "thumbnail": "https://i4.ytimg.com/vi/scTuJdg0JKA/hqdefault.jpg",
+      "summary_source_text": "   Brushed is AWESOME Get your clubs at ➡️  https://takomogolf.com\n\n#golf #takomogolf Get your clubs at ➡️  https://takomogolf.com\n\n#golf #takomogolf",
+      "summary": "Brushed is AWESOME Get your clubs at ➡️ Get your clubs at ➡️. Videon kompletterar med konkreta detaljer och exempel kring ämnet.",
+      "url": "https://www.youtube.com/watch?v=scTuJdg0JKA",
+      "duration": null,
+      "raw_short_signals": [
+        "very_short_source_text",
+        "title_or_text_short_hint",
+        "feed_metadata_short_hint"
+      ],
+      "is_short_candidate": true,
+      "thumbnail_width": 480,
+      "thumbnail_height": 360,
+      "text_length": 60
+    },
     {
       "video_id": "C1B5t097IHg",
       "title": "Crosby and Ovechkin open the game!",
@@ -16001,26 +16023,6 @@
       "thumbnail_width": 480,
       "thumbnail_height": 360,
       "text_length": 342
-    },
-    {
-      "video_id": "EIX72HZlsT8",
-      "title": "Gemma 4 Explained: 31 Billion Parameters, 256K Context — Free GPT-4o Killer",
-      "channel": "BitBiasedAI",
-      "published_at_utc": "2026-04-05T19:46:26+00:00",
-      "published_at_unix": 1775418386,
-      "published_at_stockholm": "2026-04-05T21:46:26+02:00",
-      "thumbnail": "https://i2.ytimg.com/vi/EIX72HZlsT8/hqdefault.jpg",
-      "summary_source_text": "   Gemma 4 Explained: 31 Billion Parameters, 256K Context — Free GPT-4o Killer Link to our newsletter: https://bitbiased.ai/\nGoogle just dropped Gemma 4 — and it might completely change the AI landscape.\n\nIn this video, we break down everything you need to know about Gemma 4, including its architecture, benchmarks, real-world performance, and how it compares to GPT-4o, Claude 3, and Llama 3.\n\nThis is NOT hype. This is a deep dive into whether a 31B open model can actually compete with the biggest closed AI systems in the world.\n\n🔥 What you'll learn:\n- What Gemma 4 actually is (and why Apache 2.0 matters)\n- How its Mixture-of-Experts architecture works\n- Real benchmark comparisons (AIME, MMLU, coding, vision)\n- Gemma 4 vs GPT-4o, Claude 3 Opus & Llama 3\n- Real use cases (coding, agents, local AI, multimodal workflows)\n- Limitations you NEED to know before using it\n- How to run Gemma 4 locally\n\n🚀 Why this matters:\nThis could be the moment open-source AI truly catches up to closed models.\n\n💬 Let me know in the comments:\nWould you replace GPT-4o or Claude with Gemma 4?\n\nTimestamps:\n00:00 Intro — Gemma 4 Just Changed AI\n01:30 What Is Gemma 4?\n03:34 Architecture — Why It’s Smarter Than You Think\n05:58 Benchmarks — The Numbers That Actually Matter\n08:33 Gemma 4 vs GPT-4o vs Llama 3 vs Claude 3\n10:30 Limitations & Safety — What Google Isn’t Highlighting\n12:20 Use Cases — What You Can Actually Build\n14:08 How to Actually Run It\n\n\n📌 If you enjoy deep AI breakdowns without hype, subscribe for more.\n\n#AI #Gemma4 #OpenAI #Claude3 #Llama3 #ArtificialIntelligence Link to our newsletter: https://bitbiased.ai/\nGoogle just dropped Gemma 4 — and it might completely change the AI landscape.\n\nIn this video, we break down everything you need to know about Gemma 4, including its architecture, benchmarks, real-world performance, and how it compares to GPT-4o, Claude 3, and Llama 3.\n\nThis is NOT hype. This is a deep dive into whether a 31B open model can actually compete with the biggest closed AI systems in the world.\n\n🔥 What you'll learn:\n- What Gemma 4 actually is (and why Apache 2.0 matters)\n- How its Mixture-of-Experts architecture works\n- Real benchmark comparisons (AIME, MMLU, coding, vision)\n- Gemma 4 vs GPT-4o, Claude 3 Opus & Llama 3\n- Real use cases (coding, agents, local AI, multimodal workflows)\n- Limitations you NEED to know before using it\n- How to run Gemma 4 locally\n\n🚀 Why this matters:\nThis could be the moment open-source AI truly catches up to closed models.\n\n💬 Let me know in the comments:\nWould you replace GPT-4o or Claude with Gemma 4?\n\nTimestamps:\n00:00 Intro — Gemma 4 Just Changed AI\n01:30 What Is Gemma 4?\n03:34 Architecture — Why It’s Smarter Than You Think\n05:58 Benchmarks — The Numbers That Actually Matter\n08:33 Gemma 4 vs GPT-4o vs Llama 3 vs Claude 3\n10:30 Limitations & Safety — What Google Isn’t Highlighting\n12:20 Use Cases — What You Can Actually Build\n14:08 How to Actually Run It\n\n\n📌 If you enjoy deep AI breakdowns without hype, subscribe for more.\n\n#AI #Gemma4 #OpenAI #Claude3 #Llama3 #ArtificialIntelligence",
-      "summary": "Gemma 4 Explained: 31 Billion Parameters, 256K Context — Free GPT-4o Killer Link to our newsletter: Google just dropped Gemma 4 — and it might completely change the AI landscape. In this video, we break down everything you need to know about Gemma 4, including its architecture, benchmarks, real-world performance, and how it compares to GPT-4o, Claude 3, and Llama 3.",
-      "url": "https://www.youtube.com/watch?v=EIX72HZlsT8",
-      "duration": null,
-      "raw_short_signals": [
-        "social_caption_style"
-      ],
-      "is_short_candidate": false,
-      "thumbnail_width": 480,
-      "thumbnail_height": 360,
-      "text_length": 2867
     }
   ]
 }
