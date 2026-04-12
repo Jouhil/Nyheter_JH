@@ -36,26 +36,26 @@
     const url = String(video?.url || '').toLowerCase();
     if (url.includes('/shorts/')) {
       signals.push('url_contains_/shorts/');
-      return { isShort: true, isCandidate: true, signals };
+      return { isShort: true, isCandidate: true, signals, reason: 'url_contains_/shorts/' };
     }
 
     const duration = Number(video?.duration);
     if (Number.isFinite(duration) && duration <= 60) {
       signals.push('duration_<=_60s');
-      return { isShort: true, isCandidate: true, signals };
+      return { isShort: true, isCandidate: true, signals, reason: 'duration_<=_60s' };
     }
 
     const title = String(video?.title || '').toLowerCase();
     if (/#shorts\b/.test(title) || /\bshorts\b/.test(title)) {
       signals.push('title_contains_shorts');
-      return { isShort: true, isCandidate: true, signals };
+      return { isShort: true, isCandidate: true, signals, reason: 'title_contains_shorts' };
     }
 
     const rawSignals = Array.isArray(video?.raw_short_signals) ? video.raw_short_signals : [];
     if (video?.is_short_candidate === true) signals.push('is_short_candidate');
     if (rawSignals.length > 0) signals.push('raw_short_signals');
     const metadataCandidate = video?.is_short_candidate === true || rawSignals.length > 0;
-    return { isShort: false, isCandidate: metadataCandidate, signals };
+    return { isShort: false, isCandidate: metadataCandidate, signals, reason: null };
   }
 
   function createVideoCard(video) {
@@ -129,25 +129,36 @@
         })
         .filter((video) => video._published && !Number.isNaN(video._published.getTime()));
 
-      const afterShortFilter = parsedVideos.filter((video) => {
+      const removedByShortRules = [];
+      const keptAfterShortFilter = [];
+      parsedVideos.forEach((video) => {
         const shortDecision = isLikelyShort(video);
         video._shortDecision = shortDecision;
-        return !shortDecision.isShort;
+        if (shortDecision.isShort) {
+          removedByShortRules.push(video);
+        } else {
+          keptAfterShortFilter.push(video);
+        }
       });
 
-      const videos = afterShortFilter
+      const videos = keptAfterShortFilter
         .filter((video) => video._published >= lower && video._published <= now)
         .sort((a, b) => b._published.getTime() - a._published.getTime());
 
       console.log('[YouTube debug] total videos in json:', allVideos.length);
       console.log('[YouTube debug] videos after valid date parse:', parsedVideos.length);
-      console.log('[YouTube debug] videos after hard shorts filter:', afterShortFilter.length);
+      console.log('[YouTube debug] removed by hard shorts rules:', removedByShortRules.length);
+      console.log('[YouTube debug] kept after shorts filter:', keptAfterShortFilter.length);
       console.log('[YouTube debug] videos after 24h filter:', videos.length);
-      console.log('[YouTube debug] first 5 kept titles:', videos.slice(0, 5).map((v) => v.title));
+      console.log('[YouTube debug] first 10 kept titles:', keptAfterShortFilter.slice(0, 10).map((v) => v.title || 'Utan titel'));
+      console.log('[YouTube debug] first 10 removed titles with reason:', removedByShortRules.slice(0, 10).map((v) => ({
+        title: v.title || 'Utan titel',
+        reason: v?._shortDecision?.reason || 'unknown',
+      })));
 
       const label = byId('youtube-range-label');
       if (label) {
-        label.textContent = `Hämtade ${allVideos.length} totalt • ${afterShortFilter.length} efter shorts-filter • ${videos.length} senaste 24h (${formatStockholmDateTime(lower)}–${formatStockholmDateTime(now)}, ${STOCKHOLM_TZ}).`;
+        label.textContent = `Hämtade ${allVideos.length} totalt • ${keptAfterShortFilter.length} efter shorts-filter • ${videos.length} senaste 24h (${formatStockholmDateTime(lower)}–${formatStockholmDateTime(now)}, ${STOCKHOLM_TZ}).`;
       }
 
       if (!videos.length) {
