@@ -4,15 +4,194 @@
 <body>
 <outline text="YouTube">
 <outline type="rss" text="Mat Armstrong" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCcLYOTz3ct6_lk9iLToxxAw" htmlUrl="https://www.youtube.com/@MatArmstrongbmx"/>
+<outline type="rss" text="Betsson Sverige" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCzzPEJsGGaVcgbHNhjt41wg" htmlUrl="https://www.youtube.com/@BetssonSverige"/>
+<outline type="rss" text="Matkoma" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCc61F4RfGUn-spkCIFWC-kQ" htmlUrl="https://www.youtube.com/@matkoma"/>
+<outline type="rss" text="Veikkaus Vedot" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCRHvsWMnzrTw2f9j3WR6a0Q" htmlUrl="https://www.youtube.com/@VeikkausVedot"/>
 <outline type="rss" text="carwow" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUhFaUpnq31m6TNX2VKVSVA" htmlUrl="https://www.youtube.com/@carwow"/>
 <outline type="rss" text="AI Revolution" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC5l7RouTQ60oUjLjt1Nh-UQ" htmlUrl="https://www.youtube.com/@airevolutionx"/>
+<outline type="rss" text="Paul J Lipsky" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCmeU2DYiVy80wMBGZzEWnbw" htmlUrl="https://www.youtube.com/@PaulJLipsky"/>
 <outline type="rss" text="Matt Wolfe" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UChpleBmo18P08aKCIgti38g" htmlUrl="https://www.youtube.com/@mreflow"/>
+<outline type="rss" text="H.I.T GOLF" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC78yetN3RYOf56mx0mAx23Q" htmlUrl="https://www.youtube.com/@HITGolfReviews"/>
+<outline type="rss" text="gm__golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UClljAz6ZKy0XeViKsohdjqA" htmlUrl="https://www.youtube.com/@gmgolf"/>
 <outline type="rss" text="Marques Brownlee" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ" htmlUrl="https://www.youtube.com/@mkbhd"/>
-<outline type="rss" text="Linus Tech Tips" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw" htmlUrl="https://www.youtube.com/@LinusTechTips"/>
+<outline type="rss" text="BitBiasedAI" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCGIiO6Uo8V8vkuLOcFvf3ZQ" htmlUrl="https://www.youtube.com/@BitBiasedAI"/>
+<outline type="rss" text="Alriks Bilar" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCU-4UJDGqQWK5Iv4wXDlzGQ" htmlUrl="https://www.youtube.com/@alriksbilar"/>
+<outline type="rss" text="Grant Horvat Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCgUueMmSpcl-aCTt5CuCKQw" htmlUrl="https://www.youtube.com/@GrantHorvatGolfs"/>
+<outline type="rss" text="Skill Leap AI" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCwSozl89jl2zUDzQ4jGJD3g" htmlUrl="https://www.youtube.com/@SkillLeapAI"/>
+<outline type="rss" text="Sportbladet" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC3iZc396g5qL-9mDVQzi2gA" htmlUrl="https://www.youtube.com/@sportbladet3448"/>
 <outline type="rss" text="Mrwhosetheboss" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCMiJRAwDNSNzuYeN2uWa0pA" htmlUrl="https://www.youtube.com/@Mrwhosetheboss"/>
+<outline type="rss" text="Garrett Clark Vlogs" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCGb6gV1ZM5McOzJJiyHC2Kg" htmlUrl="https://www.youtube.com/@garrettclarkvlogs"/>
+<outline type="rss" text="Good Good Girls" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCDVWBNM5HpSvo_wR4GeVvug" htmlUrl="https://www.youtube.com/@GoodGoodGirls"/>
+<outline type="rss" text="Bryson DeChambeau" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCCxF55adGXOscJ3L8qdKnrQ" htmlUrl="https://www.youtube.com/@brysondechambeau"/>
+<outline type="rss" text="Burgerdudes" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCTwOAZMBRE4aYUpU-IJa32w" htmlUrl="https://www.youtube.com/@BurgerdudesYT"/>
+<outline type="rss" text="Viaplay Urheilu" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCvMrEsQm9A1GBzLSSS8RKPg" htmlUrl="https://www.youtube.com/@ViasatUrheilu"/>
+<outline type="rss" text="Bellator Life" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UChoJkYkj8mjbSm-q36EhK-g" htmlUrl="https://www.youtube.com/@Bellator_life"/>
+<outline type="rss" text="Good Good" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCfi-mPMOmche6WI-jkvnGXw" htmlUrl="https://www.youtube.com/@GoodGood"/>
+<outline type="rss" text="Erik Grankvist" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCxByVUuLdxxiqQVmbOnDEzw" htmlUrl="https://www.youtube.com/@ErikGrankvist"/>
+<outline type="rss" text="WTV" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC6C1DHSpCK0eVCKLUCSP-Gg" htmlUrl="https://www.youtube.com/@wenstromtelevision"/>
+<outline type="rss" text="Hockey Tutorial" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCJoMmMBGMimAuEgVPU05QPQ" htmlUrl="https://www.youtube.com/@HockeyTutorialOfficial"/>
+<outline type="rss" text="Svenska tidsresor" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC5D-M_qhl6HXVsODmtMhWwA" htmlUrl="https://www.youtube.com/@svenskatidsresor"/>
+<outline type="rss" text="David Kringlund" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCW_TXiiClJylBGu3RvPr9ig" htmlUrl="https://www.youtube.com/@DavidKringlund"/>
+<outline type="rss" text="HockeyNews" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCiGv-M054YCT_LJrqxnwC1w" htmlUrl="https://www.youtube.com/@HockeyNewsse"/>
+<outline type="rss" text="Frölunda HC" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC6DO-PzFa6qBujO-h6_uR0Q" htmlUrl="https://www.youtube.com/@Fr%C3%B6lundaHC-n2z"/>
+<outline type="rss" text="Jesse James West" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCEjIjshJ8bvvCkGNk0pkYcA" htmlUrl="https://www.youtube.com/@JesseJamesWest"/>
+<outline type="rss" text="Matgeek" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCSGHj0YjencmGUSksbMbBVQ" htmlUrl="https://www.youtube.com/@matgeek"/>
+<outline type="rss" text="SampeV2" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCxLeUquqMYK-iiwsnY5WVJA" htmlUrl="https://www.youtube.com/@SampeV2"/>
+<outline type="rss" text="FORMULA 1" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCB_qr75-ydFVKSF9Dmo6izg" htmlUrl="https://www.youtube.com/@Formula1"/>
+<outline type="rss" text="sdpn" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC0a0z05HiddEn7k6OGnDprg" htmlUrl="https://www.youtube.com/@sdpn"/>
+<outline type="rss" text="AI Founders" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCRdfhTdKpGtJg-QIuAIND8g" htmlUrl="https://www.youtube.com/@AIFoundersHQ"/>
+<outline type="rss" text="Michael Automates" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCC0O5FKSMcjzrvOUa08hS_A" htmlUrl="https://www.youtube.com/@michaelionita"/>
+<outline type="rss" text="Trading with DaviddTech" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC7NJLsf6IonOy8QI8gt5BeA" htmlUrl="https://www.youtube.com/@DaviddTech"/>
+<outline type="rss" text="Brad Dalke" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCjchle1bmH0acutqK15_XSA" htmlUrl="https://www.youtube.com/@braddalkegolf"/>
+<outline type="rss" text="Julian Goldie SEO" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCGpsgNbzdF7BECCVbB1COHw" htmlUrl="https://www.youtube.com/@JulianGoldieSEO"/>
+<outline type="rss" text="Viime yön änärit" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCZtDQulSu6Ar7X6B_5SftTQ" htmlUrl="https://www.youtube.com/@viimeyonanarit8907"/>
+<outline type="rss" text="DLLS Sports" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC9hQgg0c2iNS1_aHU-Xpp9g" htmlUrl="https://www.youtube.com/@DLLS_Sports"/>
+<outline type="rss" text="Rick Shiels Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCFHZHhZaH7Rc_FOMIzUziJA" htmlUrl="https://www.youtube.com/@RickShielsPGA"/>
+<outline type="rss" text="Dr. Eric Berg DC" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC3w193M5tYPJqF0Hi-7U-2g" htmlUrl="https://www.youtube.com/@Drberg"/>
+<outline type="rss" text="Hockey on Fanatics View" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCoby8PXM_ZnMOWolmcXrXrg" htmlUrl="https://www.youtube.com/@hockeyonfanaticsview"/>
+<outline type="rss" text="SVENSK HOCKEY" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC86aeWnXbxKzS3rhsK5g-aw" htmlUrl="https://www.youtube.com/@svenskhockeytv1"/>
+<outline type="rss" text="Cyber Scrilla" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC7uWm0J2zby24qHyBkDyIxg" htmlUrl="https://www.youtube.com/@cyberscrilla"/>
+<outline type="rss" text="SPORTSNET" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCVhibwHk4WKw4leUt6JfRLg" htmlUrl="https://www.youtube.com/@sportsnet"/>
+<outline type="rss" text="SteveDangle" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCkUjSzthJUlO0uyUpiJfnxg" htmlUrl="https://www.youtube.com/@SteveDangle"/>
+<outline type="rss" text="METATERRA" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCSKGBKAfFk2oZuNKkXKYUsg" htmlUrl="https://www.youtube.com/@metaterra.official"/>
+<outline type="rss" text="Peter Finch Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCFoez1Xjc90CsHvCzqKnLcw" htmlUrl="https://www.youtube.com/@peterfinchgolf"/>
+<outline type="rss" text="ISMO" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC4j8NlovuYeIUnEJ0_q5yYg" htmlUrl="https://www.youtube.com/@IsmoComedian"/>
+<outline type="rss" text="Florida Panthers" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCSSc4wVk6telelb58RrLYdg" htmlUrl="https://www.youtube.com/@flapanthers"/>
+<outline type="rss" text="NHL" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCqFMzb-4AUf6WAIbl132QKA" htmlUrl="https://www.youtube.com/@NHL"/>
+<outline type="rss" text="The Hockey Guy" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC_AFyA9FqrZ57bb9QRH77wg" htmlUrl="https://www.youtube.com/@TheHockeyGuy"/>
+<outline type="rss" text="Thomas DeLauer" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC70SrI3VkT1MXALRtf0pcHg" htmlUrl="https://www.youtube.com/@ThomasDeLauerOfficial"/>
+<outline type="rss" text="Max Tech" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCptwuAv0XQHo1OQUSaO6NHw" htmlUrl="https://www.youtube.com/@MaxTechOfficial"/>
+<outline type="rss" text="NHL Network" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCRsrhXtzXmzYX_fiyNHHxbw" htmlUrl="https://www.youtube.com/@NHLNetwork"/>
+<outline type="rss" text="Big Head Hockey" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCfDnnlBLuzvCf1S9gfPXGRg" htmlUrl="https://www.youtube.com/@bigheadhockey"/>
+<outline type="rss" text="Filip Poon" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCcN54GrpL2nkkecIvsIsM7A" htmlUrl="https://www.youtube.com/@FilipPoon"/>
+<outline type="rss" text="New York Rangers" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXlX2t7ziIJpZQWZcrHGnow" htmlUrl="https://www.youtube.com/@nyrangers"/>
+<outline type="rss" text="FloridaHockeyNow" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCz42iD-mkztoQT1pvdX-29w" htmlUrl="https://www.youtube.com/@floridahockeynow"/>
+<outline type="rss" text="NHL Europe" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCK3CHl-6e3hq4gQaz_TOyoQ" htmlUrl="https://www.youtube.com/@nhleurope"/>
+<outline type="rss" text="Takomo Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCLHY1D8np93jExxM6hHuQRQ" htmlUrl="https://www.youtube.com/@takomogolfcompany"/>
+<outline type="rss" text="Kapten Mat" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCAiCuMprBmL2TvjiyxX9e1Q" htmlUrl="https://www.youtube.com/@KaptenMat"/>
+<outline type="rss" text="ZONEofTECH" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCr6JcgG9eskEzL-k6TtL9EQ" htmlUrl="https://www.youtube.com/@ZONEofTECH"/>
+<outline type="rss" text="Padraig Harrington" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCJolpQHWLAW6cCUYGgean8w" htmlUrl="https://www.youtube.com/@PadraigHarringtonOfficial"/>
+<outline type="rss" text="RikaTillsammans" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCpDL0lVF5RPEw_u0Taiur5Q" htmlUrl="https://www.youtube.com/@RikaTillsammansTV"/>
+<outline type="rss" text="DNVR Sports" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC8aOXvlqQqMlTFvbbAarD-A" htmlUrl="https://www.youtube.com/@DNVR_Sports"/>
 <outline type="rss" text="AppleTrack" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC2VrA-oteANZQ07TquwBvAQ" htmlUrl="https://www.youtube.com/@AppleTrack"/>
+<outline type="rss" text="Good Good Extra" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCbY_v56iMzSGvXK79X6f4dw" htmlUrl="https://www.youtube.com/@goodgoodextra"/>
+<outline type="rss" text="Guerilla Sports" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUzpJF0Nx9uURB9-K17s-pg" htmlUrl="https://www.youtube.com/@GuerillaSports_"/>
+<outline type="rss" text="Coin Bureau" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCqK_GSMbpiV8spgD3ZGloSw" htmlUrl="https://www.youtube.com/@CoinBureau"/>
+<outline type="rss" text="Svensk Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCSFsCu6-1y5Idq5s87Pn43A" htmlUrl="https://www.youtube.com/@svenskgolf_se"/>
+<outline type="rss" text="Bleacher Report" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC9-OpMMVoNP5o10_Iyq7Ndw" htmlUrl="https://www.youtube.com/@BleacherReport"/>
+<outline type="rss" text="Nick Taylor Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCoskRiKxy06HM5kXxhNiQ1w" htmlUrl="https://www.youtube.com/@NickTaylorGolf"/>
+<outline type="rss" text="Top Shelf Hockey" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCJC4kuBvrghSABumDSwl80A" htmlUrl="https://www.youtube.com/@TopShelfHockey"/>
+<outline type="rss" text="Colorado Avalanche" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCM715eqbBCk1JE4zlAwYLqw" htmlUrl="https://www.youtube.com/@ColoradoAvalanche"/>
+<outline type="rss" text="Fer Puck's Sake" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCmmKVwNhM4dSm-leZwjqZFg" htmlUrl="https://www.youtube.com/@FerPucksSake"/>
+<outline type="rss" text="NHL on ESPN" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC7i94bTxxuZBrllSxXHyFxg" htmlUrl="https://www.youtube.com/@ESPNNHL"/>
+<outline type="rss" text="Kyle Berkshire" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCE3jCX0g7xq4zRE5MS5c_mw" htmlUrl="https://www.youtube.com/@kyleberkshire3371"/>
+<outline type="rss" text="motivationaldoc" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCKcWSiffY8MpZ3NKav8LeRA" htmlUrl="https://www.youtube.com/@motivationaldoc"/>
+<outline type="rss" text="Carolina Hurricanes" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCsjx7L3gOJJYxmaEMiwxvVQ" htmlUrl="https://www.youtube.com/@CarolinaHurricanes"/>
+<outline type="rss" text="Daily Faceoff" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCPH8VRwYfex5olrt0VJcgnw" htmlUrl="https://www.youtube.com/@daily_faceoff"/>
+<outline type="rss" text="First We Feast" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCPD_bxCRGpmmeQcbe2kpPaA" htmlUrl="https://www.youtube.com/@FirstWeFeast"/>
+<outline type="rss" text="Train 2.0 Hockey" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCSb7cqVyWc9pUs_Nvp0JE7g" htmlUrl="https://www.youtube.com/@Train2point0"/>
+<outline type="rss" text="PGA TOUR" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCKwGZZMrhNYKzucCtTPY2Nw" htmlUrl="https://www.youtube.com/@PGATOUR"/>
+<outline type="rss" text="Locked On Avalanche" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCIg-1EJ77LGYsh9i8IaIO7w" htmlUrl="https://www.youtube.com/@LockedOnAvalanche"/>
+<outline type="rss" text="Edmonton Oilers" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCyfbxrAcT9w7pHvDeYCtc0Q" htmlUrl="https://www.youtube.com/@edmontonoilers"/>
+<outline type="rss" text="Dr. Pradip Jamnadas, MD" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCOtQHehGWtblMp1gZC8Kq3Q" htmlUrl="https://www.youtube.com/@pradipjamnadasmd"/>
+<outline type="rss" text="Linus Tech Tips" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw" htmlUrl="https://www.youtube.com/@LinusTechTips"/>
+<outline type="rss" text="Graviteh" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCPLyt0s7Y4fhEkVyAvY2bNQ" htmlUrl="https://www.youtube.com/@GravitehHockey"/>
+<outline type="rss" text="Dallas Stars" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCxfgTxo6HUmnZkxHWFV5T-A" htmlUrl="https://www.youtube.com/@dallasstars"/>
+<outline type="rss" text="Locked On Hurricanes" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCQ2suv9ZAZX28wE90broOdA" htmlUrl="https://www.youtube.com/@LockedOnHurricanes"/>
+<outline type="rss" text="Schnelle Rezepte" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCGntehq4uSP6fHLW6y3-zlA" htmlUrl="https://www.youtube.com/@SchnelleRezepte88"/>
+<outline type="rss" text="Pavel Barber" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCIIP7HpZewRTKQGaHTP6x8g" htmlUrl="https://www.youtube.com/@PavelBarber"/>
+<outline type="rss" text="SHL" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwsAsbK-SsW5GHufJJFUA" htmlUrl="https://www.youtube.com/@SHL"/>
+<outline type="rss" text="Matt Fryer Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCokFauAYvXnr3e9TZQFESIQ" htmlUrl="https://www.youtube.com/@Mattfryergolf"/>
+<outline type="rss" text="iTrain Hockey" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXHXKnR5fRzXC842uU8bRTw" htmlUrl="https://www.youtube.com/@itrainhockey"/>
+<outline type="rss" text="The R&A" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCZ5fOnOmQunH18xZGhu9f_Q" htmlUrl="https://www.youtube.com/@golfranda"/>
+<outline type="rss" text="SparaCash" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCA86klwjssGwC95QzN5H5Gw" htmlUrl="https://www.youtube.com/@SparaCash"/>
+<outline type="rss" text="Spittin' Chiclets" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UChV3NHKFYgxe4k1ajuk_bbw" htmlUrl="https://www.youtube.com/@SpittinChiclets"/>
+<outline type="rss" text="Top Speed Golf - Clay Ballard" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC_iddZiEUKR0Byb_eHbHHAQ" htmlUrl="https://www.youtube.com/@TopSpeedGolf"/>
+<outline type="rss" text="Dan Grieve" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCHcp_82PzKGeVa3F0CJdXjg" htmlUrl="https://www.youtube.com/@DanGrieveGolf"/>
+<outline type="rss" text="mygolfspy" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCQGFteokFe4j0i8xcNklQFA" htmlUrl="https://www.youtube.com/@mygolfspyvideos"/>
+<outline type="rss" text="AlexElliottGolf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCkkV4PdfZ9L6xHS0-FE_hSA" htmlUrl="https://www.youtube.com/@AlexElliottGolf"/>
+<outline type="rss" text="DP World Tour" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCvZwbZt6YZQ4wj_7qyjPDZw" htmlUrl="https://www.youtube.com/@DPWorldTour"/>
+<outline type="rss" text="Eric Cogorno Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UClOp9ASmFYATO1zFfpB7QlA" htmlUrl="https://www.youtube.com/@CogornoGolf"/>
+<outline type="rss" text="Feldenkrais with Taro Iwamoto" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCGDJMqOkQPs13Joy36RxO4g" htmlUrl="https://www.youtube.com/@TaroIwamoto"/>
+<outline type="rss" text="The Golf Sensei" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCoZW2iuJdl5VzdCvKR78dew" htmlUrl="https://www.youtube.com/@TheGolfSensei"/>
+<outline type="rss" text="The Rick Shiels Golf Show" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCZNEuuyLZQt5H9lUqImc0CQ" htmlUrl="https://www.youtube.com/@RickShielsGolfShow"/>
+<outline type="rss" text="Dr. Berg Shorts" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCpWhiwlOPxOmwQu5xyjtLDw" htmlUrl="https://www.youtube.com/@drbergshorts"/>
+<outline type="rss" text="Homey" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCmOtm5LaBo-wKEEZDhzA0XQ" htmlUrl="https://www.youtube.com/@homey"/>
+<outline type="rss" text="3FO Affiliate Marketing 3.0 BTCC" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCbzFwm1EGPAZ6cDKQXlFRJA" htmlUrl="https://www.youtube.com/@AFFILIATEMARKETING3.0_OFFICIAL"/>
+<outline type="rss" text="Meandmygolf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCTwywdg9Sw5xs4wdN-qz7yw" htmlUrl="https://www.youtube.com/@meandmygolf."/>
+<outline type="rss" text="Nasher" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC14d4SF8PHtsz2W4HJSl2jw" htmlUrl="https://www.youtube.com/@TheNasher61"/>
+<outline type="rss" text="Cordie Walker GolfWell" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUNn2JE6WWieyLyj2-Rs0xQ" htmlUrl="https://www.youtube.com/@golfwelltv"/>
+<outline type="rss" text="Crypto Casey" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCi7RBPfTtRkVchV6qO8PUzg" htmlUrl="https://www.youtube.com/@CryptoCasey"/>
+<outline type="rss" text="SagutoGolf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC62Ygv4OmSNZBFkL6A7KDQg" htmlUrl="https://www.youtube.com/@SagutoGolf"/>
+<outline type="rss" text="Ali Taylor Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCWHpaCT_mnnZBnhtVO7Frbw" htmlUrl="https://www.youtube.com/@AliTaylorGolf"/>
+<outline type="rss" text="ATHLEAN-X™" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCe0TLA0EsQbE-MjuHXevj2A" htmlUrl="https://www.youtube.com/@athleanx"/>
+<outline type="rss" text="Bryan Bros Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCdCxaD8rWfAj12rloIYS6jQ" htmlUrl="https://www.youtube.com/@BryanBrosGolf"/>
+<outline type="rss" text="Glucose Revolution" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCsQdi6X-12eUKBBBze46STA" htmlUrl="https://www.youtube.com/@GlucoseRevolution"/>
+<outline type="rss" text="LifebyMikeG" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCzH5n3Ih5kgQoiDAQt2FwLw" htmlUrl="https://www.youtube.com/@LifebyMikeG"/>
+<outline type="rss" text="Mark Crossfield" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCZelGnfKLXic4gDP63dIRxw" htmlUrl="https://www.youtube.com/@MarkCrossfield"/>
+<outline type="rss" text="5-Minute Fitness" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCdlArXhKkCBlaR0R6w7_x3w" htmlUrl="https://www.youtube.com/@5-minutefitness1"/>
+<outline type="rss" text="Ice Warehouse" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCuZ--bsaZNmO288IVlFWx3A" htmlUrl="https://www.youtube.com/@ice.warehouse"/>
+<outline type="rss" text="PwC Sverige" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC6ey19pGAwmfciEiUrrkl4A" htmlUrl="https://www.youtube.com/@PwCSverige"/>
+<outline type="rss" text="WeFi Official" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC5ycSi3j6mr4iBacUL2O3WA" htmlUrl="https://www.youtube.com/@wefi.official"/>
+<outline type="rss" text="Mr. CapFree" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCBI86IWpG2p4dSqOgLFfFug" htmlUrl="https://www.youtube.com/@MrCapFree"/>
+<outline type="rss" text="No Shenanigans" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCCsNokyhLWKKnhwSRX9hF4g" htmlUrl="https://www.youtube.com/@No_Shenanigans"/>
+<outline type="rss" text="PhoneBuff" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UChYU73igK5wQhWAXPh3X8PA" htmlUrl="https://www.youtube.com/@PhoneBuff"/>
+<outline type="rss" text="Julien Cohen" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC899MXB8_df7O5HzedKBzaA" htmlUrl="https://www.youtube.com/@julien_cohen"/>
+<outline type="rss" text="LIV Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCuC-Is0pVH9RudfZJw-LSmw" htmlUrl="https://www.youtube.com/@LIVGolf"/>
+<outline type="rss" text="Pizzaakademin" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC9Nv2O1t5hnNG9_XrsWAWCQ" htmlUrl="https://www.youtube.com/@pizzaakademin"/>
+<outline type="rss" text="Cermak FX" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUyjO8l7rVATcQlsKCTLhgQ" htmlUrl="https://www.youtube.com/@CermakFX"/>
+<outline type="rss" text="Förnuft och känsla med Peder och Alrik" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCefD-SBcDhshWRsTfLccNWA" htmlUrl="https://www.youtube.com/@F%C3%B6rnuftok%C3%A4nsla-aop"/>
+<outline type="rss" text="Mat Watson Cars" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCulu1KUYJ_2OBDouc_d-cUA" htmlUrl="https://www.youtube.com/@MatWatsonCars"/>
+<outline type="rss" text="Dormy Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UChQghtyfb0NMK-KbW88MPgw" htmlUrl="https://www.youtube.com/@DormyGolfeurope"/>
 <outline type="rss" text="Creator Magic" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC08Fah8EIryeOZRkjBRohcQ" htmlUrl="https://www.youtube.com/@CreatorMagicAI"/>
-<outline type="rss" text="OpenAI" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXZCJLdBC09xxGZ6gcdrc6A" htmlUrl="https://www.youtube.com/@OpenAI"/>
+<outline type="rss" text="Grant Horvat Golf 2" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCjw5RoGW4zG-zNpc5v8oFxA" htmlUrl="https://www.youtube.com/@GrantHorvatGolfsTwo"/>
+<outline type="rss" text="Peter Edvardsson - Life & Busines Mentor" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCJhdVrciida6Ujh7cE7td_w" htmlUrl="https://www.youtube.com/@peteredvardsson-Rikare"/>
+<outline type="rss" text="Your guide to better golf - Marcus Edblad PGA Pro" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCRdhuKpjc5HHhJWNO38cFpA" htmlUrl="https://www.youtube.com/@GolfwithMarcusEdblad"/>
+<outline type="rss" text="Alex Elliott Reviews" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC0vPvNMpMljIjn1oNcAlrrA" htmlUrl="https://www.youtube.com/@AlexElliottReviews"/>
+<outline type="rss" text="Good Good Labs" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC-9prB76nwUXE6MOh4rQsGA" htmlUrl="https://www.youtube.com/@GoodGoodLabs"/>
+<outline type="rss" text="Markus Aujalay" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCcomGqp2D49N886bWBQ9OLg" htmlUrl="https://www.youtube.com/@markusaujalay2782"/>
+<outline type="rss" text="Swing Quest Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCZArXevqzklWNZN0w7hxxrQ" htmlUrl="https://www.youtube.com/@swingquestgolf"/>
+<outline type="rss" text="NHL IN TREND" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCpbHFoRvnGjHd03xL0nt-mA" htmlUrl="https://www.youtube.com/@NHLinTREND"/>
+<outline type="rss" text="Johannes Cullberg" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC8yxADv4yejV2LTRacygq-Q" htmlUrl="https://www.youtube.com/@johannescullberg"/>
+<outline type="rss" text="auto motor & sport" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCNKsbxQ7vB8Yo4F3NTu3_mg" htmlUrl="https://www.youtube.com/@automotorsporttv"/>
+<outline type="rss" text="Better Than Yesterday" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCpExuV8qJMfCaSQNL1YG6bQ" htmlUrl="https://www.youtube.com/@BetterThanYesterday"/>
+<outline type="rss" text="Roaming Wild Rosie" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCY1bIrHWl4wBzzTNW4cGWKw" htmlUrl="https://www.youtube.com/@wildrosie"/>
+<outline type="rss" text="DrJoeDispenza Meditation" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC0UCQrN8zjqoJ0OJ9qY-q8A" htmlUrl="https://www.youtube.com/@ShortsMeditation"/>
+<outline type="rss" text="LITTLE BIT BETTER" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCmbF1cyNa6y7uNYiqYmSVJw" htmlUrl="https://www.youtube.com/@littlebitbetter7"/>
+<outline type="rss" text="The Bombers Club" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCBHUonn7iZWfCny4B74n07Q" htmlUrl="https://www.youtube.com/@thebombersclub"/>
+<outline type="rss" text="Uppdrag: Mat" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXAjub1yM01dqjgJRG1nvsQ" htmlUrl="https://www.youtube.com/@UppdragMat"/>
+<outline type="rss" text="YOGABODY" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCR5v8bVAjoAc61deR_HVc8A" htmlUrl="https://www.youtube.com/@YOGABODY.Official"/>
+<outline type="rss" text="Bubbie Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCEPfvFFuCdO_8HND67WcThA" htmlUrl="https://www.youtube.com/@BubbieGolf"/>
+<outline type="rss" text="Let's be Healthy" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCuuyfCvxMhUwC9N855_C2ZQ" htmlUrl="https://www.youtube.com/@lets-be-healthy"/>
+<outline type="rss" text="RESPIRE Health" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCyNaCRf6Aaljcm9ZWARawXw" htmlUrl="https://www.youtube.com/@RespireOfficial"/>
+<outline type="rss" text="Pressure Luck Cooking" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCWP5zYusIJqJCK27A0NlAKg" htmlUrl="https://www.youtube.com/@PressureLuck"/>
+<outline type="rss" text="Smart Home Solver" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCwOBG77Tm8cE24FPxHb_abw" htmlUrl="https://www.youtube.com/@SmartHomeSolver"/>
+<outline type="rss" text="On the Road with Iona" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC9c-rWQmoHDd5rkBBESRzDA" htmlUrl="https://www.youtube.com/@ontheroadwithiona"/>
+<outline type="rss" text="Nico Rosberg" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCtLZ6qQgB-EwQy5HWIo3X-w" htmlUrl="https://www.youtube.com/@NicoRosberg"/>
+<outline type="rss" text="DuPraw Powerskating" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXZBBt4D-nmZ7n2GG1D7S6Q" htmlUrl="https://www.youtube.com/@DuPrawPowerskating"/>
+<outline type="rss" text="daily MOTIVATION" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCK9i-t1GwUeVVmddPCCdqCg" htmlUrl="https://www.youtube.com/@dailyMOTIVATIONcontact"/>
+<outline type="rss" text="ifkkungalv" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCoT_70Fl634GBvVaPmcfaqA" htmlUrl="https://www.youtube.com/@ifkkungalv"/>
+<outline type="rss" text="Tiltunen" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCpoBCQ5qs4nVX6aI69itWfg" htmlUrl="https://www.youtube.com/@qitoxy"/>
+<outline type="rss" text="Dr. Sten Ekberg" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCIe2pR6PE0dae9BunJ38F7w" htmlUrl="https://www.youtube.com/@drekberg"/>
+<outline type="rss" text="The Galen Foundation" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUp8SWTLsEC6Mn8ExztMIjA" htmlUrl="https://www.youtube.com/@thegalenfoundation"/>
+<outline type="rss" text="Zac Bell" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCD17bB56nVAHDUb0U4RplQQ" htmlUrl="https://www.youtube.com/@AlwaysHockey"/>
+<outline type="rss" text="Fimpen" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCQmle3K2yCcpy55VNWdp2hA" htmlUrl="https://www.youtube.com/@Fimpen"/>
+<outline type="rss" text="Tee Party" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC53KwLK4BWXTJgUK6H2fiJg" htmlUrl="https://www.youtube.com/@teeparty"/>
+<outline type="rss" text="NHLWAM" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCxn-he3a_s4wRHJOxEJ5cuQ" htmlUrl="https://www.youtube.com/@nhlwam1"/>
+<outline type="rss" text="Hockey Training" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCRS46UDJteeQWOCMnMJH6DA" htmlUrl="https://www.youtube.com/@hockeytraining"/>
+<outline type="rss" text="ÖIS Fotboll" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCjwwPBHJsIHg5jg3rk_eDYA" htmlUrl="https://www.youtube.com/@studioois"/>
+<outline type="rss" text="On the bench" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCJWwey8qQZj-BX3xtJbYfxA" htmlUrl="https://www.youtube.com/@OnthebenchOllyandJacob"/>
+<outline type="rss" text="Coach Jeremy" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCDGB6MoY1PIuX5oHJSH9Cgg" htmlUrl="https://www.youtube.com/@CoachJeremy"/>
+<outline type="rss" text="tecmath" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCb7w5aTnt7YeXBcVCY0mgFw" htmlUrl="https://www.youtube.com/@tecmath"/>
+<outline type="rss" text="ChrisRyanGolf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCKo7Y45mcjDtLKiCx6ZTvAg" htmlUrl="https://www.youtube.com/@ChrisRyanGolf"/>
+<outline type="rss" text="Michael Newton Golf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCMigimBIRQCYqo4PVvO0NSQ" htmlUrl="https://www.youtube.com/@MichaelNewtonGolf"/>
+<outline type="rss" text="Danny Maude" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCSwdmDQhAi_-ICkAvNBLEBw" htmlUrl="https://www.youtube.com/@DanielMaude"/>
+<outline type="rss" text="Marcus Edblad Golf - Din guide till bättre golf..." xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUB_q7vMnkEvClTxpIvwOFw" htmlUrl="https://www.youtube.com/@MarcusEdbladGolf"/>
+<outline type="rss" text="MXPGolf.se" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UC5Yg5pOfAUI7hgk99nVzaaA" htmlUrl="https://www.youtube.com/@Mxpgolf"/>
+<outline type="rss" text="The Average Golfer" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCwfGb-FXG66ZCRrS-VMc4oA" htmlUrl="https://www.youtube.com/@TheAverageGolfer"/>
+<outline type="rss" text="Henrik Fexeus" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCYjd0qpnUyjCqgG2mhDA6wQ" htmlUrl="https://www.youtube.com/@HFexeus"/>
+<outline type="rss" text="MattiasRibbingPodcast" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCM7VosaoD_iMFj88AmbLApg" htmlUrl="https://www.youtube.com/@mattiasribbingpodcast"/>
+<outline type="rss" text="trottiegolf" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCK9SsZNsakb7hb6hINEYxgA" htmlUrl="https://www.youtube.com/@trottiegolf"/>
 </outline>
 </body>
 </opml>
