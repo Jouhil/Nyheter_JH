@@ -14,7 +14,7 @@ from helpers.news import fetch_news
 from helpers.smhi import get_weather
 
 LOCATION = {
-    "name": "Göteborg",
+    "name": "Göteborg/Säve",
     "lat": 57.7089,
     "lon": 11.9746,
 }
@@ -48,13 +48,14 @@ def _default_hourly_rows() -> list[dict]:
             "temperature": None,
             "weather_code": None,
             "precipitation": None,
+            "wind_speed": None,
         })
     return rows
 
 
 def _default_daily_rows() -> list[dict]:
     rows = []
-    for _ in range(7):
+    for _ in range(10):
         rows.append({
             "date": None,
             "temp_max": None,
@@ -76,8 +77,8 @@ def _validate_counts(weather: dict, videos: list[dict], news: dict[str, list[dic
             weather_warning = "Väder saknas: inga mätvärden i SMHI-data"
         print(f"[VALIDERING] VARNING: {weather_warning}")
         print("[VALIDERING] VARNING: Fortsätter ändå (väder är inte blockerande)")
-    if len(videos) < 5:
-        errors.append(f"YouTube-sektionen har för få poster ({len(videos)} < 5)")
+    if len(videos) == 0:
+        print("[VALIDERING] VARNING: Inga YouTube-videos för idag efter filtrering.")
     if total_news < 3:
         errors.append(f"Nyheter har för få poster totalt ({total_news} < 3)")
 
@@ -138,9 +139,12 @@ def main() -> None:
             "weather_code": weather.get("weather_code"),
             "description": weather.get("description"),
             "forecast_time": weather.get("forecast_time_utc"),
+            "feels_like": weather.get("feels_like_c"),
+            "temp_min": weather.get("min_c"),
+            "temp_max": weather.get("max_c"),
         },
         "hourly_24": weather.get("hourly_24") or _default_hourly_rows(),
-        "daily_7": weather.get("daily_7") or _default_daily_rows(),
+        "daily_10": weather.get("daily_10") or _default_daily_rows(),
         "error": weather.get("error"),
     }
     OUTPUT_WEATHER_JSON.write_text(
