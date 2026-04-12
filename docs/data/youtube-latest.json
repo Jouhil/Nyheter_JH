@@ -1,8 +1,78 @@
 {
-  "generated_at_utc": "2026-04-12T19:48:40.351113+00:00",
+  "generated_at_utc": "2026-04-12T20:24:27.022517+00:00",
   "timezone": "Europe/Stockholm",
   "lookback_hours": 168,
+  "config_filter": {
+    "path": "config/youtube_filters.json",
+    "version": 1,
+    "exclude_channels_exact": 0,
+    "exclude_channel_contains": 0,
+    "exclude_title_contains": 0,
+    "excluded_total": 0
+  },
   "videos": [
+    {
+      "video_id": "WBkiJC96lnc",
+      "title": "J. Cole made his debut with the Nanjing Monkey Kings",
+      "channel": "Bleacher Report",
+      "published_at_utc": "2026-04-12T20:11:44+00:00",
+      "published_at_unix": 1776024704,
+      "published_at_stockholm": "2026-04-12T22:11:44+02:00",
+      "thumbnail": "https://i4.ytimg.com/vi/WBkiJC96lnc/hqdefault.jpg",
+      "summary_source_text": "   J. Cole made his debut with the Nanjing Monkey Kings J. Cole played in his first game with Nanjing Monkey Kings in Chinese Basketball Association (via complexsports/IG, complexchinese/IG, wheretochina/TT)\n\n#basketball #jcole #shorts J. Cole played in his first game with Nanjing Monkey Kings in Chinese Basketball Association (via complexsports/IG, complexchinese/IG, wheretochina/TT)\n\n#basketball #jcole #shorts",
+      "summary": "Cole made his debut with the Nanjing Monkey Kings J. Cole played in his first game with Nanjing Monkey Kings in Chinese Basketball Association (via complexsports/IG, complexchinese/IG, wheretochina/TT) J.",
+      "url": "https://www.youtube.com/watch?v=WBkiJC96lnc",
+      "duration": null,
+      "raw_short_signals": [
+        "source_contains_short_hashtag",
+        "title_or_text_short_hint",
+        "feed_metadata_short_hint"
+      ],
+      "is_short_candidate": true,
+      "thumbnail_width": 480,
+      "thumbnail_height": 360,
+      "text_length": 356
+    },
+    {
+      "video_id": "bXAKfBH7J0Q",
+      "title": "Google Gemini New FREE Updates Are INSANE!",
+      "channel": "Julian Goldie SEO",
+      "published_at_utc": "2026-04-12T20:00:18+00:00",
+      "published_at_unix": 1776024018,
+      "published_at_stockholm": "2026-04-12T22:00:18+02:00",
+      "thumbnail": "https://i3.ytimg.com/vi/bXAKfBH7J0Q/hqdefault.jpg",
+      "summary_source_text": "   Google Gemini New FREE Updates Are INSANE! Want to make money and save time with AI? Get AI Coaching, Support & Courses 👉 https://www.skool.com/ai-profit-lab-7462/about\n\nGet the video notes + links to the tools → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI Course + 1000 NEW AI Agents  👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about\n\nWant to know how I make videos like these? Join the AI Profit Boardroom → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI SEO Strategy Session: https://go.juliangoldie.com/strategy-session?utm=julian\n\nGoogle Gemini: 4 Game-Changing Updates Nobody is Talking About\n\nGoogle just quietly released a massive wave of updates to the Gemini ecosystem that will change how you work and build apps forever. From free open-weight models to lightning-fast AI video generation, this video breaks down the four biggest features you need to start using right now.\n\n00:00 - Intro: Google's Secret Updates\n00:54 - Gemma: Free Open-Weight Models\n01:56 - Veo 3.1 Lite: Faster AI Video\n03:06 - Focus Mode: Rapid App Editing\n03:57 - Firebase Integration in AI Studio\n05:30 - Strategic Advice for Creators & Devs\n07:27 - How to Scale Your Business with AI Want to make money and save time with AI? Get AI Coaching, Support & Courses 👉 https://www.skool.com/ai-profit-lab-7462/about\n\nGet the video notes + links to the tools → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI Course + 1000 NEW AI Agents  👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about\n\nWant to know how I make videos like these? Join the AI Profit Boardroom → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI SEO Strategy Session: https://go.juliangoldie.com/strategy-session?utm=julian\n\nGoogle Gemini: 4 Game-Changing Updates Nobody is Talking About\n\nGoogle just quietly released a massive wave of updates to the Gemini ecosystem that will change how you work and build apps forever. From free open-weight models to lightning-fast AI video generation, this video breaks down the four biggest features you need to start using right now.\n\n00:00 - Intro: Google's Secret Updates\n00:54 - Gemma: Free Open-Weight Models\n01:56 - Veo 3.1 Lite: Faster AI Video\n03:06 - Focus Mode: Rapid App Editing\n03:57 - Firebase Integration in AI Studio\n05:30 - Strategic Advice for Creators & Devs\n07:27 - How to Scale Your Business with AI",
+      "summary": "Google Gemini New FREE Updates Are INSANE. Want to make money and save time with AI.",
+      "url": "https://www.youtube.com/watch?v=bXAKfBH7J0Q",
+      "duration": null,
+      "raw_short_signals": [],
+      "is_short_candidate": false,
+      "thumbnail_width": 480,
+      "thumbnail_height": 360,
+      "text_length": 1850
+    },
+    {
+      "video_id": "RFBaL2ypwYo",
+      "title": "Ovechkin sends him flying!",
+      "channel": "NHL",
+      "published_at_utc": "2026-04-12T19:51:37+00:00",
+      "published_at_unix": 1776023497,
+      "published_at_stockholm": "2026-04-12T21:51:37+02:00",
+      "thumbnail": "https://i3.ytimg.com/vi/RFBaL2ypwYo/hqdefault.jpg",
+      "summary_source_text": "   Ovechkin sends him flying! Capitals forward Alexander Ovechkin may be known for his goal scoring, but he can still lay a huge hit!\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews Capitals forward Alexander Ovechkin may be known for his goal scoring, but he can still lay a huge hit!\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews",
+      "summary": "Capitals forward Alexander Ovechkin may be known for his goal scoring, but he can still lay a huge hit. Your official home for NHL hockey coverage.",
+      "url": "https://www.youtube.com/watch?v=RFBaL2ypwYo",
+      "duration": null,
+      "raw_short_signals": [
+        "social_caption_style",
+        "title_or_text_short_hint",
+        "feed_metadata_short_hint"
+      ],
+      "is_short_candidate": true,
+      "thumbnail_width": 480,
+      "thumbnail_height": 360,
+      "text_length": 940
+    },
     {
       "video_id": "scTuJdg0JKA",
       "title": "Brushed is AWESOME",
@@ -46,27 +116,6 @@
       "thumbnail_width": 480,
       "thumbnail_height": 360,
       "text_length": 1102
-    },
-    {
-      "video_id": "OzKMG8-Aw4I",
-      "title": "Fan was shook after meeting Messi 😂🔥 (via fabi.dhers/IG)",
-      "channel": "Bleacher Report",
-      "published_at_utc": "2026-04-12T19:18:20+00:00",
-      "published_at_unix": 1776021500,
-      "published_at_stockholm": "2026-04-12T21:18:20+02:00",
-      "thumbnail": "https://i4.ytimg.com/vi/OzKMG8-Aw4I/hqdefault.jpg",
-      "summary_source_text": "   Fan was shook after meeting Messi 😂🔥 (via fabi.dhers/IG) Fan couldn't believe he met Lionel Messi 🤣\n\n#soccer #futbol #messi Fan couldn't believe he met Lionel Messi 🤣\n\n#soccer #futbol #messi",
-      "summary": "Fan was shook after meeting Messi (via fabi.dhers/IG) Fan couldn't believe he met Lionel Messi Fan couldn't believe he met Lionel Messi. Videon kompletterar med konkreta detaljer och exempel kring ämnet.",
-      "url": "https://www.youtube.com/watch?v=OzKMG8-Aw4I",
-      "duration": null,
-      "raw_short_signals": [
-        "title_or_text_short_hint",
-        "feed_metadata_short_hint"
-      ],
-      "is_short_candidate": true,
-      "thumbnail_width": 480,
-      "thumbnail_height": 360,
-      "text_length": 135
     },
     {
       "video_id": "M_2PWPijyYk",
@@ -540,6 +589,24 @@
       "thumbnail_width": 480,
       "thumbnail_height": 360,
       "text_length": 6816
+    },
+    {
+      "video_id": "TGHH-50_cl8",
+      "title": "GAME 1 !!!! 2026 MINI- STICK SERIES IS BACK",
+      "channel": "On the bench",
+      "published_at_utc": "2026-04-12T17:07:03+00:00",
+      "published_at_unix": 1776013623,
+      "published_at_stockholm": "2026-04-12T19:07:03+02:00",
+      "thumbnail": "https://i1.ytimg.com/vi/TGHH-50_cl8/hqdefault.jpg",
+      "summary_source_text": "   GAME 1 !!!! 2026 MINI- STICK SERIES IS BACK GAME 1 !!! boys its been YEARS since we hit the mini stick rink and went to war..... BUT THE WAIT IS OVER !!! GAME 1 !!! boys its been YEARS since we hit the mini stick rink and went to war..... BUT THE WAIT IS OVER !!!",
+      "summary": "2026 MINI- STICK SERIES IS BACK GAME 1. boys its been YEARS since we hit the mini stick rink and went to war.",
+      "url": "https://www.youtube.com/watch?v=TGHH-50_cl8",
+      "duration": null,
+      "raw_short_signals": [],
+      "is_short_candidate": false,
+      "thumbnail_width": 480,
+      "thumbnail_height": 360,
+      "text_length": 263
     },
     {
       "video_id": "vBvKq1HjVec",
@@ -2517,26 +2584,6 @@
       "text_length": 2670
     },
     {
-      "video_id": "5Z-f3_BVO-A",
-      "title": "Vegas CLINCHES with EICHEL OT WINNER!!",
-      "channel": "NHL",
-      "published_at_utc": "2026-04-12T02:59:23+00:00",
-      "published_at_unix": 1775962763,
-      "published_at_stockholm": "2026-04-12T04:59:23+02:00",
-      "thumbnail": "https://i2.ytimg.com/vi/5Z-f3_BVO-A/hqdefault.jpg",
-      "summary_source_text": "   Vegas CLINCHES with EICHEL OT WINNER!! Golden Knights forward Jack Eichel scores in overtime to give Vegas the 2-1 victory over the Avalanche and clinch a playoff spot for the Knights.\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews Golden Knights forward Jack Eichel scores in overtime to give Vegas the 2-1 victory over the Avalanche and clinch a playoff spot for the Knights.\n\n🏒 Your official home for NHL hockey coverage!\nGet the latest NHL news, live scores, highlights, player stats, and standings all season long. From Stanley Cup contenders to rookie sensations, we’ve got every goal, hit, and save.\n🔥 Don’t miss a moment of the action\n▶️ Subscribe now: https://youtube.com/nhl\n\nVisit NHL.com for exclusive content, game analysis, and real‑time updates.\n\n#NHL #Hockey #StanleyCup #NHLHighlights #NHLNews",
-      "summary": "Vegas CLINCHES with EICHEL OT WINNER. Golden Knights forward Jack Eichel scores in overtime to give Vegas the 2-1 victory over the Avalanche and clinch a playoff spot for the Knights.",
-      "url": "https://www.youtube.com/watch?v=5Z-f3_BVO-A",
-      "duration": null,
-      "raw_short_signals": [
-        "social_caption_style"
-      ],
-      "is_short_candidate": false,
-      "thumbnail_width": 480,
-      "thumbnail_height": 360,
-      "text_length": 1036
-    },
-    {
       "video_id": "0WtCGVdHu14",
       "title": "DNVR Avalanche Watchalong | Colorado Avalanche vs Vegas Golden Knights",
       "channel": "DNVR Sports",
@@ -3205,24 +3252,6 @@
       "thumbnail_width": 480,
       "thumbnail_height": 360,
       "text_length": 1747
-    },
-    {
-      "video_id": "dXXH2t2Dayg",
-      "title": "NEW Claude Updates are INSANE! 🤯",
-      "channel": "Julian Goldie SEO",
-      "published_at_utc": "2026-04-12T00:00:46+00:00",
-      "published_at_unix": 1775952046,
-      "published_at_stockholm": "2026-04-12T02:00:46+02:00",
-      "thumbnail": "https://i1.ytimg.com/vi/dXXH2t2Dayg/hqdefault.jpg",
-      "summary_source_text": "   NEW Claude Updates are INSANE! 🤯 Want to make money and save time with AI? Get AI Coaching, Support & Courses 👉 https://www.skool.com/ai-profit-lab-7462/about\n\nGet the video notes + links to the tools → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI Course + 1000 NEW AI Agents  👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about\n\nWant to know how I make videos like these? Join the AI Profit Boardroom → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI SEO Strategy Session: https://go.juliangoldie.com/strategy-session?utm=julian\n\nNew Claude AI Updates: How to Automate Your Business with Agents\n\nClaude has evolved from a simple chatbot into a powerful autonomous employee capable of running complex business workflows. Discover how new features like Managed Agents and Co-work integrations can save you hours every week.\n\n00:00 - Intro: Claude Just Changed Everything\n01:31 - Claude Co-work Live\n02:50 - Managed AI Agents Platform\n04:31 - Enterprise Trust Controls\n05:33 - Specialist AI Plugins\n06:21 - Replacing Workflows, Not Workers\n07:14 - Final Action Plan Want to make money and save time with AI? Get AI Coaching, Support & Courses 👉 https://www.skool.com/ai-profit-lab-7462/about\n\nGet the video notes + links to the tools → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI Course + 1000 NEW AI Agents  👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about\n\nWant to know how I make videos like these? Join the AI Profit Boardroom → https://www.skool.com/ai-profit-lab-7462/about\n\nGet a FREE AI SEO Strategy Session: https://go.juliangoldie.com/strategy-session?utm=julian\n\nNew Claude AI Updates: How to Automate Your Business with Agents\n\nClaude has evolved from a simple chatbot into a powerful autonomous employee capable of running complex business workflows. Discover how new features like Managed Agents and Co-work integrations can save you hours every week.\n\n00:00 - Intro: Claude Just Changed Everything\n01:31 - Claude Co-work Live\n02:50 - Managed AI Agents Platform\n04:31 - Enterprise Trust Controls\n05:33 - Specialist AI Plugins\n06:21 - Replacing Workflows, Not Workers\n07:14 - Final Action Plan",
-      "summary": "Want to make money and save time with AI. Get AI Coaching, Support & Courses Get the videon notes + links to the tools → Get a FREE AI Course + 1000 NEW AI Agents Want to know how I make videos like these.",
-      "url": "https://www.youtube.com/watch?v=dXXH2t2Dayg",
-      "duration": null,
-      "raw_short_signals": [],
-      "is_short_candidate": false,
-      "thumbnail_width": 480,
-      "thumbnail_height": 360,
-      "text_length": 1636
     },
     {
       "video_id": "MVPkE0XCcUs",
@@ -5325,21 +5354,21 @@
     },
     {
       "video_id": "aZUZoPeREtE",
-      "title": "Segerstedt, Norge och kriget",
+      "title": "Han varnade för Hitler",
       "channel": "Svenska tidsresor",
       "published_at_utc": "2026-04-11T07:00:01+00:00",
       "published_at_unix": 1775890801,
       "published_at_stockholm": "2026-04-11T09:00:01+02:00",
       "thumbnail": "https://i2.ytimg.com/vi/aZUZoPeREtE/hqdefault.jpg",
-      "summary_source_text": "   Segerstedt, Norge och kriget 00:00 Start\n00:40 Opinion mot Nazityskland\n03:20 Segerstedt och Norge\n04:08 Invasionen 1940\n07:27 Segerstedt ett problem för regeringen\n08:40 Tyska järnvägstransporter genom Sverige\n10:08 Statlig censur\n11:14 Freden 1945\n\nKrig i Norden:\nUnder andra världskriget befann sig Norge och Sverige i helt olika situationer. I april 1940 invaderades Norge av Nazityskland, medan Sverige lyckades hålla sig utanför kriget. Den svenska regeringen tvingades till eftergifter för att inte också Sverige skulle utsättas för en tysk invasion. En av de skarpaste kritikerna av Nazityskland och den svenska regeringens undfallenhet var Torgny Segerstedt, redaktör för Göteborgs Handels- och Sjöfarts-Tidning (GHT).\n\nFlera gånger under kriget togs tidningen i beslag för att undvika att provocerande artiklar publicerades. Klagomål på GHT kom till och med från riksminister Hermann Göring. GHT smugglades in i Norge och blev en inspirationskälla för den norska kampen mot ockupationsmakten. Själv inspirerades Torgny Segerstedt av Norges kung Haakon VII, som ledde den norska exilregeringen från England.\n\nFilmen är en del av serien \"Tusen år av norsk historia i Göteborgsområdet\", som lyfter fram de historiska banden mellan Norge och västra Sverige. Filmprojektet är en officiell del av Nasjonaljubileet 2030 - Norge i tusen år, ett jubileum som synliggör Norges historia, kultur och gemensamma nordiska arv.\n\nDetta avsnitt berättar om en utmanande tid, då världskrig och storpolitik fick återverkningar i Norden. En skarp röst från Göteborg blev både hatad och beundrad.\n\nBesök platserna i filmen:\n\nVästra Nordstaden:\nhttps://www.higab.se/nyhetsarkiv/vastra-nordstan-stadsdelen-som-har-blivit-en-snackis/\n\nGamla televerket:\nhttps://sv.wikipedia.org/wiki/Televerkets_hus,_G%C3%B6teborg\n\nSkansen Lejonet och järnvägsspåren:\nhttps://skansenlejonetevenemang.se/\n\nKvibergs kyrkorgård:\nhttps://www.svenskakyrkan.se/gbs/kvibergs-kyrkogard-\n\nLiseberg:\nhttps://www.liseberg.se/\n\nVasaplatsen:\nhttps://sv.wikipedia.org/wiki/Vasaplatsen,_G%C3%B6teborg 00:00 Start\n00:40 Opinion mot Nazityskland\n03:20 Segerstedt och Norge\n04:08 Invasionen 1940\n07:27 Segerstedt ett problem för regeringen\n08:40 Tyska järnvägstransporter genom Sverige\n10:08 Statlig censur\n11:14 Freden 1945\n\nKrig i Norden:\nUnder andra världskriget befann sig Norge och Sverige i helt olika situationer. I april 1940 invaderades Norge av Nazityskland, medan Sverige lyckades hålla sig utanför kriget. Den svenska regeringen tvingades till eftergifter för att inte också Sverige skulle utsättas för en tysk invasion. En av de skarpaste kritikerna av Nazityskland och den svenska regeringens undfallenhet var Torgny Segerstedt, redaktör för Göteborgs Handels- och Sjöfarts-Tidning (GHT).\n\nFlera gånger under kriget togs tidningen i beslag för att undvika att provocerande artiklar publicerades. Klagomål på GHT kom till och med från riksminister Hermann Göring. GHT smugglades in i Norge och blev en inspirationskälla för den norska kampen mot ockupationsmakten. Själv inspirerades Torgny Segerstedt av Norges kung Haakon VII, som ledde den norska exilregeringen från England.\n\nFilmen är en del av serien \"Tusen år av norsk historia i Göteborgsområdet\", som lyfter fram de historiska banden mellan Norge och västra Sverige. Filmprojektet är en officiell del av Nasjonaljubileet 2030 - Norge i tusen år, ett jubileum som synliggör Norges historia, kultur och gemensamma nordiska arv.\n\nDetta avsnitt berättar om en utmanande tid, då världskrig och storpolitik fick återverkningar i Norden. En skarp röst från Göteborg blev både hatad och beundrad.\n\nBesök platserna i filmen:\n\nVästra Nordstaden:\nhttps://www.higab.se/nyhetsarkiv/vastra-nordstan-stadsdelen-som-har-blivit-en-snackis/\n\nGamla televerket:\nhttps://sv.wikipedia.org/wiki/Televerkets_hus,_G%C3%B6teborg\n\nSkansen Lejonet och järnvägsspåren:\nhttps://skansenlejonetevenemang.se/\n\nKvibergs kyrkorgård:\nhttps://www.svenskakyrkan.se/gbs/kvibergs-kyrkogard-\n\nLiseberg:\nhttps://www.liseberg.se/\n\nVasaplatsen:\nhttps://sv.wikipedia.org/wiki/Vasaplatsen,_G%C3%B6teborg",
-      "summary": "Segerstedt, Norge och kriget 00:00 Start 00:40 Opinion mot Nazityskland 03:20 Segerstedt och Norge 04:08 Invasionen 1940 07:27 Segerstedt ett problem för regeringen 08:40 Tyska järnvägstransporter genom Sverige 10:08 Sta. I april 1940 invaderades Norge av Nazityskland, medan Sverige lyckades hålla sig utanför kriget.",
+      "summary_source_text": "   Han varnade för Hitler 00:00 Start\n00:40 Opinion mot Nazityskland\n03:20 Segerstedt och Norge\n04:08 Invasionen 1940\n07:27 Segerstedt ett problem för regeringen\n08:40 Tyska järnvägstransporter genom Sverige\n10:08 Statlig censur\n11:14 Freden 1945\n\nKrig i Norden:\nUnder andra världskriget befann sig Norge och Sverige i helt olika situationer. I april 1940 invaderades Norge av Nazityskland, medan Sverige lyckades hålla sig utanför kriget. Den svenska regeringen tvingades till eftergifter för att inte också Sverige skulle utsättas för en tysk invasion. En av de skarpaste kritikerna av Nazityskland och den svenska regeringens undfallenhet var Torgny Segerstedt, redaktör för Göteborgs Handels- och Sjöfarts-Tidning (GHT).\n\nFlera gånger under kriget togs tidningen i beslag för att undvika att provocerande artiklar publicerades. Klagomål på GHT kom till och med från riksminister Hermann Göring. GHT smugglades in i Norge och blev en inspirationskälla för den norska kampen mot ockupationsmakten. Själv inspirerades Torgny Segerstedt av Norges kung Haakon VII, som ledde den norska exilregeringen från England.\n\nFilmen är en del av serien \"Tusen år av norsk historia i Göteborgsområdet\", som lyfter fram de historiska banden mellan Norge och västra Sverige. Filmprojektet är en officiell del av Nasjonaljubileet 2030 - Norge i tusen år, ett jubileum som synliggör Norges historia, kultur och gemensamma nordiska arv.\n\nDetta avsnitt berättar om en utmanande tid, då världskrig och storpolitik fick återverkningar i Norden. En skarp röst från Göteborg blev både hatad och beundrad.\n\nBesök platserna i filmen:\n\nVästra Nordstaden:\nhttps://www.higab.se/nyhetsarkiv/vastra-nordstan-stadsdelen-som-har-blivit-en-snackis/\n\nGamla televerket:\nhttps://sv.wikipedia.org/wiki/Televerkets_hus,_G%C3%B6teborg\n\nSkansen Lejonet och järnvägsspåren:\nhttps://skansenlejonetevenemang.se/\n\nKvibergs kyrkorgård:\nhttps://www.svenskakyrkan.se/gbs/kvibergs-kyrkogard-\n\nLiseberg:\nhttps://www.liseberg.se/\n\nVasaplatsen:\nhttps://sv.wikipedia.org/wiki/Vasaplatsen,_G%C3%B6teborg 00:00 Start\n00:40 Opinion mot Nazityskland\n03:20 Segerstedt och Norge\n04:08 Invasionen 1940\n07:27 Segerstedt ett problem för regeringen\n08:40 Tyska järnvägstransporter genom Sverige\n10:08 Statlig censur\n11:14 Freden 1945\n\nKrig i Norden:\nUnder andra världskriget befann sig Norge och Sverige i helt olika situationer. I april 1940 invaderades Norge av Nazityskland, medan Sverige lyckades hålla sig utanför kriget. Den svenska regeringen tvingades till eftergifter för att inte också Sverige skulle utsättas för en tysk invasion. En av de skarpaste kritikerna av Nazityskland och den svenska regeringens undfallenhet var Torgny Segerstedt, redaktör för Göteborgs Handels- och Sjöfarts-Tidning (GHT).\n\nFlera gånger under kriget togs tidningen i beslag för att undvika att provocerande artiklar publicerades. Klagomål på GHT kom till och med från riksminister Hermann Göring. GHT smugglades in i Norge och blev en inspirationskälla för den norska kampen mot ockupationsmakten. Själv inspirerades Torgny Segerstedt av Norges kung Haakon VII, som ledde den norska exilregeringen från England.\n\nFilmen är en del av serien \"Tusen år av norsk historia i Göteborgsområdet\", som lyfter fram de historiska banden mellan Norge och västra Sverige. Filmprojektet är en officiell del av Nasjonaljubileet 2030 - Norge i tusen år, ett jubileum som synliggör Norges historia, kultur och gemensamma nordiska arv.\n\nDetta avsnitt berättar om en utmanande tid, då världskrig och storpolitik fick återverkningar i Norden. En skarp röst från Göteborg blev både hatad och beundrad.\n\nBesök platserna i filmen:\n\nVästra Nordstaden:\nhttps://www.higab.se/nyhetsarkiv/vastra-nordstan-stadsdelen-som-har-blivit-en-snackis/\n\nGamla televerket:\nhttps://sv.wikipedia.org/wiki/Televerkets_hus,_G%C3%B6teborg\n\nSkansen Lejonet och järnvägsspåren:\nhttps://skansenlejonetevenemang.se/\n\nKvibergs kyrkorgård:\nhttps://www.svenskakyrkan.se/gbs/kvibergs-kyrkogard-\n\nLiseberg:\nhttps://www.liseberg.se/\n\nVasaplatsen:\nhttps://sv.wikipedia.org/wiki/Vasaplatsen,_G%C3%B6teborg",
+      "summary": "Han varnade för Hitler 00:00 Start 00:40 Opinion mot Nazityskland 03:20 Segerstedt och Norge 04:08 Invasionen 1940 07:27 Segerstedt ett problem för regeringen 08:40 Tyska järnvägstransporter genom Sverige 10:08 Statlig c. I april 1940 invaderades Norge av Nazityskland, medan Sverige lyckades hålla sig utanför kriget.",
       "url": "https://www.youtube.com/watch?v=aZUZoPeREtE",
       "duration": null,
       "raw_short_signals": [],
       "is_short_candidate": false,
       "thumbnail_width": 480,
       "thumbnail_height": 360,
-      "text_length": 3420
+      "text_length": 3414
     },
     {
       "video_id": "yBCxz27ldaw",
