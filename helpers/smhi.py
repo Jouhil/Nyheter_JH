@@ -49,9 +49,9 @@ def _build_open_meteo_url(lat: float, lon: float) -> str:
     params = {
         "latitude": _fmt(lat),
         "longitude": _fmt(lon),
-        "current": "temperature_2m,wind_speed_10m,precipitation,weather_code,time",
-        "hourly": "temperature_2m,wind_speed_10m,precipitation_probability,weather_code",
-        "daily": "temperature_2m_max,temperature_2m_min,weather_code",
+        "current": "temperature_2m,wind_speed_10m,precipitation,weather_code",
+        "hourly": "temperature_2m,wind_speed_10m,precipitation,weather_code",
+        "daily": "temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum",
         "forecast_days": 7,
         "timezone": "UTC",
     }
@@ -61,8 +61,7 @@ def _build_open_meteo_url(lat: float, lon: float) -> str:
 def _build_hourly(hourly: dict[str, Any], hours: int = 24) -> list[dict[str, Any]]:
     times = _safe_list(hourly, "time")[:hours]
     temps = _safe_list(hourly, "temperature_2m")[:hours]
-    wind = _safe_list(hourly, "wind_speed_10m")[:hours]
-    precip = _safe_list(hourly, "precipitation_probability")[:hours]
+    precip = _safe_list(hourly, "precipitation")[:hours]
     code = _safe_list(hourly, "weather_code")[:hours]
 
     rows: list[dict[str, Any]] = []
@@ -70,12 +69,10 @@ def _build_hourly(hourly: dict[str, Any], hours: int = 24) -> list[dict[str, Any
         weather_code = int(code[idx]) if idx < len(code) and code[idx] is not None else 0
         rows.append(
             {
-                "valid_time": valid_time,
-                "temperature_c": temps[idx] if idx < len(temps) else None,
-                "wind_ms": wind[idx] if idx < len(wind) else None,
-                "precip_mm_h": precip[idx] if idx < len(precip) else None,
-                "symbol": weather_code,
-                "description": WEATHER_CODES.get(weather_code, "Okänd"),
+                "time": valid_time,
+                "temperature": temps[idx] if idx < len(temps) else None,
+                "weather_code": weather_code,
+                "precipitation": precip[idx] if idx < len(precip) else None,
             }
         )
     return rows
@@ -86,6 +83,7 @@ def _build_daily(daily: dict[str, Any], days: int = 7) -> list[dict[str, Any]]:
     max_t = _safe_list(daily, "temperature_2m_max")[:days]
     min_t = _safe_list(daily, "temperature_2m_min")[:days]
     code = _safe_list(daily, "weather_code")[:days]
+    precip = _safe_list(daily, "precipitation_sum")[:days]
 
     rows: list[dict[str, Any]] = []
     for idx, date in enumerate(dates):
@@ -93,10 +91,10 @@ def _build_daily(daily: dict[str, Any], days: int = 7) -> list[dict[str, Any]]:
         rows.append(
             {
                 "date": date,
-                "min_temp_c": min_t[idx] if idx < len(min_t) else None,
-                "max_temp_c": max_t[idx] if idx < len(max_t) else None,
-                "symbol": weather_code,
-                "description": WEATHER_CODES.get(weather_code, "Okänd"),
+                "temp_max": max_t[idx] if idx < len(max_t) else None,
+                "temp_min": min_t[idx] if idx < len(min_t) else None,
+                "weather_code": weather_code,
+                "precipitation_sum": precip[idx] if idx < len(precip) else None,
             }
         )
     return rows
@@ -136,6 +134,7 @@ def get_weather(
         "precip_mm_h": current.get("precipitation"),
         "description": WEATHER_CODES.get(code, "Okänd"),
         "forecast_time_utc": current.get("time"),
+        "weather_code": code,
         "hourly_24": _build_hourly(payload.get("hourly") or {}, hours=24),
         "daily_7": _build_daily(payload.get("daily") or {}, days=7),
         "error": None,

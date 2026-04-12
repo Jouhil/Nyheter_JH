@@ -44,12 +44,10 @@ def _default_hourly_rows() -> list[dict]:
     rows = []
     for _ in range(24):
         rows.append({
-            "valid_time": None,
-            "temperature_c": None,
-            "wind_ms": None,
-            "precip_mm_h": None,
-            "symbol": 0,
-            "description": "Okänd",
+            "time": None,
+            "temperature": None,
+            "weather_code": None,
+            "precipitation": None,
         })
     return rows
 
@@ -59,10 +57,10 @@ def _default_daily_rows() -> list[dict]:
     for _ in range(7):
         rows.append({
             "date": None,
-            "min_temp_c": None,
-            "max_temp_c": None,
-            "symbol": 0,
-            "description": "Okänd",
+            "temp_max": None,
+            "temp_min": None,
+            "weather_code": None,
+            "precipitation_sum": None,
         })
     return rows
 
@@ -133,15 +131,13 @@ def main() -> None:
     OUTPUT_WEATHER_JSON.parent.mkdir(parents=True, exist_ok=True)
     weather_payload = {
         "location": LOCATION["name"],
-        "lat": LOCATION["lat"],
-        "lon": LOCATION["lon"],
-        "generated_at": datetime.now(timezone.utc).isoformat(),
         "current": {
-            "temperature_c": weather.get("temperature_c"),
-            "wind_ms": weather.get("wind_ms"),
-            "precip_mm_h": weather.get("precip_mm_h"),
+            "temperature": weather.get("temperature_c"),
+            "wind_speed": weather.get("wind_ms"),
+            "precipitation": weather.get("precip_mm_h"),
+            "weather_code": weather.get("weather_code"),
             "description": weather.get("description"),
-            "forecast_time_utc": weather.get("forecast_time_utc"),
+            "forecast_time": weather.get("forecast_time_utc"),
         },
         "hourly_24": weather.get("hourly_24") or _default_hourly_rows(),
         "daily_7": weather.get("daily_7") or _default_daily_rows(),
@@ -152,6 +148,8 @@ def main() -> None:
         encoding="utf-8",
     )
     print(f"[WEATHER] Skrev lokal väderfil: {OUTPUT_WEATHER_JSON}")
+    print("[WEATHER] Preview (första 400 tecken):")
+    print(json.dumps(weather_payload, ensure_ascii=False)[:400])
 
     print("[2/4] Läser OPML och hämtar YouTube-feeds...")
     if OPML_FILE.exists():

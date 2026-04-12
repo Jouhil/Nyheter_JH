@@ -40,6 +40,11 @@ jobs:
           DEBUG_BRIEFING: "1"
         run: python -u generate_briefing.py
 
+      - name: Debug weather JSON preview
+        run: |
+          echo "----- weather-goteborg.json (first 40 lines) -----"
+          sed -n '1,40p' docs/data/weather-goteborg.json
+
       - name: Upload debug artifacts
         if: always()
         uses: actions/upload-artifact@v4
