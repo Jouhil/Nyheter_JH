@@ -28,11 +28,12 @@ body {
 
 .topbar h1 { margin: 0; font-size: clamp(1.2rem, 1.8vw, 1.6rem); }
 .topbar p, .updated { margin: 0.3rem 0 0; color: var(--muted); font-size: clamp(0.84rem, 1.5vw, 0.95rem); }
+.topbar h1, .topbar p, .updated { overflow-wrap: anywhere; }
 
 .container {
   width: min(1560px, 100%);
   margin: 0 auto;
-  padding: clamp(0.75rem, 2vw, 1.35rem);
+  padding: clamp(0.72rem, 2.8vw, 1.35rem);
   display: grid;
   gap: clamp(0.8rem, 1.4vw, 1.25rem);
   grid-template-columns: 1fr;
@@ -194,6 +195,7 @@ body {
 .item-list li { border: 1px solid rgba(255, 255, 255, 0.85); border-radius: 14px; padding: 0.8rem; background: rgba(255,255,255,0.72); min-width: 0; }
 .item-list a { color: var(--text); text-decoration: none; font-weight: 600; }
 .item-list a:hover { color: var(--accent); }
+.item-list a { display: inline-block; line-height: 1.35; }
 .meta { color: var(--muted); font-size: 0.84rem; margin-top: 0.25rem; }
 .summary {
   margin: 0.5rem 0 0;
@@ -210,7 +212,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.8rem;
-  padding: 0.25rem;
+  padding: 0.2rem;
 }
 .video-content { display: grid; gap: 0.42rem; align-content: start; min-width: 0; }
 .video-title {
@@ -229,6 +231,9 @@ body {
   display: block;
 }
 .thumb-link { display: block; min-height: 44px; }
+.news-topic { margin-top: 1rem; }
+.news-topic h3 { margin: 0 0 0.55rem; }
+.news-item .summary { -webkit-line-clamp: 3; margin-top: 0.4rem; }
 
 .video-links { display: flex; gap: 0.55rem; margin-top: 0.2rem; flex-wrap: wrap; }
 .yt-open {
@@ -250,8 +255,24 @@ body {
 }
 
 @media (max-width: 480px) {
+  .topbar { padding: 0.82rem 0.82rem 0.9rem; }
+  .container { padding-inline: 0.62rem; gap: 0.72rem; }
+  .card { padding: 0.78rem; border-radius: 14px; }
+  .subheading { margin: 0.86rem 0 0.48rem; }
+  .weather-hero-head { gap: 0.3rem; }
+  #weather-location { font-size: 1.05rem; line-height: 1.25; }
+  .weather-temp { font-size: clamp(2.1rem, 12vw, 2.9rem); }
   .weather-grid { grid-template-columns: 1fr; }
+  .metric { padding: 0.58rem; }
+  .hourly-scroll { grid-auto-columns: minmax(96px, 32vw); padding-bottom: 0.4rem; }
+  .hour-card { min-height: 120px; padding: 0.62rem 0.42rem; }
   .day-row { grid-template-columns: 58px 26px 34px 1fr 34px; gap: 0.35rem; padding: 0.45rem; }
+  .video-item { gap: 0.62rem; }
+  .video-content { gap: 0.34rem; }
+  .video-title { -webkit-line-clamp: 3; }
+  .yt-open { width: 100%; justify-content: center; min-height: 44px; }
+  .item-list li { padding: 0.68rem; }
+  .summary { -webkit-line-clamp: 3; }
 }
 
 @media (min-width: 768px) {

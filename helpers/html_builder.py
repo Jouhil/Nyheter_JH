@@ -134,12 +134,16 @@ def _render_list(items: list[dict], item_type: str) -> str:
                 )
             )
         else:
+            summary = escape(item.get('summary', ''))
             rows.append(
-                "<li><a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
-                "<div class='meta'>{subtitle}</div></li>".format(
+                (
+                    "<li class='news-item'><a href='{link}' target='_blank' rel='noopener noreferrer'>{title}</a>"
+                    "<div class='meta'>{subtitle}</div>{summary_html}</li>"
+                ).format(
                     link=escape(item.get("link", "#")),
                     title=escape(item.get("title", "Utan titel")),
                     subtitle=subtitle,
+                    summary_html=(f"<p class='summary'>{summary}</p>" if summary else ""),
                 )
             )
 
@@ -159,7 +163,7 @@ def build_html(
     news_sections = []
     for category, items in news_by_category.items():
         news_sections.append(
-            f"<section><h3>{escape(category)}</h3>{_render_list(items, 'news')}</section>"
+            f"<section class='news-topic'><h3>{escape(category)}</h3>{_render_list(items, 'news')}</section>"
         )
 
     return f"""<!doctype html>
