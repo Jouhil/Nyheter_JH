@@ -1,227 +1,200 @@
 {
   "location": "Göteborg/Säve",
   "current": {
-    "temperature": 7.7,
-    "wind_speed": 4.0,
+    "temperature": 5.8,
+    "wind_speed": 16.6,
     "precipitation": 0.0,
-    "weather_code": 1,
-    "description": "Mest klart",
-    "forecast_time": "2026-04-17T07:00",
-    "feels_like": 5.6,
-    "temp_min": 3.7,
-    "temp_max": 15.1
+    "weather_code": 0,
+    "description": "Klart",
+    "forecast_time": "2026-04-20T07:15",
+    "feels_like": 1.3,
+    "temp_min": 1.3,
+    "temp_max": 14.1
   },
   "hourly_24": [
     {
-      "time": "2026-04-17T00:00",
-      "temperature": 7.5,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 4.0
-    },
-    {
-      "time": "2026-04-17T01:00",
-      "temperature": 6.1,
-      "weather_code": 2,
-      "precipitation": 0.0,
-      "wind_speed": 3.2
-    },
-    {
-      "time": "2026-04-17T02:00",
-      "temperature": 5.2,
-      "weather_code": 2,
-      "precipitation": 0.0,
-      "wind_speed": 5.4
-    },
-    {
-      "time": "2026-04-17T03:00",
-      "temperature": 4.5,
-      "weather_code": 2,
-      "precipitation": 0.0,
-      "wind_speed": 2.9
-    },
-    {
-      "time": "2026-04-17T04:00",
-      "temperature": 3.8,
-      "weather_code": 1,
-      "precipitation": 0.0,
-      "wind_speed": 3.6
-    },
-    {
-      "time": "2026-04-17T05:00",
-      "temperature": 3.7,
+      "time": "2026-04-20T00:00",
+      "temperature": 4.7,
       "weather_code": 0,
       "precipitation": 0.0,
-      "wind_speed": 3.6
+      "wind_speed": 14.4
     },
     {
-      "time": "2026-04-17T06:00",
-      "temperature": 5.4,
+      "time": "2026-04-20T01:00",
+      "temperature": 3.2,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 11.9
+    },
+    {
+      "time": "2026-04-20T02:00",
+      "temperature": 2.2,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 13.3
+    },
+    {
+      "time": "2026-04-20T03:00",
+      "temperature": 1.5,
       "weather_code": 1,
       "precipitation": 0.0,
-      "wind_speed": 4.3
+      "wind_speed": 14.0
     },
     {
-      "time": "2026-04-17T07:00",
-      "temperature": 7.7,
+      "time": "2026-04-20T04:00",
+      "temperature": 1.3,
+      "weather_code": 2,
+      "precipitation": 0.0,
+      "wind_speed": 16.6
+    },
+    {
+      "time": "2026-04-20T05:00",
+      "temperature": 1.9,
+      "weather_code": 2,
+      "precipitation": 0.0,
+      "wind_speed": 18.0
+    },
+    {
+      "time": "2026-04-20T06:00",
+      "temperature": 3.3,
+      "weather_code": 2,
+      "precipitation": 0.0,
+      "wind_speed": 16.9
+    },
+    {
+      "time": "2026-04-20T07:00",
+      "temperature": 5.2,
       "weather_code": 1,
       "precipitation": 0.0,
-      "wind_speed": 4.0
+      "wind_speed": 16.6
     },
     {
-      "time": "2026-04-17T08:00",
+      "time": "2026-04-20T08:00",
+      "temperature": 7.4,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 17.3
+    },
+    {
+      "time": "2026-04-20T09:00",
+      "temperature": 9.2,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 18.0
+    },
+    {
+      "time": "2026-04-20T10:00",
+      "temperature": 11.1,
+      "weather_code": 1,
+      "precipitation": 0.0,
+      "wind_speed": 18.0
+    },
+    {
+      "time": "2026-04-20T11:00",
+      "temperature": 12.6,
+      "weather_code": 1,
+      "precipitation": 0.0,
+      "wind_speed": 18.4
+    },
+    {
+      "time": "2026-04-20T12:00",
+      "temperature": 13.5,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 18.4
+    },
+    {
+      "time": "2026-04-20T13:00",
+      "temperature": 13.8,
+      "weather_code": 1,
+      "precipitation": 0.0,
+      "wind_speed": 20.2
+    },
+    {
+      "time": "2026-04-20T14:00",
+      "temperature": 14.0,
+      "weather_code": 2,
+      "precipitation": 0.0,
+      "wind_speed": 19.8
+    },
+    {
+      "time": "2026-04-20T15:00",
+      "temperature": 14.1,
+      "weather_code": 2,
+      "precipitation": 0.0,
+      "wind_speed": 16.9
+    },
+    {
+      "time": "2026-04-20T16:00",
+      "temperature": 13.9,
+      "weather_code": 1,
+      "precipitation": 0.0,
+      "wind_speed": 18.0
+    },
+    {
+      "time": "2026-04-20T17:00",
+      "temperature": 13.1,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 17.3
+    },
+    {
+      "time": "2026-04-20T18:00",
+      "temperature": 11.8,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 14.8
+    },
+    {
+      "time": "2026-04-20T19:00",
       "temperature": 10.1,
       "weather_code": 0,
-      "precipitation": 0.0,
-      "wind_speed": 2.9
-    },
-    {
-      "time": "2026-04-17T09:00",
-      "temperature": 12.6,
-      "weather_code": 0,
-      "precipitation": 0.0,
-      "wind_speed": 5.0
-    },
-    {
-      "time": "2026-04-17T10:00",
-      "temperature": 14.2,
-      "weather_code": 0,
-      "precipitation": 0.0,
-      "wind_speed": 6.5
-    },
-    {
-      "time": "2026-04-17T11:00",
-      "temperature": 15.1,
-      "weather_code": 0,
-      "precipitation": 0.0,
-      "wind_speed": 12.2
-    },
-    {
-      "time": "2026-04-17T12:00",
-      "temperature": 14.9,
-      "weather_code": 0,
-      "precipitation": 0.0,
-      "wind_speed": 13.7
-    },
-    {
-      "time": "2026-04-17T13:00",
-      "temperature": 15.0,
-      "weather_code": 0,
-      "precipitation": 0.0,
-      "wind_speed": 12.2
-    },
-    {
-      "time": "2026-04-17T14:00",
-      "temperature": 14.6,
-      "weather_code": 2,
       "precipitation": 0.0,
       "wind_speed": 10.1
     },
     {
-      "time": "2026-04-17T15:00",
-      "temperature": 14.6,
-      "weather_code": 3,
+      "time": "2026-04-20T20:00",
+      "temperature": 8.7,
+      "weather_code": 0,
       "precipitation": 0.0,
       "wind_speed": 8.6
     },
     {
-      "time": "2026-04-17T16:00",
-      "temperature": 14.5,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 6.5
-    },
-    {
-      "time": "2026-04-17T17:00",
-      "temperature": 14.0,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 2.9
-    },
-    {
-      "time": "2026-04-17T18:00",
-      "temperature": 13.0,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 1.8
-    },
-    {
-      "time": "2026-04-17T19:00",
-      "temperature": 11.7,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 3.2
-    },
-    {
-      "time": "2026-04-17T20:00",
-      "temperature": 10.5,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 5.4
-    },
-    {
-      "time": "2026-04-17T21:00",
-      "temperature": 9.4,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 6.1
-    },
-    {
-      "time": "2026-04-17T22:00",
-      "temperature": 8.4,
-      "weather_code": 3,
-      "precipitation": 0.0,
-      "wind_speed": 5.8
-    },
-    {
-      "time": "2026-04-17T23:00",
+      "time": "2026-04-20T21:00",
       "temperature": 7.5,
-      "weather_code": 3,
+      "weather_code": 0,
       "precipitation": 0.0,
-      "wind_speed": 5.8
+      "wind_speed": 8.3
+    },
+    {
+      "time": "2026-04-20T22:00",
+      "temperature": 6.5,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 7.9
+    },
+    {
+      "time": "2026-04-20T23:00",
+      "temperature": 5.7,
+      "weather_code": 0,
+      "precipitation": 0.0,
+      "wind_speed": 7.6
     }
   ],
   "daily_10": [
     {
-      "date": "2026-04-17",
-      "temp_max": 15.1,
-      "temp_min": 3.7,
-      "weather_code": 3,
-      "precipitation_sum": 0.0,
-      "sunrise": "2026-04-17T03:56",
-      "sunset": "2026-04-17T18:26"
-    },
-    {
-      "date": "2026-04-18",
-      "temp_max": 12.6,
-      "temp_min": 7.2,
-      "weather_code": 55,
-      "precipitation_sum": 5.8,
-      "sunrise": "2026-04-18T03:53",
-      "sunset": "2026-04-18T18:29"
-    },
-    {
-      "date": "2026-04-19",
-      "temp_max": 9.3,
-      "temp_min": 3.0,
-      "weather_code": 61,
-      "precipitation_sum": 9.02,
-      "sunrise": "2026-04-19T03:51",
-      "sunset": "2026-04-19T18:31"
-    },
-    {
       "date": "2026-04-20",
-      "temp_max": 12.4,
-      "temp_min": 0.7,
-      "weather_code": 3,
+      "temp_max": 14.1,
+      "temp_min": 1.3,
+      "weather_code": 2,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-20T03:48",
       "sunset": "2026-04-20T18:33"
     },
     {
       "date": "2026-04-21",
-      "temp_max": 15.4,
-      "temp_min": 1.4,
+      "temp_max": 16.3,
+      "temp_min": 3.0,
       "weather_code": 2,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-21T03:45",
@@ -229,8 +202,8 @@
     },
     {
       "date": "2026-04-22",
-      "temp_max": 13.6,
-      "temp_min": 5.0,
+      "temp_max": 16.0,
+      "temp_min": 4.7,
       "weather_code": 3,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-22T03:43",
@@ -238,17 +211,17 @@
     },
     {
       "date": "2026-04-23",
-      "temp_max": 13.4,
-      "temp_min": 5.1,
-      "weather_code": 0,
+      "temp_max": 12.4,
+      "temp_min": 4.9,
+      "weather_code": 2,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-23T03:40",
       "sunset": "2026-04-23T18:40"
     },
     {
       "date": "2026-04-24",
-      "temp_max": 12.1,
-      "temp_min": 5.1,
+      "temp_max": 13.1,
+      "temp_min": 4.6,
       "weather_code": 3,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-24T03:37",
@@ -256,21 +229,48 @@
     },
     {
       "date": "2026-04-25",
-      "temp_max": 7.2,
-      "temp_min": 2.4,
-      "weather_code": 51,
-      "precipitation_sum": 0.6,
+      "temp_max": 11.1,
+      "temp_min": 2.9,
+      "weather_code": 3,
+      "precipitation_sum": 0.0,
       "sunrise": "2026-04-25T03:35",
       "sunset": "2026-04-25T18:44"
     },
     {
       "date": "2026-04-26",
-      "temp_max": 7.0,
-      "temp_min": 1.6,
-      "weather_code": 2,
+      "temp_max": 9.6,
+      "temp_min": 2.0,
+      "weather_code": 3,
       "precipitation_sum": 0.0,
       "sunrise": "2026-04-26T03:32",
       "sunset": "2026-04-26T18:46"
+    },
+    {
+      "date": "2026-04-27",
+      "temp_max": 8.4,
+      "temp_min": 2.4,
+      "weather_code": 1,
+      "precipitation_sum": 0.0,
+      "sunrise": "2026-04-27T03:30",
+      "sunset": "2026-04-27T18:49"
+    },
+    {
+      "date": "2026-04-28",
+      "temp_max": 9.9,
+      "temp_min": 2.3,
+      "weather_code": 51,
+      "precipitation_sum": 0.6,
+      "sunrise": "2026-04-28T03:27",
+      "sunset": "2026-04-28T18:51"
+    },
+    {
+      "date": "2026-04-29",
+      "temp_max": 9.1,
+      "temp_min": 3.2,
+      "weather_code": 3,
+      "precipitation_sum": 0.0,
+      "sunrise": "2026-04-29T03:25",
+      "sunset": "2026-04-29T18:53"
     }
   ],
   "error": null
